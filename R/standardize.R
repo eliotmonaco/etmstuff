@@ -1,33 +1,43 @@
-# Remove extraneous white space, choose a replacement value for blank, NA,
-# and "NULL" in cells, and optionally convert characters to uppercase.
+#' Standardize strings in a dataframe
+#'
+#' Remove excess spaces from strings, replace empty cells with `NA`, and convert strings to uppercase (optional).
+#'
+#' @param df A dataframe.
+#' @param uppercase Logical: change text to uppercase if `TRUE` (default).
+#' @param vars_ignore A character vector naming which variables to ignore.
+#' @param silence Logical: silence progress bar if `TRUE`.
+#'
+#' @return A dataframe.
+#' @export
+#'
+#' @examples
+#' df <- data.frame(x = c("pear", " kumquat ", "fuji   apple", " "),
+#'                  y = 1:4)
+#' df_stdz <- standardize(df)
 
-standardize <- function(df, replace=NA, uppercase=T, vars_ignore=NULL, silence=F) {
+standardize <- function(df, uppercase=T, vars_ignore=NULL, silence=FALSE) {
 
-  suppressWarnings({
-    library(stringr)
-  })
+  var_check(df, var = vars_ignore)
 
-  if (is.na(replace) & uppercase) {
-    f <- function(c) str_to_upper(na_if(str_trim(str_squish(str_remove(c, regex("^NULL$", ignore_case = T)))), ""))
-  } else if (is.na(replace) & !uppercase) {
-    f <- function(c) na_if(str_trim(str_squish(str_remove(c, regex("^NULL$", ignore_case = T)))), "")
-  } else if (!is.na(replace) & uppercase) {
-    f <- function(c) str_to_upper(str_replace_na(na_if(str_trim(str_squish(str_remove(c, regex("^NULL$", ignore_case = T)))), ""), replace))
-  } else if (!is.na(replace) & !uppercase) {
-    f <- function(c) str_replace_na(na_if(str_trim(str_squish(str_remove(c, regex("^NULL$", ignore_case = T)))), ""), replace)
+  if (uppercase) {
+    f <- function(c) str_to_upper(na_if(str_squish(c), ""))
+  } else if (!uppercase) {
+    f <- function(c) na_if(str_squish(c), "")
   }
 
-  cat(paste0("Standardizing ", deparse(substitute(df)), "\n"))
+  if (!silence) message(paste("Standardizing", deparse(substitute(df))))
 
-  pbmax <- ncol(df) - length(vars_ignore)
+  pbmax <- ncol(df)
   pb <- txtProgressBar(1, pbmax, width = 50, style = 3)
 
   for (i in 1:ncol(df)) {
-    if (colnames(df)[i] %in% vars_ignore) {
+    if (!silence) setTxtProgressBar(pb, i)
+    skip1 <- colnames(df)[i] %in% vars_ignore
+    skip2 <- !is.character(df[[i]])
+    if (skip1 | skip2) {
       next
     }
     df[, i] <- f(df[[i]])
-    if (!silence) setTxtProgressBar(pb, i)
   }
 
   if (!silence) close(pb)
@@ -35,6 +45,3 @@ standardize <- function(df, replace=NA, uppercase=T, vars_ignore=NULL, silence=F
   df
 
 }
-
-
-

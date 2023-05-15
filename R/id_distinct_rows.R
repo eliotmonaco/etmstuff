@@ -1,0 +1,31 @@
+#' Assign a sequential ID to distinct rows
+#'
+#' Assign a sequential ID number to distinct rows in `df` based on selected variables (`vars`). The new ID is a string, with the number of characters equal to `nchar(nrow(df))` (if there are 100 rows, the new ID will have three characters).
+#'
+#' @param df A dataframe.
+#' @param vars A vector of variable names that the new ID will be based on.
+#' @param id_name A name for the new ID variable.
+#'
+#' @return A dataframe.
+#' @export
+#'
+#' @examples
+#' rows <- 20
+#' df <- data.frame(x = sample(c("cat", "horse", "howler monkey"), size = rows, replace = TRUE),
+#'                  y = sample(c(1, 10, 100, NA), size = rows, replace = TRUE),
+#'                  z = rep("ignore this", length.out = rows))
+#' df_new <- id_distinct_rows(df, vars = c("x", "y"), id_name = "new_id")
+
+id_distinct_rows <- function(df, vars, id_name) {
+
+  var_check(df, var = vars)
+
+  df_ids <- df %>%
+    select(all_of(vars)) %>%
+    distinct() %>%
+    mutate({{ id_name }} := formatC(x = 1:nrow(.), width = nchar(nrow(df)), flag = "0"))
+
+  df %>%
+    left_join(df_ids, by = vars)
+
+}

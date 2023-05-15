@@ -1,0 +1,45 @@
+#' @keywords internal
+"_PACKAGE"
+
+## usethis namespace: start
+#' @importFrom dplyr %>%
+#' @importFrom dplyr across
+#' @importFrom dplyr all_of
+#' @importFrom dplyr anti_join
+#' @importFrom dplyr arrange
+#' @importFrom dplyr case_when
+#' @importFrom dplyr count
+#' @importFrom dplyr distinct
+#' @importFrom dplyr filter
+#' @importFrom dplyr full_join
+#' @importFrom dplyr if_else
+#' @importFrom dplyr inner_join
+#' @importFrom dplyr left_join
+#' @importFrom dplyr mutate
+#' @importFrom dplyr n_distinct
+#' @importFrom dplyr na_if
+#' @importFrom dplyr pull
+#' @importFrom dplyr relocate
+#' @importFrom dplyr rename
+#' @importFrom dplyr right_join
+#' @importFrom dplyr select
+#' @importFrom dplyr semi_join
+#' @importFrom dplyr slice
+#' @importFrom dplyr transmute
+#' @importFrom rlang .data
+#' @importFrom rlang :=
+#' @importFrom stats na.omit
+#' @importFrom stringr regex
+#' @importFrom stringr str_detect
+#' @importFrom stringr str_extract
+#' @importFrom stringr str_extract_all
+#' @importFrom stringr str_pad
+#' @importFrom stringr str_replace
+#' @importFrom stringr str_replace_all
+#' @importFrom stringr str_squish
+#' @importFrom stringr str_to_upper
+#' @importFrom stringr str_trim
+#' @importFrom utils setTxtProgressBar
+#' @importFrom utils txtProgressBar
+## usethis namespace: end
+NULL
