@@ -3,6 +3,7 @@
 export(get_quarter)
 export(get_year)
 export(id_distinct_rows)
+export(match_elements)
 export(pattern_check_df)
 export(prox_check)
 export(skipper_seq)
