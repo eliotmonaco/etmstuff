@@ -9,7 +9,7 @@
 #' @param df A dataframe.
 #' @param undupe_vars A character vector of variable names in `df` to use as the basis for unduplication.
 #' @param ignore_vars A character vector of variable names in `df` to ignore during unduplication.
-#' @param id_name A name for the duplicate ID variable. The default name is `dupe_id` if `id_name` is left `NULL`.
+#' @param dupe_id_name A name for the duplicate ID variable. The default name is `dupe_id` if `dupe_id_name` is left `NULL`.
 #'
 #' @return
 #' A list containing three dataframes:
@@ -26,17 +26,17 @@
 #' n_rows <- 20
 #' df <- data.frame(x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
 #'                  y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
-#'                  z = sample(c(TRUE, FALSE, NA), size = n_rows, replace = TRUE))
+#'                  z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE))
 #' undupe <- undupe(df, undupe_vars = c("x", "y"))
 
-undupe <- function(df, undupe_vars=NULL, ignore_vars=NULL, id_name=NULL) {
+undupe <- function(df, undupe_vars=NULL, ignore_vars=NULL, dupe_id_name=NULL) {
 
-  # If `id_name` isn't provided, use generic name for duplicate ID variable
-  if (is.null(id_name)) id_name <- "dupe_id"
+  # If `dupe_id_name` isn't provided, use generic name for duplicate ID variable
+  if (is.null(dupe_id_name)) dupe_id_name <- "dupe_id"
 
-  # Check for presence of `id_name` in the dataframe
-  if (any(str_detect(colnames(df), id_name))) {
-    m <- paste0("`df` already has a variable named `", id_name, "`. Please provide a different value for `id_name`.")
+  # Check for presence of `dupe_id_name` in the dataframe
+  if (any(str_detect(colnames(df), dupe_id_name))) {
+    m <- paste0("`df` already has a variable named `", dupe_id_name, "`. Please provide a different value for `dupe_id_name`.")
     stop(m, call. = FALSE)
   }
 
@@ -57,11 +57,11 @@ undupe <- function(df, undupe_vars=NULL, ignore_vars=NULL, id_name=NULL) {
     mutate(n_row = row_number(), dupe_type = "")
 
   # Add duplicate ID
-  df[id_name] <- apply(df %>% select({{ undupe_vars }}), 1, digest::digest, algo = "md5")
+  df[dupe_id_name] <- apply(df %>% select({{ undupe_vars }}), 1, digest::digest, algo = "md5")
 
   # Subset distinct rows
   df_distinct <- df %>%
-    distinct(across(all_of(undupe_vars)), .keep_all = T)
+    distinct(across(all_of(undupe_vars)), .keep_all = TRUE)
 
   # Subset removed duplicates (df - df_distinct)
   df_dupes <- df %>%
@@ -70,13 +70,13 @@ undupe <- function(df, undupe_vars=NULL, ignore_vars=NULL, id_name=NULL) {
 
   # Find rows in df_distinct with a match in df_dupes
   df_matches <- df_distinct %>%
-    semi_join(df_dupes, by = id_name) %>%
+    semi_join(df_dupes, by = dupe_id_name) %>%
     mutate(dupe_type = "retained")
 
   # Join dupe sets and sort by undupe_vars
   df_dupesets <- df_matches %>%
     full_join(df_dupes, by = colnames(df_matches)) %>%
-    arrange(.data[[id_name]]) %>%
+    arrange(.data[[dupe_id_name]]) %>%
     select(-n_row)
 
   if (nrow(df_dupes) == 0) {

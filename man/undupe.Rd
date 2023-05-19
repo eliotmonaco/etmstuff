@@ -4,7 +4,7 @@
 \alias{undupe}
 \title{Unduplicate a dataframe based on selected variables}
 \usage{
-undupe(df, undupe_vars = NULL, ignore_vars = NULL, id_name = NULL)
+undupe(df, undupe_vars = NULL, ignore_vars = NULL, dupe_id_name = NULL)
 }
 \arguments{
 \item{df}{A dataframe.}
@@ -13,7 +13,7 @@ undupe(df, undupe_vars = NULL, ignore_vars = NULL, id_name = NULL)
 
 \item{ignore_vars}{A character vector of variable names in \code{df} to ignore during unduplication.}
 
-\item{id_name}{A name for the duplicate ID variable. The default name is \code{dupe_id} if \code{id_name} is left \code{NULL}.}
+\item{dupe_id_name}{A name for the duplicate ID variable. The default name is \code{dupe_id} if \code{dupe_id_name} is left \code{NULL}.}
 }
 \value{
 A list containing three dataframes:
@@ -35,7 +35,14 @@ In \code{undupe_vars}, provide the names of variables from \code{df} whose value
 n_rows <- 20
 df <- data.frame(x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
                  y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
-                 z = sample(c(TRUE, FALSE, NA), size = n_rows, replace = TRUE))
+                 z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE))
 undupe <- undupe(df, undupe_vars = c("x", "y"))
+}
+\seealso{
+Other undupe functions: 
+\code{\link{aggregate_values}()},
+\code{\link{count_dupeset_diffs}()},
+\code{\link{distill_dupeset_diffs}()},
+\code{\link{dupes2xl}()}
 }
 \concept{undupe functions}
