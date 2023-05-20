@@ -15,7 +15,7 @@
 #'                  y = 1:4)
 #' df_stdz <- standardize(df)
 
-standardize <- function(df, uppercase=T, vars_ignore=NULL, silence=FALSE) {
+standardize <- function(df, uppercase=TRUE, vars_ignore=NULL, silence=FALSE) {
 
   var_check(df, var = vars_ignore)
 

@@ -4,7 +4,7 @@
 \alias{standardize}
 \title{Standardize strings in a dataframe}
 \usage{
-standardize(df, uppercase = T, vars_ignore = NULL, silence = FALSE)
+standardize(df, uppercase = TRUE, vars_ignore = NULL, silence = FALSE)
 }
 \arguments{
 \item{df}{A dataframe.}

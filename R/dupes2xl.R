@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @importFrom openxlsx addWorksheet loadWorkbook removeWorksheet saveWorkbook writeData
-#' @importFrom RDCOMClient COMCreate
+#' @importFrom RDCOMClient COMCreate createCOMReference
 #'
 #' @family undupe functions
 #' @examples
