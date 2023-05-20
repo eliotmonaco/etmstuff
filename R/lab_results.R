@@ -1,8 +1,8 @@
 #' Check, clean, and parse lab results
 #'
-#' * `check_lab_results()`
-#' * `clean_lab_results()`
-#' * `parse_lab_results()`
+#' * `check_lab_results()` finds unexpected values in the results, i.e., anything that isn't a number, sometimes preceded by `<` or `>`.
+#' * `clean_lab_results()` removes the most common unexpected values from the results and converts a `Not detected` (or similar) result to `0`. The cleaned results appear in a new variable, `lab_results_cleaned`.
+#' * `parse_lab_results()` splits the cleaned lab results into two new variables: `lab_results_symbol`, containing either `<`, `>`, or `NA`, and `lab_results_number`, containing the numeric result.
 #'
 #' @param df A dataframe.
 #' @param var A variable name from `df` containing lab results.
@@ -18,6 +18,7 @@ NULL
 
 #' @export
 #' @rdname lab_results
+#' @family lab result processing functions
 check_lab_results <- function(df, var) {
 
   var_check(df, var = c("lab_result_value", var))
@@ -33,6 +34,7 @@ check_lab_results <- function(df, var) {
 
 #' @export
 #' @rdname lab_results
+#' @family lab result processing functions
 clean_lab_results <- function(df, var) {
 
   var_check(df, var = var)
@@ -56,6 +58,7 @@ clean_lab_results <- function(df, var) {
 
 #' @export
 #' @rdname lab_results
+#' @family lab result processing functions
 parse_lab_results <- function(df, var) {
 
   var_check(df, var = c("recno", var))

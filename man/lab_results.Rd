@@ -23,8 +23,9 @@ A dataframe.
 }
 \description{
 \itemize{
-\item \code{check_lab_results()}
-\item \code{clean_lab_results()}
-\item \code{parse_lab_results()}
+\item \code{check_lab_results()} finds unexpected values in the results, i.e., anything that isn't a number, sometimes preceded by \code{<} or \code{>}.
+\item \code{clean_lab_results()} removes the most common unexpected values from the results and converts a \verb{Not detected} (or similar) result to \code{0}. The cleaned results appear in a new variable, \code{lab_results_cleaned}.
+\item \code{parse_lab_results()} splits the cleaned lab results into two new variables: \code{lab_results_symbol}, containing either \code{<}, \code{>}, or \code{NA}, and \code{lab_results_number}, containing the numeric result.
 }
 }
+\concept{lab result processing functions}
