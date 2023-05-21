@@ -4,22 +4,22 @@
 \alias{validate_values}
 \title{Validate address components}
 \usage{
-validate_values(df, var, ref, max_dist = 0.1)
+validate_values(df, var, type, max_dist = 0.1)
 }
 \arguments{
 \item{df}{A dataframe of addresses.}
 
-\item{var}{A variable name in \code{df} containing values to validate.}
+\item{var}{A variable name in \code{df} containing the address component to validate.}
 
-\item{ref}{A reference file with a list of values to validate \code{var} against.}
+\item{type}{The type of address component to validate.}
 
-\item{max_dist}{A value passed to \code{max.distance} in \code{agrep()} that determines the "maximum distance allowed for a match" to the pattern in \code{ref}.}
+\item{max_dist}{A value passed to \code{max.distance} in \code{agrep()} that determines the "maximum distance allowed for a match" to the elements in the reference list.}
 }
 \value{
 A dataframe with a column of possible matches to replace the values in \code{var}.
 }
 \description{
-This function checks the address component in var against values in a reference file. If an exact match isn't found, it uses \code{\link[=agrep]{agrep()}} to find an approximate match or matches. Only rows without an exact match are returned.
+This function checks an address component in \code{df$var} against elements in a reference list, e.g., cities in Kansas. If an exact match isn't found, it uses \code{\link[=agrep]{agrep()}} to find an approximate match or matches. The returned dataframe has one new column, \code{replacement_text}. Only rows without an exact match are returned. After visually confirming the results and making any needed adjustments to the returned dataframe, use \code{\link[=replace_values]{replace_values()}} to substitute the value in \code{replacement_text} for the original value in \code{var}.
 }
 \seealso{
 Other address processing functions: 

@@ -4,22 +4,22 @@
 \alias{clean_values}
 \title{Clean addresses in a dataframe}
 \usage{
-clean_values(df, var, id_var, ref)
+clean_values(df, var, id_var, type)
 }
 \arguments{
 \item{df}{A dataframe of addresses.}
 
-\item{var}{A variable name in \code{df} containing values to be cleaned.}
+\item{var}{A variable name in \code{df} containing street addresses.}
 
 \item{id_var}{A variable name in \code{df} that serves as a unique row identifier.}
 
-\item{ref}{A reference file with the variables \code{pattern} and \code{replacement}.}
+\item{type}{The type of cleaning to perform.}
 }
 \value{
 A dataframe containing only the rows that have been cleaned.
 }
 \description{
-Clean address values based on a reference file containing a \code{pattern} variable and a \code{replacement} variable. The returned dataframe has two new columns, \code{removed_text} and \code{replacement_text}. Use \code{\link[=replace_values]{replace_values()}} to substitute the string in \code{replacement_text} for the original string in \code{var}.
+This function applies a pattern to clean street address strings in \code{df$var} based on the \code{type} chosen. The returned dataframe has two new columns, \code{removed_text} and \code{replacement_text}. Only cleaned rows are returned. After visually confirming the results and making any needed adjustments to the returned dataframe, use \code{\link[=replace_values]{replace_values()}} to substitute the value in \code{replacement_text} for the original value in \code{var}.
 }
 \seealso{
 Other address processing functions: 

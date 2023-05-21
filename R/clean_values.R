@@ -1,11 +1,11 @@
 #' Clean addresses in a dataframe
 #'
-#' Clean address values based on a reference file containing a `pattern` variable and a `replacement` variable. The returned dataframe has two new columns, `removed_text` and `replacement_text`. Use [replace_values()] to substitute the string in `replacement_text` for the original string in `var`.
+#' This function applies a pattern to clean street address strings in `df$var` based on the `type` chosen. The returned dataframe has two new columns, `removed_text` and `replacement_text`. Only cleaned rows are returned. After visually confirming the results and making any needed adjustments to the returned dataframe, use [replace_values()] to substitute the value in `replacement_text` for the original value in `var`.
 #'
 #' @param df A dataframe of addresses.
-#' @param var A variable name in `df` containing values to be cleaned.
+#' @param var A variable name in `df` containing street addresses.
 #' @param id_var A variable name in `df` that serves as a unique row identifier.
-#' @param ref A reference file with the variables `pattern` and `replacement`.
+#' @param type The type of cleaning to perform.
 #'
 #' @return A dataframe containing only the rows that have been cleaned.
 #' @export
@@ -22,7 +22,15 @@ clean_values <- function(df, var, id_var, type) {
   # var_check(ref, var = c("pattern", "replacement"))
 
   if (type == "pobox") {
-    ref <- etmstuff:::regex_pobox
+    ref <- regex_pobox
+  } else if (type == "ordinal_dir") {
+    ref <- directions_ordinal
+  } else if (type %in% rownames(regex_various)) {
+    ref <- regex_various[which(rownames(regex_various) == type),]
+  } else {
+    types <- c("pobox", rownames(regex_various))
+    m <- paste0("`type` must be one of c(", paste0('"', paste(types, collapse='", "'), '"'), ")")
+    stop(m, call. = FALSE)
   }
 
   df2 <- df %>%
