@@ -16,10 +16,14 @@
 #' @family address processing functions
 # @examples
 
-clean_values <- function(df, var, id_var, ref) {
+clean_values <- function(df, var, id_var, type) {
 
   var_check(df, var = c(var, id_var))
-  var_check(ref, var = c("pattern", "replacement"))
+  # var_check(ref, var = c("pattern", "replacement"))
+
+  if (type == "pobox") {
+    ref <- etmstuff:::regex_pobox
+  }
 
   df2 <- df %>%
     select(all_of(c(id_var, var)))
