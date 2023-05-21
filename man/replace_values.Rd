@@ -7,7 +7,7 @@
 replace_values(df, var, id_var, source)
 }
 \arguments{
-\item{df}{A dataframe of addresses - the destination for the replacement text in \code{source}.}
+\item{df}{A dataframe of addresses.}
 
 \item{var}{A variable name in \code{df} whose values will be replaced.}
 
