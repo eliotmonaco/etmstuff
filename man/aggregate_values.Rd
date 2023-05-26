@@ -36,9 +36,9 @@ df_aggregated <- aggregate_values(undupe[["df_dupesets"]], var = "z", dupe_id = 
 }
 \seealso{
 Other undupe functions: 
-\code{\link{count_dupeset_diffs}()},
 \code{\link{distill_dupeset_diffs}()},
 \code{\link{dupes2xl}()},
+\code{\link{dupeset_conflict_count}()},
 \code{\link{undupe}()}
 }
 \concept{undupe functions}

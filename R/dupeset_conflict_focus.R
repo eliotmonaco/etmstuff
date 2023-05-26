@@ -4,6 +4,7 @@
 #'
 #' @param df A dataframe of dupesets returned by [undupe()].
 #' @param vars A character vector of variable names in `df`.
+#' @param silence Logical: silence progress bar if `TRUE`.
 #'
 #' @return A dataframe.
 #' @export
@@ -17,7 +18,7 @@
 #' undupe <- undupe(df, undupe_vars = c("x", "y"))
 #' df_distilled <- distill_dupeset_diffs(undupe[["df_dupesets"]], vars = "z")
 
-distill_dupeset_diffs <- function(df, vars) {
+distill_dupeset_diffs <- function(df, vars, silence=FALSE) {
 
   var_check(df, var = c("dupe_type", vars))
 
@@ -44,17 +45,17 @@ distill_dupeset_diffs <- function(df, vars) {
   }
 
   if (n_vars > 1) {
-    message("Finding differences in dupesets")
+    if (!silence) message("Finding differences in dupesets")
     pb <- txtProgressBar(1, n_vars, width = 50, style = 3)
   }
 
   for (i in 1:n_vars) {
     r <- sapply(seq, f, col = df2[[i]], simplify = T)
     keep_rows <- unique(c(keep_rows, unlist(r)))
-    if (n_vars > 1) setTxtProgressBar(pb, i)
+    if (n_vars > 1 & !silence) setTxtProgressBar(pb, i)
   }
 
-  if (n_vars > 1) close(pb)
+  if (n_vars > 1 & !silence) close(pb)
 
   # End function if no differences found
   if (is.null(keep_rows)) return(message("No differences found among dupesets in the variable(s) provided"))

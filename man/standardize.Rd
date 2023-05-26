@@ -4,14 +4,22 @@
 \alias{standardize}
 \title{Standardize strings in a dataframe}
 \usage{
-standardize(df, uppercase = TRUE, vars_ignore = NULL, silence = FALSE)
+standardize(
+  df,
+  vars = NULL,
+  vars_ignore = NULL,
+  uppercase = TRUE,
+  silence = FALSE
+)
 }
 \arguments{
 \item{df}{A dataframe.}
 
-\item{uppercase}{Logical: change text to uppercase if \code{TRUE} (default).}
+\item{vars}{A character vector naming which variables to standardize.}
 
 \item{vars_ignore}{A character vector naming which variables to ignore.}
+
+\item{uppercase}{Logical: change text to uppercase if \code{TRUE} (default).}
 
 \item{silence}{Logical: silence progress bar if \code{TRUE}.}
 }
@@ -19,10 +27,12 @@ standardize(df, uppercase = TRUE, vars_ignore = NULL, silence = FALSE)
 A dataframe.
 }
 \description{
-Remove excess spaces from strings, replace empty cells with \code{NA}, and convert strings to uppercase (optional).
+Remove excess spaces from strings, replace empty cells with \code{NA}, and convert strings to uppercase (optional). If neither \code{vars} nor \code{vars_ignore} are supplied, all character variables in \code{df} are standardized.
 }
 \examples{
-df <- data.frame(x = c("pear", " kumquat ", "fuji   apple", " "),
-                 y = 1:4)
+df <- data.frame(
+  x = c("pear", " kumquat ", "fuji   apple", " "),
+  y = 1:4
+)
 df_stdz <- standardize(df)
 }

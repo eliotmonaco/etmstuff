@@ -1,6 +1,6 @@
-#' Count dupesets with value differences for each variable
+#' For each dataframe variable count the number of dupesets with conflicting values
 #'
-#' When a dataframe is deduplicated, values may differ among duplicates in the variables that were not used as the basis for deduplication. `count_dupeset_diffs()` tallies the number of dupesets in which value differences occur for each variable in `df`.
+#' Dupesets are records that have the same values in selected variables. However, within a dupeset, any other variables may contain conflicting values. `dupeset_conflict_count()` tallies the number of dupesets with conflicting values for each variable in `df`.
 #'
 #' @param df A dataframe of dupesets returned by [undupe()].
 #'
@@ -10,21 +10,23 @@
 #' @family undupe functions
 #' @examples
 #' n_rows <- 20
-#' df <- data.frame(x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
-#'                  y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
-#'                  z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE))
+#' df <- data.frame(
+#'   x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
+#'   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
+#'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
+#' )
 #' undupe <- undupe(df, undupe_vars = c("x", "y"))
-#' df_diff_count <- count_dupeset_diffs(undupe[["df_dupesets"]])
-
-count_dupeset_diffs <- function(df) {
-
+#' df_diff_count <- dupeset_conflict_count(undupe[["df_dupesets"]])
+dupeset_conflict_count <- function(df) {
   var_check(df, var = "dupe_type")
 
   df <- df %>%
     relocate(dupe_type, .after = colnames(df)[length(colnames(df))])
 
-  df_diffs <- data.frame(var_name = colnames(df)[-which(colnames(df) == "dupe_type")],
-                         diff_ct = 0)
+  df_diffs <- data.frame(
+    var_name = colnames(df)[-which(colnames(df) == "dupe_type")],
+    diff_ct = 0
+  )
 
   seq_start <- which(toupper(df$dupe_type) == "RETAINED")
   seq_end <- c(as.integer(seq_start - 1)[-1], nrow(df))
@@ -34,8 +36,9 @@ count_dupeset_diffs <- function(df) {
   f <- function(col, seq) {
     set <- col[seq]
     n_uniq <- ifelse(purrr::is_empty(set[set != ""]),
-                     1,
-                     sum(!duplicated(set[set != ""])))
+      1,
+      sum(!duplicated(set[set != ""]))
+    )
     n_uniq != 1
   }
 
@@ -57,5 +60,4 @@ count_dupeset_diffs <- function(df) {
     mutate(diff_pct = round(diff_ct / n_sets * 100, digits = 2))
 
   df_diffs
-
 }
