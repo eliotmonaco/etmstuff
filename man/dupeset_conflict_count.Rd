@@ -4,10 +4,12 @@
 \alias{dupeset_conflict_count}
 \title{For each dataframe variable count the number of dupesets with conflicting values}
 \usage{
-dupeset_conflict_count(df)
+dupeset_conflict_count(df, silent = FALSE)
 }
 \arguments{
 \item{df}{A dataframe of dupesets returned by \code{\link[=undupe]{undupe()}}.}
+
+\item{silent}{Logical: silence progress bar if \code{TRUE}.}
 }
 \value{
 A table with one row per variable in \code{df} and both the count and percentage of dupesets in which value differences occur for each variable.
@@ -23,13 +25,13 @@ df <- data.frame(
   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 )
 undupe <- undupe(df, undupe_vars = c("x", "y"))
-df_diff_count <- dupeset_conflict_count(undupe[["df_dupesets"]])
+df_dupeset_count <- dupeset_conflict_count(undupe[["df_dupesets"]])
 }
 \seealso{
 Other undupe functions: 
 \code{\link{aggregate_values}()},
-\code{\link{distill_dupeset_diffs}()},
 \code{\link{dupes2xl}()},
+\code{\link{dupeset_conflict_focus}()},
 \code{\link{undupe}()}
 }
 \concept{undupe functions}

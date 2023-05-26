@@ -3,6 +3,7 @@
 #' Dupesets are records that have the same values in selected variables. However, within a dupeset, any other variables may contain conflicting values. `dupeset_conflict_count()` tallies the number of dupesets with conflicting values for each variable in `df`.
 #'
 #' @param df A dataframe of dupesets returned by [undupe()].
+#' @param silent Logical: silence progress bar if `TRUE`.
 #'
 #' @return A table with one row per variable in `df` and both the count and percentage of dupesets in which value differences occur for each variable.
 #' @export
@@ -16,8 +17,8 @@
 #'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 #' )
 #' undupe <- undupe(df, undupe_vars = c("x", "y"))
-#' df_diff_count <- dupeset_conflict_count(undupe[["df_dupesets"]])
-dupeset_conflict_count <- function(df) {
+#' df_dupeset_count <- dupeset_conflict_count(undupe[["df_dupesets"]])
+dupeset_conflict_count <- function(df, silent = FALSE) {
   var_check(df, var = "dupe_type")
 
   df <- df %>%
@@ -44,15 +45,17 @@ dupeset_conflict_count <- function(df) {
 
   n_vars <- ncol(df) - 1
 
-  message("Finding differences in dupesets")
-  pb <- txtProgressBar(1, n_vars, width = 50, style = 3)
+  if (n_vars > 1 & !silent) {
+    message("Finding differences in dupesets")
+    pb <- txtProgressBar(1, n_vars, width = 50, style = 3)
+  }
 
   for (i in 1:n_vars) {
     df_diffs$diff_ct[i] <- sum(sapply(seq, f, col = df[[i]], simplify = T))
-    setTxtProgressBar(pb, i)
+    if (n_vars > 1 & !silent) setTxtProgressBar(pb, i)
   }
 
-  close(pb)
+  if (n_vars > 1 & !silent) close(pb)
 
   n_sets <- sum(toupper(df$dupe_type) == "RETAINED")
 

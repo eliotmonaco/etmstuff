@@ -3,14 +3,14 @@
 #' This function is used when counting individuals based on the blood lead level (BLL) from their test results. It picks the test with the highest BLL, preferring a confirmed over an unconfirmed test, for each person within the time period defined by the data in `df`. Tests are grouped by `patient_id`. Tests for the same person that occur within 92 days of another belong to one sequence. The highest confirmed test is selected within each person sequence. If a person has more than one sequence, the highest confirmed test among the sequences is then selected.
 #'
 #' @param df A dataframe.
-#' @param silence Logical: silence progress bar if `TRUE`.
+#' @param silent Logical: silence progress bar if `TRUE`.
 #'
 #' @return  A dataframe.
 #' @export
 #'
 # @examples
 
-pick_highest_confirmed_test <- function(df, silence = FALSE) {
+pick_highest_confirmed_test <- function(df, silent = FALSE) {
   vars <- c("recno", "patient_id", "lab_collection_date", "lab_specimen_source", "lab_result_symbol", "lab_result_number")
   var_check(df, var = vars)
 
@@ -42,8 +42,10 @@ pick_highest_confirmed_test <- function(df, silence = FALSE) {
     }
   }
 
-  pbmax <- length(pid_unq)
-  pb <- txtProgressBar(1, pbmax, width = 50, style = 3)
+  if (!silent) {
+    pbmax <- length(pid_unq)
+    pb <- txtProgressBar(1, pbmax, width = 50, style = 3)
+  }
 
   for (i in 1:length(pid_unq)) {
     # All tests for each `patient_id`
@@ -56,7 +58,8 @@ pick_highest_confirmed_test <- function(df, silence = FALSE) {
     } else {
       # DF to hold max result from each test sequence
       df_max <- df[0, ]
-      r <- 1 # Row counter for df_max
+      # Row counter for `df_max`
+      r <- 1
 
       while (nrow(df_tests) > 0) {
         # Holds rows that belong to a test sequence
@@ -89,7 +92,7 @@ pick_highest_confirmed_test <- function(df, silence = FALSE) {
         df_tests <- df_tests[-test_seq, ]
 
         r <- r + 1
-      } # while
+      } # end of while
 
       # Pick one test from the aggregate of all sequences
       df_max2 <- pick_max_result(df_max)
@@ -98,12 +101,12 @@ pick_highest_confirmed_test <- function(df, silence = FALSE) {
       # df_max2$lab_collection_date <- as.Date(df_max2$lab_collection_date, origin = "1970-01-01")
 
       df_tests_unq <- rbind(df_tests_unq, df_max2)
-    } # else
+    } # end of else
 
-    if (!silence) setTxtProgressBar(pb, i)
-  } # for
+    if (!silent) setTxtProgressBar(pb, i)
+  } # end of for
 
-  if (!silence) close(pb)
+  if (!silent) close(pb)
 
   df_tests_unq
 }

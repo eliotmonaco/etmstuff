@@ -1,10 +1,10 @@
-#' Distill dupesets to just those with value differences in selected variables
+#' Focus on dupesets with conflicting values in selected variables
 #'
-#' When a dataframe is deduplicated, values may differ among duplicates in the variables that were not used as the basis for deduplication. `distill_dupeset_diffs()` produces a dataframe that keeps only those dupesets that have value differences in the variables named in `vars`. This makes it easier to visually inspect the data and look for patterns among dupesets, especially when [dupes2xl()] is run on the distilled dataframe.
+#' Dupesets are records that have the same values in selected variables. However, within a dupeset, any other variables may contain conflicting values. `dupeset_conflict_focus()` produces a dataframe that keeps only those dupesets that have conflicting values in the variables named in `vars`. This makes it easier to visually inspect the data and look for patterns among dupesets, especially when [dupes2xl()] is run on the returned dataframe.
 #'
 #' @param df A dataframe of dupesets returned by [undupe()].
 #' @param vars A character vector of variable names in `df`.
-#' @param silence Logical: silence progress bar if `TRUE`.
+#' @param silent Logical: silence progress bar if `TRUE`.
 #'
 #' @return A dataframe.
 #' @export
@@ -18,8 +18,8 @@
 #'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 #' )
 #' undupe <- undupe(df, undupe_vars = c("x", "y"))
-#' df_distilled <- distill_dupeset_diffs(undupe[["df_dupesets"]], vars = "z")
-distill_dupeset_diffs <- function(df, vars, silence = FALSE) {
+#' df_distilled <- dupeset_conflict_focus(undupe[["df_dupesets"]], vars = "z")
+dupeset_conflict_focus <- function(df, vars, silent = FALSE) {
   var_check(df, var = c("dupe_type", vars))
 
   df2 <- df %>%
@@ -45,18 +45,18 @@ distill_dupeset_diffs <- function(df, vars, silence = FALSE) {
     if (n_uniq != 1) seq
   }
 
-  if (n_vars > 1) {
-    if (!silence) message("Finding differences in dupesets")
+  if (n_vars > 1 & !silent) {
+    message("Finding differences in dupesets")
     pb <- txtProgressBar(1, n_vars, width = 50, style = 3)
   }
 
   for (i in 1:n_vars) {
     r <- sapply(seq, f, col = df2[[i]], simplify = T)
     keep_rows <- unique(c(keep_rows, unlist(r)))
-    if (n_vars > 1 & !silence) setTxtProgressBar(pb, i)
+    if (n_vars > 1 & !silent) setTxtProgressBar(pb, i)
   }
 
-  if (n_vars > 1 & !silence) close(pb)
+  if (n_vars > 1 & !silent) close(pb)
 
   # End function if no differences found
   if (is.null(keep_rows)) {

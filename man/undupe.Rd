@@ -43,8 +43,8 @@ undupe <- undupe(df, undupe_vars = c("x", "y"))
 \seealso{
 Other undupe functions: 
 \code{\link{aggregate_values}()},
-\code{\link{distill_dupeset_diffs}()},
 \code{\link{dupes2xl}()},
-\code{\link{dupeset_conflict_count}()}
+\code{\link{dupeset_conflict_count}()},
+\code{\link{dupeset_conflict_focus}()}
 }
 \concept{undupe functions}

@@ -4,12 +4,12 @@
 \alias{pick_highest_confirmed_test}
 \title{Pick the highest confirmed test for each person in the data set}
 \usage{
-pick_highest_confirmed_test(df, silence = FALSE)
+pick_highest_confirmed_test(df, silent = FALSE)
 }
 \arguments{
 \item{df}{A dataframe.}
 
-\item{silence}{Logical: silence progress bar if \code{TRUE}.}
+\item{silent}{Logical: silence progress bar if \code{TRUE}.}
 }
 \value{
 A dataframe.

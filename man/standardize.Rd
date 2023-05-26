@@ -9,7 +9,7 @@ standardize(
   vars = NULL,
   vars_ignore = NULL,
   uppercase = TRUE,
-  silence = FALSE
+  silent = FALSE
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ standardize(
 
 \item{uppercase}{Logical: change text to uppercase if \code{TRUE} (default).}
 
-\item{silence}{Logical: silence progress bar if \code{TRUE}.}
+\item{silent}{Logical: silence progress bar if \code{TRUE}.}
 }
 \value{
 A dataframe.

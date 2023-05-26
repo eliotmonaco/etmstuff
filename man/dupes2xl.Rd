@@ -38,8 +38,8 @@ dupes2xl(undupe[["df_dupesets"]], filename = f, path = p)
 \seealso{
 Other undupe functions: 
 \code{\link{aggregate_values}()},
-\code{\link{distill_dupeset_diffs}()},
 \code{\link{dupeset_conflict_count}()},
+\code{\link{dupeset_conflict_focus}()},
 \code{\link{undupe}()}
 }
 \concept{undupe functions}

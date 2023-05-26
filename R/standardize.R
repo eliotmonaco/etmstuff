@@ -6,7 +6,7 @@
 #' @param vars A character vector naming which variables to standardize.
 #' @param vars_ignore A character vector naming which variables to ignore.
 #' @param uppercase Logical: change text to uppercase if `TRUE` (default).
-#' @param silence Logical: silence progress bar if `TRUE`.
+#' @param silent Logical: silence progress bar if `TRUE`.
 #'
 #' @return A dataframe.
 #' @export
@@ -17,7 +17,7 @@
 #'   y = 1:4
 #' )
 #' df_stdz <- standardize(df)
-standardize <- function(df, vars = NULL, vars_ignore = NULL, uppercase = TRUE, silence = FALSE) {
+standardize <- function(df, vars = NULL, vars_ignore = NULL, uppercase = TRUE, silent = FALSE) {
   var_check(df, var = c(vars, vars_ignore))
 
   if (!is.null(vars) & !is.null(vars_ignore)) {
@@ -32,13 +32,13 @@ standardize <- function(df, vars = NULL, vars_ignore = NULL, uppercase = TRUE, s
     f <- function(c) na_if(str_squish(c), "")
   }
 
-  if (!silence) message(paste("Standardizing", deparse(substitute(df))))
+  if (!silent) message(paste("Standardizing", deparse(substitute(df))))
 
   pbmax <- length(vars)
   pb <- txtProgressBar(1, pbmax, width = 50, style = 3)
 
   for (i in 1:length(vars)) {
-    if (!silence) setTxtProgressBar(pb, i)
+    if (!silent) setTxtProgressBar(pb, i)
     skip <- !is.character(df[[vars[i]]])
     if (skip) {
       next
@@ -46,7 +46,7 @@ standardize <- function(df, vars = NULL, vars_ignore = NULL, uppercase = TRUE, s
     df[, vars[i]] <- f(df[[vars[i]]])
   }
 
-  if (!silence) close(pb)
+  if (!silent) close(pb)
 
   df
 }
