@@ -16,18 +16,18 @@
 #' @family undupe functions
 #' @examples
 #' n_rows <- 20
-#' df <- data.frame(x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
-#'                  y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
-#'                  z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE))
+#' df <- data.frame(
+#'   x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
+#'   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
+#'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
+#' )
 #' undupe <- undupe(df, undupe_vars = c("x", "y"))
 #' f <- ""
 #' p <- ""
 #' \dontrun{
 #' dupes2xl(undupe[["df_dupesets"]], filename = f, path = p)
 #' }
-
-dupes2xl <- function(df, filename, path=NULL, visible=FALSE) {
-
+dupes2xl <- function(df, filename, path = NULL, visible = FALSE) {
   xlpath <- paste0(path, filename, ".xlsm")
   # xlpath <- paste0(gsub("/", "\\\\", getwd()), "\\", gsub("/", "\\\\", path), filename, ".xlsm")
 
@@ -58,5 +58,4 @@ dupes2xl <- function(df, filename, path=NULL, visible=FALSE) {
   # Release resources
   rm(xlWbk, xlApp)
   gc()
-
 }

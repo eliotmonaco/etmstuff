@@ -12,14 +12,14 @@
 #' @family undupe functions
 #' @examples
 #' n_rows <- 20
-#' df <- data.frame(x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
-#'                  y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
-#'                  z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE))
+#' df <- data.frame(
+#'   x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
+#'   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
+#'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
+#' )
 #' undupe <- undupe(df, undupe_vars = c("x", "y"))
 #' df_distilled <- distill_dupeset_diffs(undupe[["df_dupesets"]], vars = "z")
-
-distill_dupeset_diffs <- function(df, vars, silence=FALSE) {
-
+distill_dupeset_diffs <- function(df, vars, silence = FALSE) {
   var_check(df, var = c("dupe_type", vars))
 
   df2 <- df %>%
@@ -39,8 +39,9 @@ distill_dupeset_diffs <- function(df, vars, silence=FALSE) {
   f <- function(col, seq) {
     set <- col[seq]
     n_uniq <- ifelse(purrr::is_empty(set[set != ""]),
-                     1,
-                     sum(!duplicated(set[set != ""])))
+      1,
+      sum(!duplicated(set[set != ""]))
+    )
     if (n_uniq != 1) seq
   }
 
@@ -58,7 +59,9 @@ distill_dupeset_diffs <- function(df, vars, silence=FALSE) {
   if (n_vars > 1 & !silence) close(pb)
 
   # End function if no differences found
-  if (is.null(keep_rows)) return(message("No differences found among dupesets in the variable(s) provided"))
+  if (is.null(keep_rows)) {
+    return(message("No differences found among dupesets in the variable(s) provided"))
+  }
 
   df_distilled <- data.frame(n_row = sort(unique(keep_rows)))
 
@@ -67,5 +70,4 @@ distill_dupeset_diffs <- function(df, vars, silence=FALSE) {
     right_join(df_distilled, by = "n_row")
 
   df_distilled
-
 }

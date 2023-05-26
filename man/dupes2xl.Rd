@@ -23,9 +23,11 @@ This function saves a dataframe of dupesets to an existing macro-enabled Excel w
 }
 \examples{
 n_rows <- 20
-df <- data.frame(x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
-                 y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
-                 z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE))
+df <- data.frame(
+  x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
+  y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
+  z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
+)
 undupe <- undupe(df, undupe_vars = c("x", "y"))
 f <- ""
 p <- ""

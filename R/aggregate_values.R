@@ -20,14 +20,14 @@
 #' @family undupe functions
 #' @examples
 #' n_rows <- 20
-#' df <- data.frame(x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
-#'                  y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
-#'                  z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE))
+#' df <- data.frame(
+#'   x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
+#'   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
+#'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
+#' )
 #' undupe <- undupe(df, undupe_vars = c("x", "y"))
 #' df_aggregated <- aggregate_values(undupe[["df_dupesets"]], var = "z", dupe_id = "dupe_id")
-
-aggregate_values <- function(df, var, dupe_id, sep=" | ") {
-
+aggregate_values <- function(df, var, dupe_id, sep = " | ") {
   var_check(df, var = c(var, dupe_id))
 
   # List of unique `dupe_id` values
@@ -54,10 +54,9 @@ aggregate_values <- function(df, var, dupe_id, sep=" | ") {
 
   for (i in 1:n_cols) { # Loop through variables in `var`
     # df_agg[, var[i]] <- mapply(f, seq = id_unq, var = var[i], SIMPLIFY = TRUE)
-    df_agg[, var[i]] <- future_mapply(f, seq = id_unq, var = var[i], separator=sep, SIMPLIFY = TRUE)
+    df_agg[, var[i]] <- future_mapply(f, seq = id_unq, var = var[i], separator = sep, SIMPLIFY = TRUE)
     message(paste("Column", i, "of", n_cols, "complete"))
   }
 
   df_agg
-
 }

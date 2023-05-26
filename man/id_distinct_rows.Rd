@@ -21,8 +21,10 @@ Assign a sequential ID number to distinct rows in \code{df} based on selected va
 }
 \examples{
 n_rows <- 20
-df <- data.frame(x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
-                 y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
-                 z = rep("ignore this", length.out = n_rows))
+df <- data.frame(
+  x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
+  y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
+  z = rep("ignore this", length.out = n_rows)
+)
 df_new <- id_distinct_rows(df, vars = c("x", "y"), id_name = "new_id")
 }

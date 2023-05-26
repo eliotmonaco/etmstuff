@@ -10,13 +10,13 @@
 #' @export
 #'
 #' @examples
-#' df <- data.frame(x = c("one", "two", "three"),
-#'                  y = c("eleven", "twelve", "thirteen"),
-#'                  z = c("twenty-one", "twenty-two", "twenty-three"))
+#' df <- data.frame(
+#'   x = c("one", "two", "three"),
+#'   y = c("eleven", "twelve", "thirteen"),
+#'   z = c("twenty-one", "twenty-two", "twenty-three")
+#' )
 #' pattern_check_df(df, "^one$")
-
-pattern_check_df <- function(df, pattern, ignore_case=FALSE) {
-
+pattern_check_df <- function(df, pattern, ignore_case = FALSE) {
   # Empty vector to hold names of variables in which `pattern` is found
   vars <- c()
 
@@ -38,5 +38,4 @@ pattern_check_df <- function(df, pattern, ignore_case=FALSE) {
   } else {
     message(paste("Pattern found in:", paste(vars, collapse = ", ")))
   }
-
 }

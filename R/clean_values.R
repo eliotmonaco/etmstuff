@@ -17,7 +17,6 @@
 # @examples
 
 clean_values <- function(df, var, id_var, type) {
-
   var_check(df, var = c(var, id_var))
   # var_check(ref, var = c("pattern", "replacement"))
 
@@ -26,10 +25,10 @@ clean_values <- function(df, var, id_var, type) {
   } else if (type == "ordinal_dir") {
     ref <- directions_ordinal
   } else if (type %in% rownames(regex_various)) {
-    ref <- regex_various[which(rownames(regex_various) == type),]
+    ref <- regex_various[which(rownames(regex_various) == type), ]
   } else {
     types <- c("pobox", rownames(regex_various))
-    m <- paste0("`type` must be one of c(", paste0('"', paste(types, collapse='", "'), '"'), ")")
+    m <- paste0("`type` must be one of c(", paste0('"', paste(types, collapse = '", "'), '"'), ")")
     stop(m, call. = FALSE)
   }
 
@@ -38,9 +37,11 @@ clean_values <- function(df, var, id_var, type) {
 
   p <- paste(ref$pattern, collapse = "|")
 
-  extracted <- str_extract_all(string = df2[[var]],
-                               pattern = regex(p, ignore_case = TRUE),
-                               simplify = TRUE)
+  extracted <- str_extract_all(
+    string = df2[[var]],
+    pattern = regex(p, ignore_case = TRUE),
+    simplify = TRUE
+  )
 
   if (purrr::is_empty(extracted)) {
     return(message("No matching values found"))
@@ -58,9 +59,10 @@ clean_values <- function(df, var, id_var, type) {
 
   df2 %>%
     filter(removed_text != "") %>%
-    left_join(df %>%
-                select(-all_of(var)),
-              by = id_var) %>%
+    left_join(
+      df %>%
+        select(-all_of(var)),
+      by = id_var
+    ) %>%
     relocate(replacement_text, .before = removed_text)
-
 }

@@ -28,9 +28,11 @@ Values within each variable named in \code{var} from a duplicate set are pasted 
 }
 \examples{
 n_rows <- 20
-df <- data.frame(x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
-                 y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
-                 z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE))
+df <- data.frame(
+  x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
+  y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
+  z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
+)
 undupe <- undupe(df, undupe_vars = c("x", "y"))
 df_aggregated <- aggregate_values(undupe[["df_dupesets"]], var = "z", dupe_id = "dupe_id")
 }

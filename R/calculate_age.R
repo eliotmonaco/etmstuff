@@ -12,14 +12,16 @@
 #' @importFrom lubridate is.Date
 #'
 #' @examples
-#' df <- data.frame(DOB = sample(seq.Date(as.Date("1970-01-01"), as.Date("1980-01-01"),
-#'                                        by = "day"), size = 10),
-#'                  event = sample(seq.Date(as.Date("1990-01-01"), as.Date("2020-01-01"),
-#'                                          by = "day"), size = 10))
+#' df <- data.frame(
+#'   DOB = sample(seq.Date(as.Date("1970-01-01"), as.Date("1980-01-01"),
+#'     by = "day"
+#'   ), size = 10),
+#'   event = sample(seq.Date(as.Date("1990-01-01"), as.Date("2020-01-01"),
+#'     by = "day"
+#'   ), size = 10)
+#' )
 #' df_new <- calculate_age(df, d1 = "DOB", d2 = "event")
-
 calculate_age <- function(df, d1, d2) {
-
   var_check(df, var = c(d1, d2))
 
   # Check if d1 & d2 are formatted as date
@@ -27,9 +29,13 @@ calculate_age <- function(df, d1, d2) {
   is_date_d2 <- lubridate::is.Date(df[[d2]])
 
   if (!is_date_d1 | !is_date_d2) {
-    s <- paste(na.omit(c(ifelse(!is_date_d1, paste0("`", d1, "`"), NA),
-                         ifelse(!is_date_d2, paste0("`", d2, "`"), NA))),
-               collapse = ", ")
+    s <- paste(
+      na.omit(c(
+        ifelse(!is_date_d1, paste0("`", d1, "`"), NA),
+        ifelse(!is_date_d2, paste0("`", d2, "`"), NA)
+      )),
+      collapse = ", "
+    )
     m <- paste("Variable not formatted as date:", s)
     stop(m, call. = FALSE)
   }
@@ -37,8 +43,10 @@ calculate_age <- function(df, d1, d2) {
   # Check for NA in d1 & d2
   df_check <- df %>%
     # select(recno, all_of(c(d1, d2))) %>%
-    mutate(d1_is_na = is.na(.data[[d1]]),
-           d2_is_na = is.na(.data[[d2]])) %>%
+    mutate(
+      d1_is_na = is.na(.data[[d1]]),
+      d2_is_na = is.na(.data[[d2]])
+    ) %>%
     filter(d1_is_na | d2_is_na)
 
   # Calculate age
@@ -56,5 +64,4 @@ calculate_age <- function(df, d1, d2) {
   message(m)
 
   df
-
 }

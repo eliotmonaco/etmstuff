@@ -20,24 +20,23 @@ NULL
 #' @export
 #' @rdname get_date_element
 get_year <- function(dates) {
-
   y <- as.numeric(na.omit(unique(format(as.Date(dates, tryFormats = c("%Y-%m-%d", "%Y%m%d")),
-                                        format = "%Y"))))
+    format = "%Y"
+  ))))
 
   sort(y)
-
 }
 
 #' @export
 #' @rdname get_date_element
 get_quarter <- function(dates) {
-
   y <- get_year(dates)
 
   if (length(y) > 1) message("`dates` represents multiple years")
 
   m <- as.numeric(na.omit(unique(format(as.Date(dates, tryFormats = c("%Y-%m-%d", "%Y%m%d")),
-                                        format = "%m"))))
+    format = "%m"
+  ))))
 
   q <- c()
 
@@ -47,5 +46,4 @@ get_quarter <- function(dates) {
   q[4] <- ifelse(any(10:12 %in% m), 4, 0)
 
   q[which(q != 0)]
-
 }

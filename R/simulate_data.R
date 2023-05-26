@@ -12,42 +12,59 @@
 #'
 #' @examples
 #' df <- simulate_data(rows = 1000, dirty = TRUE)
-
-simulate_data <- function(rows, dirty=FALSE) {
-
+simulate_data <- function(rows, dirty = FALSE) {
   # Create `street` column
-  df <- data.frame(street = str_squish(paste(sample(c(1:9999), rows, replace = T),
-                                             sample(c(directions, ""), rows, replace = T,
-                                                    prob = c(rep(.35/8, length.out = 8), .65)),
-                                             sample(common_streets, rows, replace = T),
-                                             sample(c(common_street_suffixes, ""), rows, replace = T,
-                                                    prob = c(rep(.65/7, length.out = 7), .35)))))
+  df <- data.frame(street = str_squish(paste(
+    sample(c(1:9999), rows, replace = T),
+    sample(c(directions, ""), rows,
+      replace = T,
+      prob = c(rep(.35 / 8, length.out = 8), .65)
+    ),
+    sample(common_streets, rows, replace = T),
+    sample(c(common_street_suffixes, ""), rows,
+      replace = T,
+      prob = c(rep(.65 / 7, length.out = 7), .35)
+    )
+  )))
 
   # Create `unit` column
   df$unit <- NA
   n <- rows %/% 5
-  units <- paste0(sample(c(1:50, ""), n, replace = T,
-                         prob = c(rep(.85/50, length.out = 50), .15)),
-                  sample(c(LETTERS[1:8], ""), n, replace = T,
-                         prob = c(rep(.65/8, length.out = 8), .35)))
+  units <- paste0(
+    sample(c(1:50, ""), n,
+      replace = T,
+      prob = c(rep(.85 / 50, length.out = 50), .15)
+    ),
+    sample(c(LETTERS[1:8], ""), n,
+      replace = T,
+      prob = c(rep(.65 / 8, length.out = 8), .35)
+    )
+  )
   units <- units[!units == ""]
-  units <- str_trim(paste(sample(c(common_unit_prefixes, ""), length(units), replace = T,
-                                 prob = c(rep(.5/6, length.out = 6), .5)),
-                          units))
+  units <- str_trim(paste(
+    sample(c(common_unit_prefixes, ""), length(units),
+      replace = T,
+      prob = c(rep(.5 / 6, length.out = 6), .5)
+    ),
+    units
+  ))
   n <- sample(1:rows, length(units))
   df$unit[n] <- units
 
   # Create `city` and `zip` columns
   n <- sample(nrow(ks_cities), rows, replace = T)
-  df <- cbind(df,
-              data.frame(city = stringr::str_to_title(ks_cities[n, "name"]),
-                         zip = ks_cities[n, "zip"]))
+  df <- cbind(
+    df,
+    data.frame(
+      city = stringr::str_to_title(ks_cities[n, "name"]),
+      zip = ks_cities[n, "zip"]
+    )
+  )
 
   # Create `state` column
   df$state <- "KS"
 
   if (dirty) {
-
     # Add PO Box to `street`
     n <- rows %/% 50
     n <- ifelse(n < 2, 2, n)
@@ -73,14 +90,12 @@ simulate_data <- function(rows, dirty=FALSE) {
     n <- ifelse(n < 2, 2, n)
     n <- sample(1:rows, n)
     df$zip[n] <- sample(10000:99999, length(n), replace = T)
-
   }
 
   df <- id_distinct_rows(df, vars = colnames(df), id_name = "address_id")
 
   df %>%
     relocate(address_id)
-
 }
 
 string_delete <- function(s) {
@@ -91,7 +106,9 @@ string_delete <- function(s) {
 
 string_add <- function(s) {
   c <- sample(1:nchar(s), 1)
-  paste0(substr(s, 1, c),
-         sample(letters, 1),
-         substr(s, c + 1, nchar(s)))
+  paste0(
+    substr(s, 1, c),
+    sample(letters, 1),
+    substr(s, c + 1, nchar(s))
+  )
 }

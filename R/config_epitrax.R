@@ -13,23 +13,24 @@
 # @examples
 
 config_epitrax <- function(df) {
-
   if (!assertive::is_data.frame(df)) stop("`df` must be a dataframe", call. = FALSE)
 
-  vars_date <- c("patient_birth_date",
-                 "treatment_date",
-                 "lab_collection_date",
-                 "lab_test_date",
-                 "lab_created_at",
-                 "patient_investigation_completed_lhd_date",
-                 "lhd_investigation_start_date",
-                 "lhd_date_closed",
-                 "first_investigation_started_date",
-                 "last_investigation_completed_lhd_date",
-                 "first_accepted_by_lhd_date",
-                 "last_approved_by_lhd_date",
-                 "last_routed_to_lhd_date",
-                 "patient_results_reported_to_LHD")
+  vars_date <- c(
+    "patient_birth_date",
+    "treatment_date",
+    "lab_collection_date",
+    "lab_test_date",
+    "lab_created_at",
+    "patient_investigation_completed_lhd_date",
+    "lhd_investigation_start_date",
+    "lhd_date_closed",
+    "first_investigation_started_date",
+    "last_investigation_completed_lhd_date",
+    "first_accepted_by_lhd_date",
+    "last_approved_by_lhd_date",
+    "last_routed_to_lhd_date",
+    "patient_results_reported_to_LHD"
+  )
 
   var_check(df, var = vars_date)
 
@@ -44,16 +45,18 @@ config_epitrax <- function(df) {
   message("Data wrangling: `recno` column added")
 
   df[, vars_date] <- lapply(df[, vars_date],
-                            FUN = as.Date,
-                            format = "%Y-%m-%d %H:%M:%S",
-                            origin = "1970-01-01")
+    FUN = as.Date,
+    format = "%Y-%m-%d %H:%M:%S",
+    origin = "1970-01-01"
+  )
 
   message("Data wrangling: date columns formatted")
 
-  list(data = df %>%
-         select(recno, hash_value, everything()),
-       keys = df %>%
-         select(recno, hash_value, patient_record_number) %>%
-         mutate(timestamp = Sys.time()))
-
+  list(
+    data = df %>%
+      select(recno, hash_value, everything()),
+    keys = df %>%
+      select(recno, hash_value, patient_record_number) %>%
+      mutate(timestamp = Sys.time())
+  )
 }

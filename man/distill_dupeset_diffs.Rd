@@ -21,9 +21,11 @@ When a dataframe is deduplicated, values may differ among duplicates in the vari
 }
 \examples{
 n_rows <- 20
-df <- data.frame(x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
-                 y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
-                 z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE))
+df <- data.frame(
+  x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
+  y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
+  z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
+)
 undupe <- undupe(df, undupe_vars = c("x", "y"))
 df_distilled <- distill_dupeset_diffs(undupe[["df_dupesets"]], vars = "z")
 }

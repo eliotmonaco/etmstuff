@@ -14,7 +14,6 @@
 # @examples
 
 replace_values <- function(df, var, id_var, source) {
-
   var_check(df, var = c(var, id_var))
   var_check(source, var = "replacement_text")
 
@@ -32,5 +31,4 @@ replace_values <- function(df, var, id_var, source) {
   # Join cleaned rows back to `df`
   df %>%
     full_join(df_sub, by = colnames(df))
-
 }

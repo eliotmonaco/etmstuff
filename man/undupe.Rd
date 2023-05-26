@@ -18,24 +18,26 @@ undupe(df, undupe_vars = NULL, ignore_vars = NULL, dupe_id_name = NULL)
 \value{
 A list containing three dataframes:
 \itemize{
-\item \code{df_full}, the original dataframe, \code{df}, plus the duplicate ID variable
-\item \code{df_distinct}, the deduplicated dataframe containing only distinct rows according to the selected variables
-\item \code{df_dupesets}, a dataframe of full duplicate sets from \code{df}, including the duplicates retained in \code{df_distinct} and the removed duplicates
+\item \code{df_full}: The original dataframe, \code{df}, with the duplicate ID variable added.
+\item \code{df_distinct}: The deduplicated dataframe, which contains only distinct rows from \code{df} according to the selected variables.
+\item \code{df_dupesets}: A dataframe of grouped duplicate sets from \code{df}, with each set consisting of the duplicate retained in \code{df_distinct} and the duplicate(s) removed. Rows in \code{df} without duplicates are not included.
 }
 }
 \description{
-\code{undupe()} identifies duplicate rows in a dataframe and returns a deduplicated dataframe containing only distinct rows and a dataframe of duplicate sets. A duplicate set consists of all rows with identical values across selected variables.
+\code{undupe()} identifies duplicate rows in a dataframe and returns a deduplicated dataframe containing only distinct rows and a dataframe of duplicate sets (dupesets). A dupeset consists of all rows with identical values across selected variables.
 }
 \details{
-In \code{undupe_vars}, provide the names of variables from \code{df} whose values must match for rows to be considered duplicates. Alternatively, in \code{ignore_vars}, provide the names of variables from \code{df} whose values may differ among duplicates. If \code{ignore_vars} is provided, all other variables in \code{df} effectively become the list of \code{undupe_vars}. Both arguments can't be provided. A unique identifier for duplicate rows is added to the output dataframes.
+In \code{undupe_vars}, provide the names of variables from \code{df} whose values must match for rows to be considered duplicates. Alternatively, in \code{ignore_vars}, provide the names of variables from \code{df} whose values may differ among duplicates. If \code{ignore_vars} is provided, all other variables in \code{df} effectively become the list of \code{undupe_vars}. Both arguments can't be provided. A unique identifier for duplicate rows (named \code{dupe_id} by default) is added to the output dataframes.
 
 \code{undupe()} uses \code{dplyr::distinct()}, which returns distinct/unique rows according to the selected variables. In the case of rows identified as duplicates, only the first row that occurs in \code{df} is returned in \code{df_distinct}.
 }
 \examples{
 n_rows <- 20
-df <- data.frame(x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
-                 y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
-                 z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE))
+df <- data.frame(
+  x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
+  y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
+  z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
+)
 undupe <- undupe(df, undupe_vars = c("x", "y"))
 }
 \seealso{

@@ -10,8 +10,7 @@
 #'
 # @examples
 
-pick_highest_confirmed_test <- function(df, silence=FALSE) {
-
+pick_highest_confirmed_test <- function(df, silence = FALSE) {
   vars <- c("recno", "patient_id", "lab_collection_date", "lab_specimen_source", "lab_result_symbol", "lab_result_number")
   var_check(df, var = vars)
 
@@ -21,7 +20,7 @@ pick_highest_confirmed_test <- function(df, silence=FALSE) {
     pull()
 
   # DF to hold one test per `patient_id`
-  df_tests_unq <- df[0,]
+  df_tests_unq <- df[0, ]
 
   # Select the highest venous or capillary test from a sequence
   pick_max_result <- function(df) {
@@ -47,24 +46,19 @@ pick_highest_confirmed_test <- function(df, silence=FALSE) {
   pb <- txtProgressBar(1, pbmax, width = 50, style = 3)
 
   for (i in 1:length(pid_unq)) {
-
     # All tests for each `patient_id`
     df_tests <- df %>%
       filter(patient_id == pid_unq[i]) %>%
       arrange(lab_collection_date)
 
     if (nrow(df_tests) == 1) {
-
       df_tests_unq <- rbind(df_tests_unq, df_tests)
-
     } else {
-
       # DF to hold max result from each test sequence
-      df_max <- df[0,]
+      df_max <- df[0, ]
       r <- 1 # Row counter for df_max
 
       while (nrow(df_tests) > 0) {
-
         # Holds rows that belong to a test sequence
         test_seq <- 1
 
@@ -81,7 +75,7 @@ pick_highest_confirmed_test <- function(df, silence=FALSE) {
         }
 
         # Subset test sequence
-        df_seq <- df_tests[test_seq,]
+        df_seq <- df_tests[test_seq, ]
 
         # Relabel any test following an initial capillary test as "venous equivalent", to be treated as venous in pick_max_result()
         if (nrow(df_seq) > 1 & df_seq$lab_specimen_source[1] == "Blood - capillary") {
@@ -89,13 +83,12 @@ pick_highest_confirmed_test <- function(df, silence=FALSE) {
         }
 
         # Pick one test from sequence
-        df_max[r,] <- pick_max_result(df_seq)
+        df_max[r, ] <- pick_max_result(df_seq)
 
         # Remove test sequence; if any tests remain, they recycle through the while loop
-        df_tests <- df_tests[-test_seq,]
+        df_tests <- df_tests[-test_seq, ]
 
         r <- r + 1
-
       } # while
 
       # Pick one test from the aggregate of all sequences
@@ -105,15 +98,12 @@ pick_highest_confirmed_test <- function(df, silence=FALSE) {
       # df_max2$lab_collection_date <- as.Date(df_max2$lab_collection_date, origin = "1970-01-01")
 
       df_tests_unq <- rbind(df_tests_unq, df_max2)
-
     } # else
 
     if (!silence) setTxtProgressBar(pb, i)
-
   } # for
 
   if (!silence) close(pb)
 
   df_tests_unq
-
 }

@@ -26,6 +26,7 @@ Subset a dataframe by year(s), year-quarter(s), or dates. Supply the date variab
 }
 \examples{
 df <- data.frame(date = sample(seq.Date(as.Date("2020-01-01"), as.Date("2022-12-31"),
-                                        by = "day"), size = 500))
+  by = "day"
+), size = 500))
 df_new <- subset_date_range(df, var = "date", range = "2021q3")
 }

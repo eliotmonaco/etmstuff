@@ -20,9 +20,13 @@ A dataframe with a new variable, \code{df$age}.
 Calculates age as (\code{d2} - \code{d1}) / 365.25. For EpiTrax data, \code{d1 = "patient_birth_date"} and \code{d2 = "lab_collection_date"}.
 }
 \examples{
-df <- data.frame(DOB = sample(seq.Date(as.Date("1970-01-01"), as.Date("1980-01-01"),
-                                       by = "day"), size = 10),
-                 event = sample(seq.Date(as.Date("1990-01-01"), as.Date("2020-01-01"),
-                                         by = "day"), size = 10))
+df <- data.frame(
+  DOB = sample(seq.Date(as.Date("1970-01-01"), as.Date("1980-01-01"),
+    by = "day"
+  ), size = 10),
+  event = sample(seq.Date(as.Date("1990-01-01"), as.Date("2020-01-01"),
+    by = "day"
+  ), size = 10)
+)
 df_new <- calculate_age(df, d1 = "DOB", d2 = "event")
 }

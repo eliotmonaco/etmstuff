@@ -14,18 +14,16 @@
 #'
 #' @examples
 #' df <- data.frame(date = sample(seq.Date(as.Date("2020-01-01"), as.Date("2022-12-31"),
-#'                                         by = "day"), size = 500))
+#'   by = "day"
+#' ), size = 500))
 #' df_new <- subset_date_range(df, var = "date", range = "2021q3")
-
 subset_date_range <- function(df, var, range) {
-
   var_check(df, var = var)
 
   continue_yq <- str_detect(range, "^\\d{4}$") | str_detect(range, "^\\d{4}[Qq]\\d$")
   continue_date <- str_detect(range, "^\\d{4}-\\d{2}-\\d{2}$")
 
   if (all(continue_yq) & length(continue_yq) %in% 1:2) {
-
     # Get beginning and ending year and quarter from `range`
     range_y <- as.numeric(str_extract(range, "^\\d{4}((?=[Qq])|$)"))
     range_q <- as.numeric(str_extract(range, "(?<=[Qq])\\d$"))
@@ -55,21 +53,20 @@ subset_date_range <- function(df, var, range) {
 
     df_subset <- df %>%
       filter(.data[[var]] >= t1, .data[[var]] < t2) # Includes t1 but not t2
-
   } else if (all(continue_date) & all(!is.na(as.Date(range, format = "%Y-%m-%d"))) & length(continue_date) == 2) {
-
     range_d <- as.Date(range, format = "%Y-%m-%d")
     t1 <- range_d[1]
     t2 <- range_d[2]
 
     df_subset <- df %>%
       filter(.data[[var]] >= t1, .data[[var]] <= t2) # Includes both t1 and t2
-
   } else {
-    stop(paste("`range` must be a character vector of length 1-2 containing:\n",
-               "- a single year (e.g., \"2023\") or year-quarter (e.g., \"2023q1\")\n",
-               "- a year and/or year-quarter pair (start & end)\n",
-               "- a pair (start & end) of dates (e.g., c(\"2022-02-02\", \"2023-03-03\"))"), call. = FALSE)
+    stop(paste(
+      "`range` must be a character vector of length 1-2 containing:\n",
+      "- a single year (e.g., \"2023\") or year-quarter (e.g., \"2023q1\")\n",
+      "- a year and/or year-quarter pair (start & end)\n",
+      "- a pair (start & end) of dates (e.g., c(\"2022-02-02\", \"2023-03-03\"))"
+    ), call. = FALSE)
   }
 
   if (nrow(df_subset) > 0) {
@@ -81,5 +78,4 @@ subset_date_range <- function(df, var, range) {
   message(m)
 
   df_subset
-
 }

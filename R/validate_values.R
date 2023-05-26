@@ -13,8 +13,7 @@
 #' @family address processing functions
 # @examples
 
-validate_values <- function(df, var, type, max_dist=0.1) {
-
+validate_values <- function(df, var, type, max_dist = 0.1) {
   var_check(df, var = var)
 
   if (type == "city") {
@@ -29,7 +28,7 @@ validate_values <- function(df, var, type, max_dist=0.1) {
   df <- df %>%
     mutate(n_row = row_number())
 
-  df2 <- df[!(str_to_upper(df[[var]]) %in% str_to_upper(ref)),]
+  df2 <- df[!(str_to_upper(df[[var]]) %in% str_to_upper(ref)), ]
 
   # df2 <- df2 %>%
   #   filter(.data[[var]] != "")
@@ -40,11 +39,13 @@ validate_values <- function(df, var, type, max_dist=0.1) {
 
   # Find potential match
   f <- function(r, df, source, ref_list, max_dist) {
-    matches <- agrep(pattern = df[var][r,],
-                     x = ref,
-                     max.distance = max_dist,
-                     ignore.case = TRUE,
-                     value = TRUE)
+    matches <- agrep(
+      pattern = df[var][r, ],
+      x = ref,
+      max.distance = max_dist,
+      ignore.case = TRUE,
+      value = TRUE
+    )
     if (purrr::is_empty(matches)) {
       NA
     } else {
@@ -57,5 +58,4 @@ validate_values <- function(df, var, type, max_dist=0.1) {
   df2 %>%
     select(-n_row) %>%
     relocate(replacement_text, .after = all_of(var))
-
 }

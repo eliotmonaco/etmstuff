@@ -20,8 +20,10 @@ Returns a message listing which columns contain the pattern.
 Search a dataframe for a pattern formatted as a regular expression. For exact matches, use \code{^} and \code{$} at the beginning and ending of the string in \code{pattern}.
 }
 \examples{
-df <- data.frame(x = c("one", "two", "three"),
-                 y = c("eleven", "twelve", "thirteen"),
-                 z = c("twenty-one", "twenty-two", "twenty-three"))
+df <- data.frame(
+  x = c("one", "two", "three"),
+  y = c("eleven", "twelve", "thirteen"),
+  z = c("twenty-one", "twenty-two", "twenty-three")
+)
 pattern_check_df(df, "^one$")
 }
