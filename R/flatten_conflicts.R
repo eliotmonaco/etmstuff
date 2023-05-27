@@ -10,9 +10,10 @@
 #' @param df A dataframe of dupesets (or the full data set) returned by [undupe()].
 #' @param var A character vector of variable names in `df`.
 #' @param dupe_id The duplicate ID variable name, which groups all members of a duplicate set.
-#' @param sep A string to use as a separator between the aggregated values from a duplicate set.
+#' @param sep A string to use as a separator between the aggregated values from a duplicate set. The default is " | ".
+#' @param silent Logical: silence output to console if `TRUE`.
 #'
-#' @return A dataframe of aggregated values from each dupeset (row) and variable (column).
+#' @return A dataframe of flattened values, with one row per dupeset in `df` and one column per variable in `var`.
 #' @export
 #'
 #' @importFrom future.apply future_mapply
@@ -26,23 +27,24 @@
 #'   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
 #'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 #' )
-#' undupe <- undupe(df, undupe_vars = c("x", "y"))
-#' df_aggregated <- flatten_conflicts(undupe[["df_dupesets"]], var = "z", dupe_id = "dupe_id")
+#' undupe <- undupe(df, visible_vars = c("x", "y"))
+#' df_flattened <- flatten_conflicts(undupe[["df_dupesets"]], var = "z", dupe_id = "dupe_id")
 #'
 flatten_conflicts <- function(df,
                               var,
                               dupe_id,
-                              sep = " | ") {
+                              sep = " | ",
+                              silent = FALSE) {
   var_check(df, var = c(var, dupe_id))
 
   # List of unique `dupe_id` values
   id_unq <- unique(df[[dupe_id]])
 
-  # DF to hold aggregated `var` values
-  df_agg <- data.frame(id_unq)
-  colnames(df_agg) <- c(dupe_id)
+  # DF to hold flattened `var` values
+  df_flat <- data.frame(id_unq)
+  colnames(df_flat) <- c(dupe_id)
 
-  # Use each value in `seq` (`id_unq`) to aggregate `var` values
+  # Use each value in `seq` (`id_unq`) to flatten `var` values
   f <- function(seq, var, separator) {
     df_set <- df %>%
       filter(.data[[dupe_id]] == seq)
@@ -57,11 +59,12 @@ flatten_conflicts <- function(df,
   oplan <- future::plan(future::multisession)
   on.exit(future::plan(oplan), add = TRUE)
 
-  for (i in 1:n_cols) { # Loop through variables in `var`
-    # df_agg[, var[i]] <- mapply(f, seq = id_unq, var = var[i], SIMPLIFY = TRUE)
-    df_agg[, var[i]] <- future_mapply(f, seq = id_unq, var = var[i], separator = sep, SIMPLIFY = TRUE)
-    message(paste("Column", i, "of", n_cols, "complete"))
+  # Loop through variables in `var` and flatten dupeset values
+  for (i in 1:n_cols) {
+    # df_flat[, var[i]] <- mapply(f, seq = id_unq, var = var[i], SIMPLIFY = TRUE)
+    df_flat[, var[i]] <- future_mapply(f, seq = id_unq, var = var[i], separator = sep, SIMPLIFY = TRUE)
+    if (!silent) message(paste("Column", i, "of", n_cols, "complete"))
   }
 
-  df_agg
+  df_flat
 }

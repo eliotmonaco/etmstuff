@@ -7,7 +7,7 @@
 #'
 #' @param df A dataframe of dupesets returned by [undupe()].
 #' @param vars A character vector of variable names in `df`.
-#' @param silent Logical: silence progress bar if `TRUE`.
+#' @param silent Logical: silence output to console if `TRUE`.
 #'
 #' @return A dataframe.
 #' @export
@@ -20,8 +20,8 @@
 #'   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
 #'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 #' )
-#' undupe <- undupe(df, undupe_vars = c("x", "y"))
-#' df_distilled <- isolate_conflicts(undupe[["df_dupesets"]], vars = "z")
+#' undupe <- undupe(df, visible_vars = c("x", "y"))
+#' df_isolated <- isolate_conflicts(undupe[["df_dupesets"]], vars = "z")
 #'
 isolate_conflicts <- function(df,
                               vars,

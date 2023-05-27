@@ -9,7 +9,7 @@ pick_highest_confirmed_test(df, silent = FALSE)
 \arguments{
 \item{df}{A dataframe.}
 
-\item{silent}{Logical: silence progress bar if \code{TRUE}.}
+\item{silent}{Logical: silence output to console if \code{TRUE}.}
 }
 \value{
 A dataframe.

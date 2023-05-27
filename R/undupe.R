@@ -7,18 +7,18 @@
 #' When deduplicating a dataframe, one set of variables is "visible" to the process. If rows share identical values across this set of variables, they are considered duplicates. The remaining variables are "invisible" to the deduplication process. Their values are unconstrained within dupesets, therefore a dupeset can have conflicting values within one or more of these invisible variables.
 #'
 #' `undupe()` allows two methods of setting the visible and invisible variables:
-#' * In `visible`, provide the names of variables whose values must match to be evaluated as duplicates.
-#' * In `invisible`, provide the names of variables to ignore, in which case all other variables in df become visible during deduplication.
+#' * In `visible_vars`, provide the names of variables whose values must match to be evaluated as duplicates.
+#' * In `invisible_vars`, provide the names of variables to ignore, in which case all other variables in df become visible during deduplication.
 #'
 #' Only one of these arguments may be used.
 #'
-#' `undupe()` adds an identifier to each row based on the unique values in the varibles provided in `visible`. The identifier variable is named `dupe_id` unless another name is provided in `dupe_id_name`. It is added to each dataframe in the output.
+#' `undupe()` adds an identifier to each row based on the unique values in the varibles provided in `visible_vars`. The identifier variable is named `dupe_id` unless another name is provided in `dupe_id_name`. It is added to each dataframe in the output.
 #'
 #' To produce `df_distinct`, `undupe()` uses [dplyr::distinct()], which returns the first of a set of distinct/unique rows (dupesets) in a dataframe.
 #'
 #' @param df A dataframe.
-#' @param undupe_vars A character vector of variable names in `df` to use as the basis for unduplication.
-#' @param ignore_vars A character vector of variable names in `df` to ignore during unduplication.
+#' @param visible_vars A character vector of variable names from `df` whose values must match for rows to be considered duplicates.
+#' @param invisible_vars A character vector of variable names from `df` whose values will be ignored during deduplication. All other variables in `df` will be visible during deduplication.
 #' @param dupe_id_name A name for the duplicate ID variable. The default name is `dupe_id` if `dupe_id_name` is left `NULL`.
 #'
 #' @return
@@ -39,11 +39,11 @@
 #'   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
 #'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 #' )
-#' undupe <- undupe(df, undupe_vars = c("x", "y"))
+#' undupe_list <- undupe(df, visible_vars = c("x", "y"))
 #'
 undupe <- function(df,
-                   undupe_vars = NULL,
-                   ignore_vars = NULL,
+                   visible_vars = NULL,
+                   invisible_vars = NULL,
                    dupe_id_name = NULL) {
   # If `dupe_id_name` isn't provided, use "dupe_id" as the default
   if (is.null(dupe_id_name)) dupe_id_name <- "dupe_id"
@@ -58,28 +58,28 @@ undupe <- function(df,
   }
 
   # Check if vectors containing variable names are both provided or both unprovided
-  if (!is.null(undupe_vars) & !is.null(ignore_vars)) {
-    stop("Only one of `undupe_vars` or `ignore_vars` can be supplied", call. = F)
-  } else if (is.null(undupe_vars) & is.null(ignore_vars)) {
-    stop("One of `undupe_vars` or `ignore_vars` must be supplied", call. = F)
+  if (!is.null(visible_vars) & !is.null(invisible_vars)) {
+    stop("Only one of `visible_vars` or `invisible_vars` can be supplied", call. = F)
+  } else if (is.null(visible_vars) & is.null(invisible_vars)) {
+    stop("One of `visible_vars` or `invisible_vars` must be supplied", call. = F)
   }
 
-  var_check(df, var = c(undupe_vars, ignore_vars))
+  var_check(df, var = c(visible_vars, invisible_vars))
 
-  if (!is.null(ignore_vars)) {
-    undupe_vars <- names(df)[!names(df) %in% ignore_vars]
+  if (!is.null(invisible_vars)) {
+    visible_vars <- names(df)[!names(df) %in% invisible_vars]
   }
 
   # Add `n_row` & `dupe_type`
   df <- df %>%
     mutate(n_row = row_number(), dupe_type = "")
 
-  # Add duplicate ID
-  df[dupe_id_name] <- apply(df %>% select({{ undupe_vars }}), 1, digest::digest, algo = "md5")
+  # Add duplicate ID variable
+  df[dupe_id_name] <- apply(df %>% select({{ visible_vars }}), 1, digest::digest, algo = "md5")
 
   # Subset distinct rows
   df_distinct <- df %>%
-    distinct(across(all_of(undupe_vars)), .keep_all = TRUE)
+    distinct(across(all_of(visible_vars)), .keep_all = TRUE)
 
   # Subset removed duplicates (`df` - `df_distinct`)
   df_dupes <- df %>%
@@ -91,7 +91,7 @@ undupe <- function(df,
     semi_join(df_dupes, by = dupe_id_name) %>%
     mutate(dupe_type = "retained")
 
-  # Join dupesets and sort by `undupe_vars`
+  # Join dupesets and sort by `visible_vars`
   df_dupesets <- df_matches %>%
     full_join(df_dupes, by = colnames(df_matches)) %>%
     arrange(.data[[dupe_id_name]]) %>%

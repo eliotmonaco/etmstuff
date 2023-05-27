@@ -9,7 +9,7 @@ count_conflicts(df, silent = FALSE)
 \arguments{
 \item{df}{A dataframe of dupesets returned by \code{\link[=undupe]{undupe()}}.}
 
-\item{silent}{Logical: silence progress bar if \code{TRUE}.}
+\item{silent}{Logical: silence output to console if \code{TRUE}.}
 }
 \value{
 A dataframe with one row per variable in \code{df}. The returned dataframe has three columns:
@@ -24,7 +24,7 @@ For each variable in a dataframe, \code{count_conflicts()} counts the number of 
 }
 \section{Deduplication}{
 
-Deduplication is the process of reducing a dataframe to only the distinct rows. Rows that have identical values across a set of selected variables are considered duplicates. These selected variables are "visible" to the process of deduplication. All other variables in the dataframe are "invisible" to deduplication, so they are ignored. Within dupesets, variables that were invisible to deduplication can have conflicting values.
+Deduplication is the process of reducing a dataframe to distinct rows only. Rows that have identical values across a set of selected variables are considered duplicates. These selected variables are "visible" to the process of deduplication. All other variables in the dataframe are "invisible" to deduplication, so they are ignored. Within dupesets, variables that were invisible to deduplication can have conflicting values.
 
 The \code{\link[=undupe]{undupe()}} function produces both a deduplicated dataframe and a dataframe of all duplicate rows (dupesets) pulled from the original dataframe.
 
@@ -38,8 +38,8 @@ df <- data.frame(
   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 )
-undupe <- undupe(df, undupe_vars = c("x", "y"))
-df_dupeset_count <- count_conflicts(undupe[["df_dupesets"]])
+undupe <- undupe(df, visible_vars = c("x", "y"))
+df_count <- count_conflicts(undupe[["df_dupesets"]])
 
 }
 \seealso{

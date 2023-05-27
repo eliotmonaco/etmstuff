@@ -4,14 +4,14 @@
 #' For each variable in a dataframe, `count_conflicts()` counts the number of dupesets with any conflicting values.
 #'
 #' @section Deduplication:
-#' Deduplication is the process of reducing a dataframe to only the distinct rows. Rows that have identical values across a set of selected variables are considered duplicates. These selected variables are "visible" to the process of deduplication. All other variables in the dataframe are "invisible" to deduplication, so they are ignored. Within dupesets, variables that were invisible to deduplication can have conflicting values.
+#' Deduplication is the process of reducing a dataframe to distinct rows only. Rows that have identical values across a set of selected variables are considered duplicates. These selected variables are "visible" to the process of deduplication. All other variables in the dataframe are "invisible" to deduplication, so they are ignored. Within dupesets, variables that were invisible to deduplication can have conflicting values.
 #'
 #' The [undupe()] function produces both a deduplicated dataframe and a dataframe of all duplicate rows (dupesets) pulled from the original dataframe.
 #'
 #' For a more detailed explanation of deduplication, see the [undupe()] documentation.
 #'
 #' @param df A dataframe of dupesets returned by [undupe()].
-#' @param silent Logical: silence progress bar if `TRUE`.
+#' @param silent Logical: silence output to console if `TRUE`.
 #'
 #' @return A dataframe with one row per variable in `df`. The returned dataframe has three columns:
 #' * `var_name`: The variable name from `df`.
@@ -27,8 +27,8 @@
 #'   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
 #'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 #' )
-#' undupe <- undupe(df, undupe_vars = c("x", "y"))
-#' df_dupeset_count <- count_conflicts(undupe[["df_dupesets"]])
+#' undupe <- undupe(df, visible_vars = c("x", "y"))
+#' df_count <- count_conflicts(undupe[["df_dupesets"]])
 #'
 count_conflicts <- function(df,
                             silent = FALSE) {

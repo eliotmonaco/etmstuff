@@ -4,7 +4,7 @@
 \alias{flatten_conflicts}
 \title{Flatten conflicting values for each variable in a dupeset}
 \usage{
-flatten_conflicts(df, var, dupe_id, sep = " | ")
+flatten_conflicts(df, var, dupe_id, sep = " | ", silent = FALSE)
 }
 \arguments{
 \item{df}{A dataframe of dupesets (or the full data set) returned by \code{\link[=undupe]{undupe()}}.}
@@ -13,10 +13,12 @@ flatten_conflicts(df, var, dupe_id, sep = " | ")
 
 \item{dupe_id}{The duplicate ID variable name, which groups all members of a duplicate set.}
 
-\item{sep}{A string to use as a separator between the aggregated values from a duplicate set.}
+\item{sep}{A string to use as a separator between the aggregated values from a duplicate set. The default is " | ".}
+
+\item{silent}{Logical: silence output to console if \code{TRUE}.}
 }
 \value{
-A dataframe of aggregated values from each dupeset (row) and variable (column).
+A dataframe of flattened values, with one row per dupeset in \code{df} and one column per variable in \code{var}.
 }
 \description{
 \code{flatten_conflicts()} combines the different values for selected variables (named in \code{var}) into one cell so that no data is lost as a result of deduplication. \code{flatten_conflicts()} must be run on either \code{df_full} or \code{df_dupesets}, both produced by \code{\link[=undupe]{undupe()}}.
@@ -25,7 +27,7 @@ Each dupeset is essentially flattened into one row, with each variable named in 
 }
 \section{Deduplication}{
 
-Deduplication is the process of reducing a dataframe to only the distinct rows. Rows that have identical values across a set of selected variables are considered duplicates. These selected variables are "visible" to the process of deduplication. All other variables in the dataframe are "invisible" to deduplication, so they are ignored. Within dupesets, variables that were invisible to deduplication can have conflicting values.
+Deduplication is the process of reducing a dataframe to distinct rows only. Rows that have identical values across a set of selected variables are considered duplicates. These selected variables are "visible" to the process of deduplication. All other variables in the dataframe are "invisible" to deduplication, so they are ignored. Within dupesets, variables that were invisible to deduplication can have conflicting values.
 
 The \code{\link[=undupe]{undupe()}} function produces both a deduplicated dataframe and a dataframe of all duplicate rows (dupesets) pulled from the original dataframe.
 
@@ -39,8 +41,8 @@ df <- data.frame(
   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 )
-undupe <- undupe(df, undupe_vars = c("x", "y"))
-df_aggregated <- flatten_conflicts(undupe[["df_dupesets"]], var = "z", dupe_id = "dupe_id")
+undupe <- undupe(df, visible_vars = c("x", "y"))
+df_flattened <- flatten_conflicts(undupe[["df_dupesets"]], var = "z", dupe_id = "dupe_id")
 
 }
 \seealso{

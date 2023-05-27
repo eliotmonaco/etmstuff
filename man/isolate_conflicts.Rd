@@ -11,7 +11,7 @@ isolate_conflicts(df, vars, silent = FALSE)
 
 \item{vars}{A character vector of variable names in \code{df}.}
 
-\item{silent}{Logical: silence progress bar if \code{TRUE}.}
+\item{silent}{Logical: silence output to console if \code{TRUE}.}
 }
 \value{
 A dataframe.
@@ -21,7 +21,7 @@ A dataframe.
 }
 \section{Deduplication}{
 
-Deduplication is the process of reducing a dataframe to only the distinct rows. Rows that have identical values across a set of selected variables are considered duplicates. These selected variables are "visible" to the process of deduplication. All other variables in the dataframe are "invisible" to deduplication, so they are ignored. Within dupesets, variables that were invisible to deduplication can have conflicting values.
+Deduplication is the process of reducing a dataframe to distinct rows only. Rows that have identical values across a set of selected variables are considered duplicates. These selected variables are "visible" to the process of deduplication. All other variables in the dataframe are "invisible" to deduplication, so they are ignored. Within dupesets, variables that were invisible to deduplication can have conflicting values.
 
 The \code{\link[=undupe]{undupe()}} function produces both a deduplicated dataframe and a dataframe of all duplicate rows (dupesets) pulled from the original dataframe.
 
@@ -35,8 +35,8 @@ df <- data.frame(
   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 )
-undupe <- undupe(df, undupe_vars = c("x", "y"))
-df_distilled <- isolate_conflicts(undupe[["df_dupesets"]], vars = "z")
+undupe <- undupe(df, visible_vars = c("x", "y"))
+df_isolated <- isolate_conflicts(undupe[["df_dupesets"]], vars = "z")
 
 }
 \seealso{

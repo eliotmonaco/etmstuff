@@ -3,7 +3,7 @@
 #' This function is used when counting individuals based on the blood lead level (BLL) from their test results. It picks the test with the highest BLL, preferring a confirmed over an unconfirmed test, for each person within the time period defined by the data in `df`. Tests are grouped by `patient_id`. Tests for the same person that occur within 92 days of another belong to one sequence. The highest confirmed test is selected within each person sequence. If a person has more than one sequence, the highest confirmed test among the sequences is then selected.
 #'
 #' @param df A dataframe.
-#' @param silent Logical: silence progress bar if `TRUE`.
+#' @param silent Logical: silence output to console if `TRUE`.
 #'
 #' @return  A dataframe.
 #' @export
