@@ -1,6 +1,9 @@
 #' Focus on dupesets with conflicting values in selected variables
 #'
-#' Dupesets are records that have the same values in selected variables. However, within a dupeset, any other variables may contain conflicting values. `dupeset_conflict_focus()` produces a dataframe that keeps only those dupesets that have conflicting values in the variables named in `vars`. This makes it easier to visually inspect the data and look for patterns among dupesets, especially when [dupes2xl()] is run on the returned dataframe.
+#' @description
+#' `isolate_conflicts()` produces a dataframe that keeps only those dupesets that have conflicting values in the variables named in `vars`. This makes it easier to visually inspect the data and look for patterns among dupesets, particularly when [dupes2xl()] is used on the returned dataframe to produce a formatted .XLSM file.
+#'
+#' @inheritSection count_conflicts Deduplication
 #'
 #' @param df A dataframe of dupesets returned by [undupe()].
 #' @param vars A character vector of variable names in `df`.
@@ -18,8 +21,11 @@
 #'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 #' )
 #' undupe <- undupe(df, undupe_vars = c("x", "y"))
-#' df_distilled <- dupeset_conflict_focus(undupe[["df_dupesets"]], vars = "z")
-dupeset_conflict_focus <- function(df, vars, silent = FALSE) {
+#' df_distilled <- isolate_conflicts(undupe[["df_dupesets"]], vars = "z")
+#'
+isolate_conflicts <- function(df,
+                              vars,
+                              silent = FALSE) {
   var_check(df, var = c("dupe_type", vars))
 
   df2 <- df %>%

@@ -1,10 +1,20 @@
 #' Unduplicate a dataframe based on selected variables
 #'
-#' `undupe()` identifies duplicate rows in a dataframe and returns a deduplicated dataframe containing only distinct rows and a dataframe of duplicate sets (dupesets). A dupeset consists of all rows with identical values across selected variables.
+#' @description
+#' `undupe()` identifies duplicate rows in a dataframe based on a set of variables provided in the arguments. Duplicates are rows that have identical values across this set of variables. All other variables in the dataframe are ignored. `undupe()` returns both a dataframe of distinct rows and a dataframe of duplicates grouped together for easy visual comparison (dupesets).
 #'
-#' In `undupe_vars`, provide the names of variables from `df` whose values must match for rows to be considered duplicates. Alternatively, in `ignore_vars`, provide the names of variables from `df` whose values may differ among duplicates. If `ignore_vars` is provided, all other variables in `df` effectively become the list of `undupe_vars`. Both arguments can't be provided. A unique identifier for duplicate rows (named `dupe_id` by default) is added to the output dataframes.
+#' @details
+#' When deduplicating a dataframe, one set of variables is "visible" to the process. If rows share identical values across this set of variables, they are considered duplicates. The remaining variables are "invisible" to the deduplication process. Their values are unconstrained within dupesets, therefore a dupeset can have conflicting values within one or more of these invisible variables.
 #'
-#' `undupe()` uses `dplyr::distinct()`, which returns distinct/unique rows according to the selected variables. In the case of rows identified as duplicates, only the first row that occurs in `df` is returned in `df_distinct`.
+#' `undupe()` allows two methods of setting the visible and invisible variables:
+#' * In `visible`, provide the names of variables whose values must match to be evaluated as duplicates.
+#' * In `invisible`, provide the names of variables to ignore, in which case all other variables in df become visible during deduplication.
+#'
+#' Only one of these arguments may be used.
+#'
+#' `undupe()` adds an identifier to each row based on the unique values in the varibles provided in `visible`. The identifier variable is named `dupe_id` unless another name is provided in `dupe_id_name`. It is added to each dataframe in the output.
+#'
+#' To produce `df_distinct`, `undupe()` uses [dplyr::distinct()], which returns the first of a set of distinct/unique rows (dupesets) in a dataframe.
 #'
 #' @param df A dataframe.
 #' @param undupe_vars A character vector of variable names in `df` to use as the basis for unduplication.
@@ -30,7 +40,11 @@
 #'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 #' )
 #' undupe <- undupe(df, undupe_vars = c("x", "y"))
-undupe <- function(df, undupe_vars = NULL, ignore_vars = NULL, dupe_id_name = NULL) {
+#'
+undupe <- function(df,
+                   undupe_vars = NULL,
+                   ignore_vars = NULL,
+                   dupe_id_name = NULL) {
   # If `dupe_id_name` isn't provided, use "dupe_id" as the default
   if (is.null(dupe_id_name)) dupe_id_name <- "dupe_id"
 

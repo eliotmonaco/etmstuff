@@ -24,12 +24,22 @@ A list containing three dataframes:
 }
 }
 \description{
-\code{undupe()} identifies duplicate rows in a dataframe and returns a deduplicated dataframe containing only distinct rows and a dataframe of duplicate sets (dupesets). A dupeset consists of all rows with identical values across selected variables.
+\code{undupe()} identifies duplicate rows in a dataframe based on a set of variables provided in the arguments. Duplicates are rows that have identical values across this set of variables. All other variables in the dataframe are ignored. \code{undupe()} returns both a dataframe of distinct rows and a dataframe of duplicates grouped together for easy visual comparison (dupesets).
 }
 \details{
-In \code{undupe_vars}, provide the names of variables from \code{df} whose values must match for rows to be considered duplicates. Alternatively, in \code{ignore_vars}, provide the names of variables from \code{df} whose values may differ among duplicates. If \code{ignore_vars} is provided, all other variables in \code{df} effectively become the list of \code{undupe_vars}. Both arguments can't be provided. A unique identifier for duplicate rows (named \code{dupe_id} by default) is added to the output dataframes.
+When deduplicating a dataframe, one set of variables is "visible" to the process. If rows share identical values across this set of variables, they are considered duplicates. The remaining variables are "invisible" to the deduplication process. Their values are unconstrained within dupesets, therefore a dupeset can have conflicting values within one or more of these invisible variables.
 
-\code{undupe()} uses \code{dplyr::distinct()}, which returns distinct/unique rows according to the selected variables. In the case of rows identified as duplicates, only the first row that occurs in \code{df} is returned in \code{df_distinct}.
+\code{undupe()} allows two methods of setting the visible and invisible variables:
+\itemize{
+\item In \code{visible}, provide the names of variables whose values must match to be evaluated as duplicates.
+\item In \code{invisible}, provide the names of variables to ignore, in which case all other variables in df become visible during deduplication.
+}
+
+Only one of these arguments may be used.
+
+\code{undupe()} adds an identifier to each row based on the unique values in the varibles provided in \code{visible}. The identifier variable is named \code{dupe_id} unless another name is provided in \code{dupe_id_name}. It is added to each dataframe in the output.
+
+To produce \code{df_distinct}, \code{undupe()} uses \code{\link[dplyr:distinct]{dplyr::distinct()}}, which returns the first of a set of distinct/unique rows (dupesets) in a dataframe.
 }
 \examples{
 n_rows <- 20
@@ -39,12 +49,13 @@ df <- data.frame(
   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 )
 undupe <- undupe(df, undupe_vars = c("x", "y"))
+
 }
 \seealso{
 Other undupe functions: 
-\code{\link{aggregate_values}()},
+\code{\link{count_conflicts}()},
 \code{\link{dupes2xl}()},
-\code{\link{dupeset_conflict_count}()},
-\code{\link{dupeset_conflict_focus}()}
+\code{\link{flatten_conflicts}()},
+\code{\link{isolate_conflicts}()}
 }
 \concept{undupe functions}
