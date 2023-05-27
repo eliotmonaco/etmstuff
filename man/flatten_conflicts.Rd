@@ -50,6 +50,7 @@ Other undupe functions:
 \code{\link{count_conflicts}()},
 \code{\link{dupes2xl}()},
 \code{\link{isolate_conflicts}()},
+\code{\link{undupe2}()},
 \code{\link{undupe}()}
 }
 \concept{undupe functions}

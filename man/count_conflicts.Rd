@@ -47,6 +47,7 @@ Other undupe functions:
 \code{\link{dupes2xl}()},
 \code{\link{flatten_conflicts}()},
 \code{\link{isolate_conflicts}()},
+\code{\link{undupe2}()},
 \code{\link{undupe}()}
 }
 \concept{undupe functions}
