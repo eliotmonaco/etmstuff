@@ -4,12 +4,14 @@
 \alias{isolate_conflicts}
 \title{Focus on dupesets with conflicting values in selected variables}
 \usage{
-isolate_conflicts(df, vars, silent = FALSE)
+isolate_conflicts(df, var, ignore_empty = TRUE, silent = FALSE)
 }
 \arguments{
 \item{df}{A dataframe of dupesets returned by \code{\link[=undupe]{undupe()}}.}
 
-\item{vars}{A character vector of variable names in \code{df}.}
+\item{var}{A character vector of variable names in \code{df}.}
+
+\item{ignore_empty}{Logical: omit blank strings and \code{NA}s when finding conflicts if \code{TRUE}.}
 
 \item{silent}{Logical: silence output to console if \code{TRUE}.}
 }
@@ -17,7 +19,7 @@ isolate_conflicts(df, vars, silent = FALSE)
 A dataframe.
 }
 \description{
-\code{isolate_conflicts()} produces a dataframe that keeps only those dupesets that have conflicting values in the variables named in \code{vars}. This makes it easier to visually inspect the data and look for patterns among dupesets, particularly when \code{\link[=dupes2xl]{dupes2xl()}} is used on the returned dataframe to produce a formatted .XLSM file.
+\code{isolate_conflicts()} produces a dataframe that keeps only those dupesets that have conflicting values in the variables named in \code{var}. This makes it easier to visually inspect the data and look for patterns among dupesets, particularly when \code{\link[=dupes2xl]{dupes2xl()}} is used on the returned dataframe to produce a formatted .XLSM file.
 }
 \section{Deduplication}{
 
@@ -36,7 +38,7 @@ df <- data.frame(
   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 )
 undupe <- undupe(df, visible_vars = c("x", "y"))
-df_isolated <- isolate_conflicts(undupe[["df_dupesets"]], vars = "z")
+df_isolated <- isolate_conflicts(undupe[["df_dupesets"]], var = "z")
 
 }
 \seealso{

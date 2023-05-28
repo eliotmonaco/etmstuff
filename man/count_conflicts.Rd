@@ -4,19 +4,21 @@
 \alias{count_conflicts}
 \title{Count dupesets with conflicting values}
 \usage{
-count_conflicts(df, silent = FALSE)
+count_conflicts(df, ignore_empty = TRUE, silent = FALSE)
 }
 \arguments{
 \item{df}{A dataframe of dupesets returned by \code{\link[=undupe]{undupe()}}.}
 
+\item{ignore_empty}{Logical: omit blank strings and \code{NA}s when finding conflicts if \code{TRUE}.}
+
 \item{silent}{Logical: silence output to console if \code{TRUE}.}
 }
 \value{
-A dataframe with one row per variable in \code{df}. The returned dataframe has three columns:
+A dataframe with one row per variable in \code{df} (omitting \code{dupe_id} and \code{dupe_order}). The returned dataframe has three columns:
 \itemize{
 \item \code{var_name}: The variable name from \code{df}.
-\item \code{conflict_count}: The count of dupesets in \code{df} with conflicting values.
-\item \code{conflict_percent}: The percentage of dupesets in \code{df} with conflicting values.
+\item \code{n}: The count of dupesets in \code{df} with conflicting values.
+\item \code{pct}: The percentage of dupesets in \code{df} with conflicting values.
 }
 }
 \description{

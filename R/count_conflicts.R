@@ -11,12 +11,13 @@
 #' For a more detailed explanation of deduplication, see the [undupe()] documentation.
 #'
 #' @param df A dataframe of dupesets returned by [undupe()].
+#' @param ignore_empty Logical: omit blank strings and `NA`s when finding conflicts if `TRUE`.
 #' @param silent Logical: silence output to console if `TRUE`.
 #'
-#' @return A dataframe with one row per variable in `df`. The returned dataframe has three columns:
+#' @return A dataframe with one row per variable in `df` (omitting `dupe_id` and `dupe_order`). The returned dataframe has three columns:
 #' * `var_name`: The variable name from `df`.
-#' * `conflict_count`: The count of dupesets in `df` with conflicting values.
-#' * `conflict_percent`: The percentage of dupesets in `df` with conflicting values.
+#' * `n`: The count of dupesets in `df` with conflicting values.
+#' * `pct`: The percentage of dupesets in `df` with conflicting values.
 #' @export
 #'
 #' @family undupe functions
@@ -30,50 +31,62 @@
 #' undupe <- undupe(df, visible_vars = c("x", "y"))
 #' df_count <- count_conflicts(undupe[["df_dupesets"]])
 #'
-count_conflicts <- function(df,
-                            silent = FALSE) {
-  var_check(df, var = "dupe_type")
+count_conflicts <- function(df, ignore_empty = TRUE, silent = FALSE) {
+  etmstuff::var_check(df, var = "dupe_id")
 
+  # Vector of unique `dupe_id`s
+  dupe_ids <- unique(df$dupe_id)
+
+  # Find the row sequence matching each `dupe_id` value
+  f_seq <- function(x) {
+    which(df$dupe_id == dupe_ids[x])
+  }
+
+  # Get the list of all duplicate sequences
+  seq <- sapply(X = 1:length(dupe_ids), FUN = f_seq)
+
+  if ("dupe_order" %in% colnames(df)) {
+    vars_rm <- c("dupe_id", "dupe_order")
+  } else {
+    vars_rm <- "dupe_id"
+  }
+
+  # Remove columns that shouldn't be counted
   df <- df %>%
-    relocate(dupe_type, .after = colnames(df)[length(colnames(df))])
+    select(-all_of(vars_rm))
 
-  df_conflicts <- data.frame(
-    var_name = colnames(df)[-which(colnames(df) == "dupe_type")],
-    conflict_count = 0
+  # Create dataframe to hold counts of dupesets with conflicts
+  df_ct <- data.frame(
+    var_name = colnames(df),
+    n = NA
   )
 
-  seq_start <- which(toupper(df$dupe_type) == "RETAINED")
-  seq_end <- c(as.integer(seq_start - 1)[-1], nrow(df))
-  seq <- mapply(seq, seq_start, seq_end)
-
-  # If n_uniq > 1, the set contains multiple unique values
-  f <- function(col, seq) {
-    set <- col[seq]
-    n_uniq <- ifelse(purrr::is_empty(set[set != ""]),
-      1,
-      sum(!duplicated(set[set != ""]))
-    )
-    n_uniq != 1
+  # If the set has > 1 unique value, return 1, otherwise 0
+  if (ignore_empty) {
+    f_conf <- function(col, seq) {
+      set <- col[seq]
+      ifelse(length(unique(set[!is.na(set) & set != ""])) > 1, 1, 0)
+    }
+  } else {
+    f_conf <- function(col, seq) {
+      set <- col[seq]
+      ifelse(length(unique(set)) > 1, 1, 0)
+    }
   }
 
-  n_vars <- ncol(df) - 1
+  if (!silent) pb <- txtProgressBar(1, ncol(df), width = 50, style = 3)
 
-  if (n_vars > 1 & !silent) {
-    message("Finding differences in dupesets")
-    pb <- txtProgressBar(1, n_vars, width = 50, style = 3)
+  # For each column of `df`, sum the number of conflicts found by `f_conf()`
+  for (i in 1:ncol(df)) {
+    df_ct$n[i] <- sum(sapply(X = seq, FUN = f_conf, col = df[[i]], simplify = T))
+    if (!silent) setTxtProgressBar(pb, i)
   }
 
-  for (i in 1:n_vars) {
-    df_conflicts$conflict_count[i] <- sum(sapply(seq, f, col = df[[i]], simplify = T))
-    if (n_vars > 1 & !silent) setTxtProgressBar(pb, i)
-  }
+  if (!silent) close(pb)
 
-  if (n_vars > 1 & !silent) close(pb)
+  # Add percentage variable to `df_ct`
+  df_ct <- df_ct %>%
+    mutate(pct = round(n / length(dupe_ids) * 100, digits = 2))
 
-  n_sets <- sum(toupper(df$dupe_type) == "RETAINED")
-
-  df_conflicts <- df_conflicts %>%
-    mutate(conflict_percent = round(conflict_count / n_sets * 100, digits = 2))
-
-  df_conflicts
+  df_ct
 }
