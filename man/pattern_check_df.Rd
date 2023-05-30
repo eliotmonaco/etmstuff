@@ -26,4 +26,5 @@ df <- data.frame(
   z = c("twenty-one", "twenty-two", "twenty-three")
 )
 pattern_check_df(df, "^one$")
+
 }

@@ -9,7 +9,7 @@
 #'
 #' @return A dataframe.
 #'
-#' @importFrom tidyr unite
+#' @importFrom magrittr %>%
 #'
 # @examples
 #'
@@ -22,12 +22,14 @@ NULL
 check_lab_results <- function(df, var) {
   var_check(df, var = c("lab_result_value", var))
 
+  p <- "^(<|>)?\\s*\\d*\\.?\\d*\\s*$"
+
   # Return rows with unexpected formatting in result
   df %>%
-    filter(!str_detect(.data[[var]], "^(<|>)?\\s*\\d*\\.?\\d*\\s*$") |
-      !str_detect(.data[[var]], "\\d")) %>%
-    relocate(starts_with("lab_result")) %>%
-    arrange(.data[[var]])
+    dplyr::filter(!stringr::str_detect(.data[[var]], p) |
+      !stringr::str_detect(.data[[var]], "\\d")) %>%
+    dplyr::relocate(dplyr::starts_with("lab_result")) %>%
+    dplyr::arrange(.data[[var]])
 }
 
 #' @export
@@ -38,20 +40,22 @@ clean_lab_results <- function(df, var) {
 
   # Replace or remove text in results
   f <- function(var) {
-    case_when(
-      str_detect(var, regex("(not|none) detected", ignore_case = T)) ~ "0",
-      str_detect(var, regex("(mc|u)g/dl", ignore_case = T)) ~
-        str_remove_all(var, regex("(mc|u)g/dl", ignore_case = T)),
-      str_detect(var, "^>") & as.numeric(str_remove(var, ">")) < 3.5 ~
-        str_replace(var, ">", "<"),
+    dplyr::case_when(
+      stringr::str_detect(var, stringr::regex("(not|none) detected", ignore_case = TRUE)) ~ "0",
+      stringr::str_detect(var, stringr::regex("(mc|u)g/dl", ignore_case = TRUE)) ~
+        stringr::str_remove_all(var, stringr::regex("(mc|u)g/dl", ignore_case = TRUE)),
+      stringr::str_detect(var, "^>") & as.numeric(stringr::str_remove(var, ">")) < 3.5 ~
+        stringr::str_replace(var, ">", "<"),
       T ~ var
     )
   }
 
+  p <- "^=|\\s|([:punct:]|`)$"
+
   df %>%
-    mutate(lab_result_clean = f(.data[[var]])) %>%
-    mutate(lab_result_clean = str_remove_all(lab_result_clean, "^=|\\s|([:punct:]|`)$")) %>%
-    relocate(lab_result_clean, .after = all_of(var))
+    dplyr::mutate(lab_result_clean = f(.data[[var]])) %>%
+    dplyr::mutate(lab_result_clean = stringr::str_remove_all(lab_result_clean, p)) %>%
+    dplyr::relocate(lab_result_clean, .after = dplyr::all_of(var))
 }
 
 #' @export
@@ -61,27 +65,42 @@ parse_lab_results <- function(df, var) {
   var_check(df, var = c("recno", var))
 
   # Extract comparison symbol
-  extracted <- str_extract_all(df[[var]], "<|>", simplify = T)
-  df <- cbind(df, tidyr::unite(as.data.frame(extracted), "lab_result_symbol", sep = " "))
+  extracted <- stringr::str_extract_all(df[[var]], "<|>", simplify = TRUE)
+
+  # Convert to column and add to `df`
+  df <- cbind(df, tidyr::unite(
+    as.data.frame(extracted),
+    col = "lab_result_symbol",
+    sep = " "
+  ))
+
   df$lab_result_symbol[df$lab_result_symbol == ""] <- NA
 
   # Extract number
-  df$lab_result_number <- as.numeric(str_remove_all(df[[var]], "[^\\d\\.]"))
+  df$lab_result_number <- as.numeric(stringr::str_remove_all(df[[var]], "[^\\d\\.]"))
+
+  p <- "^\\d+$|^\\d*\\.\\d+$"
 
   # Check lab_result_number for any non-numeric value
   df_prob <- df %>%
-    filter(!str_detect(lab_result_number, "^\\d+$|^\\d*\\.\\d+$") |
+    dplyr::filter(!stringr::str_detect(lab_result_number, p) |
       is.na(lab_result_number)) %>%
-    select(recno)
+    dplyr::select(recno)
 
   if (nrow(df_prob) == 0) {
     m <- "All lab results parsed"
   } else {
-    m <- paste("Problems with the following record(s):", paste(df_prob$recno, collapse = ", "))
+    m <- paste(
+      "Problems with the following record(s):",
+      paste(df_prob$recno, collapse = ", ")
+    )
   }
 
   message(m)
 
   df %>%
-    relocate(lab_result_symbol, lab_result_number, .after = all_of(var))
+    dplyr::relocate(
+      lab_result_symbol, lab_result_number,
+      .after = dplyr::all_of(var)
+    )
 }

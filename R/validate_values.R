@@ -10,9 +10,11 @@
 #' @return A dataframe with a column of possible matches to replace the values in `var`.
 #' @export
 #'
+#' @importFrom magrittr %>%
+#'
 #' @family address processing functions
 # @examples
-
+#'
 validate_values <- function(df, var, type, max_dist = 0.1) {
   var_check(df, var = var)
 
@@ -21,14 +23,14 @@ validate_values <- function(df, var, type, max_dist = 0.1) {
   } else if (type == "zip") {
     ref <- ks_zipcodes$zip
   } else {
-    m <- "`type` must be one of c(\"city\", \"zip\")"
+    m <- '`type` must be one of c("city", "zip")'
     stop(m, call. = FALSE)
   }
 
   df <- df %>%
-    mutate(n_row = row_number())
+    dplyr::mutate(n_row = dplyr::row_number())
 
-  df2 <- df[!(str_to_upper(df[[var]]) %in% str_to_upper(ref)), ]
+  df2 <- df[!(stringr::str_to_upper(df[[var]]) %in% stringr::str_to_upper(ref)), ]
 
   # df2 <- df2 %>%
   #   filter(.data[[var]] != "")
@@ -53,9 +55,13 @@ validate_values <- function(df, var, type, max_dist = 0.1) {
     }
   }
 
-  df2$replacement_text <- sapply(1:nrow(df2), f, df = df2, source = var, ref_list = ref, max_dist = max_dist)
+  df2$replacement_text <- sapply(
+    X = 1:nrow(df2),
+    FUN = f,
+    df = df2, source = var,
+    ref_list = ref, max_dist = max_dist)
 
   df2 %>%
-    select(-n_row) %>%
-    relocate(replacement_text, .after = all_of(var))
+    dplyr::select(-n_row) %>%
+    dplyr::relocate(replacement_text, .after = dplyr::all_of(var))
 }

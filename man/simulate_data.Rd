@@ -19,4 +19,5 @@ Create a dataframe of simulated addresses. Street names are from \code{common_st
 }
 \examples{
 df <- simulate_data(rows = 1000, dirty = TRUE)
+
 }

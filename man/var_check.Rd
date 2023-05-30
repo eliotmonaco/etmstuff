@@ -23,4 +23,5 @@ var_check(Loblolly, var = x)
 
 # Strings are case-sensitive
 try(var_check(Loblolly, "seed"))
+
 }

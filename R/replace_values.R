@@ -10,25 +10,27 @@
 #' @return A dataframe.
 #' @export
 #'
+#' @importFrom magrittr %>%
+#'
 #' @family address processing functions
 # @examples
-
+#'
 replace_values <- function(df, var, id_var, source) {
   var_check(df, var = c(var, id_var))
   var_check(source, var = "replacement_text")
 
   # Separate rows in `df` that match cleaned rows in `source`
   df_sub <- df %>%
-    semi_join(source, by = id_var)
+    dplyr::semi_join(source, by = id_var)
 
   # Remove rows in `df` that match cleaned rows in `source`
   df <- df %>%
-    anti_join(source, by = id_var)
+    dplyr::anti_join(source, by = id_var)
 
   # Replace values in `df` with replacement text in `source`
   df_sub[[var]] <- source[["replacement_text"]]
 
   # Join cleaned rows back to `df`
   df %>%
-    full_join(df_sub, by = colnames(df))
+    dplyr::full_join(df_sub, by = colnames(df))
 }

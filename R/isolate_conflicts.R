@@ -25,7 +25,7 @@
 #' df_isolated <- isolate_conflicts(undupe[["df_dupesets"]], var = "z")
 #'
 isolate_conflicts <- function(df, var, ignore_empty = TRUE, silent = FALSE) {
-  etmstuff::var_check(df, var = c("dupe_id", var))
+  var_check(df, var = c("dupe_id", var))
 
   # Vector of unique `dupe_id`s
   dupe_ids <- unique(df$dupe_id)
@@ -36,7 +36,7 @@ isolate_conflicts <- function(df, var, ignore_empty = TRUE, silent = FALSE) {
   }
 
   # Get the list of all duplicate sequences
-  seq <- sapply(1:length(dupe_ids), f_seq)
+  seq <- sapply(X = 1:length(dupe_ids), FUN = f_seq)
 
   # If the set has > 1 unique value, return `seq` (row numbers), otherwise nothing
   if (ignore_empty) {
@@ -51,15 +51,19 @@ isolate_conflicts <- function(df, var, ignore_empty = TRUE, silent = FALSE) {
     }
   }
 
-  if (length(var) > 1 & !silent) pb <- txtProgressBar(1, length(var), width = 50, style = 3)
+  if (length(var) > 1 & !silent) pb <- utils::txtProgressBar(1, length(var), width = 50, style = 3)
 
   # Vector to hold row numbers of dupesets with conflicts
   rows <- c()
 
   for (i in 1:length(var)) {
-    r <- sapply(X = seq, FUN = f_conf, col = df[[var[i]]], simplify = T)
+    r <- sapply(
+      X = seq,
+      FUN = f_conf,
+      col = df[[var[i]]],
+      simplify = TRUE)
     rows <- sort(unique(c(rows, unlist(r))))
-    if (length(var) > 1 & !silent) setTxtProgressBar(pb, i)
+    if (length(var) > 1 & !silent) utils::setTxtProgressBar(pb, i)
   }
 
   if (length(var) > 1 & !silent) close(pb)

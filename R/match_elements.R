@@ -14,6 +14,7 @@
 #' x <- sample(1:30, size = 20)
 #' y <- sample(1:30, size = 20)
 #' match_elements(x, y)
+#'
 match_elements <- function(v1, v2) {
   v1 <- unique(v1)
   v2 <- unique(v2)

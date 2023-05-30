@@ -7,11 +7,10 @@
 #' @return A list containing two dataframes: `data` and `keys`.
 #' @export
 #'
-#' @importFrom digest digest
-#' @importFrom assertive is_data.frame
+#' @importFrom magrittr %>%
 #'
 # @examples
-
+#'
 config_epitrax <- function(df) {
   if (!assertive::is_data.frame(df)) stop("`df` must be a dataframe", call. = FALSE)
 
@@ -34,17 +33,26 @@ config_epitrax <- function(df) {
 
   var_check(df, var = vars_date)
 
-  df$hash_value <- apply(df, 1, digest::digest, algo = "md5")
+  df$hash_value <- apply(
+    X = df,
+    MARGIN = 1,
+    FUN = digest::digest,
+    algo = "md5")
 
   message("Data wrangling: `hash_value` column added")
 
   df <- df %>%
-    mutate(recno = formatC(x = 1:nrow(.), digits = 0, width = 6, flag = "0")) %>%
-    filter(!is.na(patient_record_number))
+    dplyr::mutate(recno = formatC(
+      x = 1:nrow(.),
+      digits = 0,
+      width = 6,
+      flag = "0")) %>%
+    dplyr::filter(!is.na(patient_record_number))
 
   message("Data wrangling: `recno` column added")
 
-  df[, vars_date] <- lapply(df[, vars_date],
+  df[, vars_date] <- lapply(
+    X = df[, vars_date],
     FUN = as.Date,
     format = "%Y-%m-%d %H:%M:%S",
     origin = "1970-01-01"
@@ -54,9 +62,9 @@ config_epitrax <- function(df) {
 
   list(
     data = df %>%
-      select(recno, hash_value, everything()),
+      dplyr::select(recno, hash_value, dplyr::everything()),
     keys = df %>%
-      select(recno, hash_value, patient_record_number) %>%
-      mutate(timestamp = Sys.time())
+      dplyr::select(recno, hash_value, patient_record_number) %>%
+      dplyr::mutate(timestamp = Sys.time())
   )
 }

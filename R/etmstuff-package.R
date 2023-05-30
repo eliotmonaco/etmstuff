@@ -32,6 +32,7 @@
 #' @importFrom dplyr starts_with
 #' @importFrom dplyr transmute
 #' @importFrom dplyr ungroup
+#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @importFrom rlang :=
 #' @importFrom stats na.omit

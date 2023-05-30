@@ -8,19 +8,21 @@
 #' @return Nothing is returned if all elements of `var` are present in `df`.
 #' @export
 #'
-#' @importFrom purrr is_empty
-#'
 #' @examples
 #' x <- c("height", "age")
 #' var_check(Loblolly, var = x)
 #'
 #' # Strings are case-sensitive
 #' try(var_check(Loblolly, "seed"))
+#'
 var_check <- function(df, var) {
   missing <- var[which(!var %in% colnames(df))]
 
   if (!purrr::is_empty(missing)) {
-    m <- paste("Missing dataframe variable(s):", paste(missing, collapse = ", "))
+    m <- paste(
+      "Missing dataframe variable(s):",
+      paste(missing, collapse = ", ")
+    )
     stop(m, call. = FALSE)
   }
 }

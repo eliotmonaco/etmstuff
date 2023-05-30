@@ -4,7 +4,7 @@
 \alias{undupe}
 \title{Unduplicate a dataframe based on selected variables}
 \usage{
-undupe(df, visible_vars = NULL, invisible_vars = NULL, dupe_id_name = NULL)
+undupe(df, visible_vars = NULL, invisible_vars = NULL)
 }
 \arguments{
 \item{df}{A dataframe.}
@@ -12,8 +12,6 @@ undupe(df, visible_vars = NULL, invisible_vars = NULL, dupe_id_name = NULL)
 \item{visible_vars}{A character vector of variable names from \code{df} whose values must match for rows to be considered duplicates.}
 
 \item{invisible_vars}{A character vector of variable names from \code{df} whose values will be ignored during deduplication. All other variables in \code{df} will be visible during deduplication.}
-
-\item{dupe_id_name}{A name for the duplicate ID variable. The default name is \code{dupe_id} if \code{dupe_id_name} is left \code{NULL}.}
 }
 \value{
 A list containing three dataframes:
@@ -37,7 +35,7 @@ When deduplicating a dataframe, one set of variables is "visible" to the process
 
 Only one of these arguments may be used.
 
-\code{undupe()} adds an identifier to each row based on the unique values in the varibles provided in \code{visible_vars}. The identifier variable is named \code{dupe_id} unless another name is provided in \code{dupe_id_name}. It is added to each dataframe in the output.
+\code{undupe()} adds an identifier in \code{dupe_id} to each row based on the unique values in the varibles provided in \code{visible_vars}. It also adds an integer in \code{dupe_order} which sequentially numbers each member of a dupeset.
 
 To produce \code{df_distinct}, \code{undupe()} uses \code{\link[dplyr:distinct]{dplyr::distinct()}}, which returns the first of a set of distinct/unique rows (dupesets) in a dataframe.
 }
@@ -56,7 +54,6 @@ Other undupe functions:
 \code{\link{count_conflicts}()},
 \code{\link{dupes2xl}()},
 \code{\link{flatten_conflicts}()},
-\code{\link{isolate_conflicts}()},
-\code{\link{undupe2}()}
+\code{\link{isolate_conflicts}()}
 }
 \concept{undupe functions}

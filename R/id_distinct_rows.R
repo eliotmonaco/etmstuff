@@ -9,6 +9,8 @@
 #' @return A dataframe.
 #' @export
 #'
+#' @importFrom magrittr %>%
+#'
 #' @examples
 #' n_rows <- 20
 #' df <- data.frame(
@@ -17,14 +19,19 @@
 #'   z = rep("ignore this", length.out = n_rows)
 #' )
 #' df_new <- id_distinct_rows(df, vars = c("x", "y"), id_name = "new_id")
+#'
 id_distinct_rows <- function(df, vars, id_name) {
   var_check(df, var = vars)
 
   df_ids <- df %>%
-    select(all_of(vars)) %>%
-    distinct() %>%
-    mutate({{ id_name }} := formatC(x = 1:nrow(.), width = nchar(nrow(df)), flag = "0"))
+    dplyr::select(dplyr::all_of(vars)) %>%
+    dplyr::distinct() %>%
+    dplyr::mutate({{ id_name }} := formatC(
+      x = 1:nrow(.),
+      width = nchar(nrow(df)),
+      flag = "0"
+    ))
 
   df %>%
-    left_join(df_ids, by = vars)
+    dplyr::left_join(df_ids, by = vars)
 }

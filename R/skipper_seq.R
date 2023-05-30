@@ -10,7 +10,12 @@
 #' @export
 #'
 #' @examples
-#' s <- skipper_seq(start = 1000, length = 50, skip = c(1000, 1004:1008, 1045:1055))
+#' s <- skipper_seq(
+#'   start = 1000,
+#'   length = 50,
+#'   skip = c(1000, 1004:1008, 1045:1055)
+#' )
+#'
 skipper_seq <- function(start, length, skip) {
   s1 <- seq(from = start, length.out = length)
   s2 <- s1[which(!s1 %in% skip)]

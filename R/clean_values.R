@@ -10,15 +10,13 @@
 #' @return A dataframe containing only the rows that have been cleaned.
 #' @export
 #'
-#' @importFrom tidyr unite
-#' @importFrom stats setNames
+#' @importFrom magrittr %>%
 #'
 #' @family address processing functions
 # @examples
-
+#'
 clean_values <- function(df, var, id_var, type) {
   var_check(df, var = c(var, id_var))
-  # var_check(ref, var = c("pattern", "replacement"))
 
   if (type == "pobox") {
     ref <- regex_pobox
@@ -33,13 +31,13 @@ clean_values <- function(df, var, id_var, type) {
   }
 
   df2 <- df %>%
-    select(all_of(c(id_var, var)))
+    dplyr::select(dplyr::all_of(c(id_var, var)))
 
   p <- paste(ref$pattern, collapse = "|")
 
-  extracted <- str_extract_all(
+  extracted <- stringr::str_extract_all(
     string = df2[[var]],
-    pattern = regex(p, ignore_case = TRUE),
+    pattern = stringr::regex(p, ignore_case = TRUE),
     simplify = TRUE
   )
 
@@ -47,22 +45,29 @@ clean_values <- function(df, var, id_var, type) {
     return(message("No matching values found"))
   }
 
-  p <- setNames(ref$replacement, ref$pattern)
+  p <- stats::setNames(ref$replacement, ref$pattern)
 
   df2[3] <- tidyr::unite(as.data.frame(extracted), "removed_text", sep = " ")
-  df2$removed_text <- str_squish(df2$removed_text)
+  df2$removed_text <- stringr::str_squish(df2$removed_text)
 
   z <- "[[:punct:]\\s]*"
   punct <- paste0("(^", z, ")|(", z, "$)")
 
-  df2$replacement_text <- str_squish(str_remove_all(str_replace_all(df2[[var]], regex(p, ignore_case = TRUE)), punct))
+  df2$replacement_text <- stringr::str_squish(
+    stringr::str_remove_all(
+      stringr::str_replace_all(
+        df2[[var]],
+        stringr::regex(p, ignore_case = TRUE)
+      ), punct
+    )
+  )
 
   df2 %>%
-    filter(removed_text != "") %>%
-    left_join(
+    dplyr::filter(removed_text != "") %>%
+    dplyr::left_join(
       df %>%
-        select(-all_of(var)),
+        dplyr::select(-dplyr::all_of(var)),
       by = id_var
     ) %>%
-    relocate(replacement_text, .before = removed_text)
+    dplyr::relocate(replacement_text, .before = removed_text)
 }

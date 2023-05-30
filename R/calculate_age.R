@@ -9,7 +9,7 @@
 #' @return A dataframe with a new variable, `df$age`.
 #' @export
 #'
-#' @importFrom lubridate is.Date
+#' @importFrom magrittr %>%
 #'
 #' @examples
 #' df <- data.frame(
@@ -21,6 +21,7 @@
 #'   ), size = 10)
 #' )
 #' df_new <- calculate_age(df, d1 = "DOB", d2 = "event")
+#'
 calculate_age <- function(df, d1, d2) {
   var_check(df, var = c(d1, d2))
 
@@ -30,7 +31,7 @@ calculate_age <- function(df, d1, d2) {
 
   if (!is_date_d1 | !is_date_d2) {
     s <- paste(
-      na.omit(c(
+      stats::na.omit(c(
         ifelse(!is_date_d1, paste0("`", d1, "`"), NA),
         ifelse(!is_date_d2, paste0("`", d2, "`"), NA)
       )),
@@ -42,17 +43,16 @@ calculate_age <- function(df, d1, d2) {
 
   # Check for NA in d1 & d2
   df_check <- df %>%
-    # select(recno, all_of(c(d1, d2))) %>%
-    mutate(
+    dplyr::mutate(
       d1_is_na = is.na(.data[[d1]]),
       d2_is_na = is.na(.data[[d2]])
     ) %>%
-    filter(d1_is_na | d2_is_na)
+    dplyr::filter(d1_is_na | d2_is_na)
 
   # Calculate age
   df <- df %>%
-    mutate(age = as.numeric((.data[[d2]] - .data[[d1]]) / 365.25)) %>%
-    relocate(age, .after = {{ d1 }})
+    dplyr::mutate(age = as.numeric((.data[[d2]] - .data[[d1]]) / 365.25)) %>%
+    dplyr::relocate(age, .after = {{ d1 }})
 
   if (nrow(df_check) == 0) {
     m <- "Age calculated for all records"

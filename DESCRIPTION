@@ -18,6 +18,7 @@ Imports:
     future,
     future.apply,
     lubridate,
+    magrittr,
     openxlsx,
     purrr,
     RDCOMClient,

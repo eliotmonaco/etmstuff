@@ -16,26 +16,40 @@
 #'   z = c("twenty-one", "twenty-two", "twenty-three")
 #' )
 #' pattern_check_df(df, "^one$")
+#'
 pattern_check_df <- function(df, pattern, ignore_case = FALSE) {
   # Empty vector to hold names of variables in which `pattern` is found
   vars <- c()
 
   for (i in 1:ncol(df)) {
-    pattern_in_col <- any(str_detect(df[[i]], regex(pattern, ignore_case = ignore_case)), na.rm = TRUE)
+    pattern_in_col <- any(
+      stringr::str_detect(
+        df[[i]],
+        stringr::regex(pattern, ignore_case = ignore_case)
+      ),
+      na.rm = TRUE
+    )
     if (pattern_in_col) {
       vars <- c(vars, colnames(df)[i])
     }
     # Progress indicator
-    message("\r", paste("Column", i, "of", ncol(df), "checked"), appendLF = FALSE)
+    message(
+      "\r",
+      paste("Column", i, "of", ncol(df), "checked"),
+      appendLF = FALSE
+    )
   }
 
-  # New line after last message in loop
+  # New line after progress indicator is finished
   message()
 
   # Output
   if (length(vars) == 0) {
     message("Pattern not found in dataframe")
   } else {
-    message(paste("Pattern found in:", paste(vars, collapse = ", ")))
+    message(paste(
+      "Pattern found in:",
+      paste(vars, collapse = ", ")
+    ))
   }
 }

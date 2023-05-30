@@ -16,8 +16,7 @@
 #' @return A dataframe of flattened values, with one row per dupeset in `df` and one column per variable in `var`.
 #' @export
 #'
-#' @importFrom future.apply future_mapply
-#' @importFrom future plan multisession
+#' @importFrom magrittr %>%
 #'
 #' @family undupe functions
 #' @examples
@@ -47,8 +46,8 @@ flatten_conflicts <- function(df,
   # Use each value in `seq` (`id_unq`) to flatten `var` values
   f <- function(seq, var, separator) {
     df_set <- df %>%
-      filter(.data[[dupe_id]] == seq)
-    values <- na.omit(unique(df_set[[var]]))
+      dplyr::filter(.data[[dupe_id]] == seq)
+    values <- stats::na.omit(unique(df_set[[var]]))
     if (is.character(values)) values <- values[values != ""]
     paste0(values, collapse = separator)
   }
@@ -62,9 +61,24 @@ flatten_conflicts <- function(df,
   # Loop through variables in `var` and flatten dupeset values
   for (i in 1:n_cols) {
     # df_flat[, var[i]] <- mapply(f, seq = id_unq, var = var[i], SIMPLIFY = TRUE)
-    df_flat[, var[i]] <- future_mapply(f, seq = id_unq, var = var[i], separator = sep, SIMPLIFY = TRUE)
-    if (!silent) message(paste("Column", i, "of", n_cols, "complete"))
+    df_flat[, var[i]] <- future.apply::future_mapply(
+      FUN = f,
+      seq = id_unq,
+      var = var[i],
+      separator = sep,
+      SIMPLIFY = TRUE)
+      # Progress indicator
+    if (!silent) {
+      message(
+        "\r",
+        paste("Column", i, "of", n_cols, "complete"),
+        appendLF = FALSE
+      )
+    }
   }
+
+  # New line after progress indicator is finished
+  message()
 
   df_flat
 }

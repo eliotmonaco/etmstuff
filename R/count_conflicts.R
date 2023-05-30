@@ -20,6 +20,8 @@
 #' * `pct`: The percentage of dupesets in `df` with conflicting values.
 #' @export
 #'
+#' @importFrom magrittr %>%
+#'
 #' @family undupe functions
 #' @examples
 #' n_rows <- 20
@@ -32,7 +34,7 @@
 #' df_count <- count_conflicts(undupe[["df_dupesets"]])
 #'
 count_conflicts <- function(df, ignore_empty = TRUE, silent = FALSE) {
-  etmstuff::var_check(df, var = "dupe_id")
+  var_check(df, var = "dupe_id")
 
   # Vector of unique `dupe_id`s
   dupe_ids <- unique(df$dupe_id)
@@ -53,7 +55,7 @@ count_conflicts <- function(df, ignore_empty = TRUE, silent = FALSE) {
 
   # Remove columns that shouldn't be counted
   df <- df %>%
-    select(-all_of(vars_rm))
+    dplyr::select(-dplyr::all_of(vars_rm))
 
   # Create dataframe to hold counts of dupesets with conflicts
   df_ct <- data.frame(
@@ -74,19 +76,23 @@ count_conflicts <- function(df, ignore_empty = TRUE, silent = FALSE) {
     }
   }
 
-  if (!silent) pb <- txtProgressBar(1, ncol(df), width = 50, style = 3)
+  if (!silent) pb <- utils::txtProgressBar(1, ncol(df), width = 50, style = 3)
 
   # For each column of `df`, sum the number of conflicts found by `f_conf()`
   for (i in 1:ncol(df)) {
-    df_ct$n[i] <- sum(sapply(X = seq, FUN = f_conf, col = df[[i]], simplify = T))
-    if (!silent) setTxtProgressBar(pb, i)
+    df_ct$n[i] <- sum(sapply(
+      X = seq,
+      FUN = f_conf,
+      col = df[[i]],
+      simplify = T))
+    if (!silent) utils::setTxtProgressBar(pb, i)
   }
 
   if (!silent) close(pb)
 
   # Add percentage variable to `df_ct`
   df_ct <- df_ct %>%
-    mutate(pct = round(n / length(dupe_ids) * 100, digits = 2))
+    dplyr::mutate(pct = round(n / length(dupe_ids) * 100, digits = 2))
 
   df_ct
 }

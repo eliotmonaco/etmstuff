@@ -29,4 +29,5 @@ df <- data.frame(
   ), size = 10)
 )
 df_new <- calculate_age(df, d1 = "DOB", d2 = "event")
+
 }

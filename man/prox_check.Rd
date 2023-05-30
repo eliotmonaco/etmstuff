@@ -28,4 +28,5 @@ The proximity of \code{x} to \code{y} is checked for two range types: a percent 
 }
 \examples{
 prox_check(105, 100)
+
 }

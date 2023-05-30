@@ -17,7 +17,12 @@
 #'   y = 1:4
 #' )
 #' df_stdz <- standardize(df)
-standardize <- function(df, vars = NULL, vars_ignore = NULL, uppercase = TRUE, silent = FALSE) {
+#'
+standardize <- function(df,
+                        vars = NULL,
+                        vars_ignore = NULL,
+                        uppercase = TRUE,
+                        silent = FALSE) {
   var_check(df, var = c(vars, vars_ignore))
 
   if (!is.null(vars) & !is.null(vars_ignore)) {
@@ -27,18 +32,22 @@ standardize <- function(df, vars = NULL, vars_ignore = NULL, uppercase = TRUE, s
   } else if (is.null(vars)) vars <- colnames(df)[!colnames(df) %in% vars_ignore]
 
   if (uppercase) {
-    f <- function(c) str_to_upper(na_if(str_squish(c), ""))
+    f <- function(c) {
+      stringr::str_to_upper(dplyr::na_if(stringr::str_squish(c), ""))
+    }
   } else if (!uppercase) {
-    f <- function(c) na_if(str_squish(c), "")
+    f <- function(c) {
+      dplyr::na_if(stringr::str_squish(c), "")
+    }
   }
 
-  if (!silent) message(paste("Standardizing", deparse(substitute(df))))
-
-  pbmax <- length(vars)
-  pb <- txtProgressBar(1, pbmax, width = 50, style = 3)
+  if (!silent) {
+    message(paste("Standardizing", deparse(substitute(df))))
+    pb <- utils::txtProgressBar(1, length(vars), width = 50, style = 3)
+  }
 
   for (i in 1:length(vars)) {
-    if (!silent) setTxtProgressBar(pb, i)
+    if (!silent) utils::setTxtProgressBar(pb, i)
     skip <- !is.character(df[[vars[i]]])
     if (skip) {
       next

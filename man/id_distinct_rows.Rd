@@ -27,4 +27,5 @@ df <- data.frame(
   z = rep("ignore this", length.out = n_rows)
 )
 df_new <- id_distinct_rows(df, vars = c("x", "y"), id_name = "new_id")
+
 }

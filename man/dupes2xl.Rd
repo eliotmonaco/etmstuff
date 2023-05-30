@@ -34,13 +34,13 @@ p <- ""
 \dontrun{
 dupes2xl(undupe[["df_dupesets"]], filename = f, path = p)
 }
+
 }
 \seealso{
 Other undupe functions: 
 \code{\link{count_conflicts}()},
 \code{\link{flatten_conflicts}()},
 \code{\link{isolate_conflicts}()},
-\code{\link{undupe2}()},
 \code{\link{undupe}()}
 }
 \concept{undupe functions}

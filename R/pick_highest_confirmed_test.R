@@ -8,50 +8,53 @@
 #' @return  A dataframe.
 #' @export
 #'
+#' @importFrom magrittr %>%
+#'
 # @examples
-
+#'
 pick_highest_confirmed_test <- function(df, silent = FALSE) {
-  vars <- c("recno", "patient_id", "lab_collection_date", "lab_specimen_source", "lab_result_symbol", "lab_result_number")
+  vars <- c(
+    "recno", "patient_id",
+    "lab_collection_date", "lab_specimen_source",
+    "lab_result_symbol", "lab_result_number")
+
   var_check(df, var = vars)
 
   # Unique `patient_id`s
   pid_unq <- df %>%
-    distinct(patient_id) %>%
-    pull()
+    dplyr::distinct(patient_id) %>%
+    dplyr::pull()
 
   # DF to hold one test per `patient_id`
   df_tests_unq <- df[0, ]
 
   # Select the highest venous or capillary test from a sequence
   pick_max_result <- function(df) {
-    if (any(str_detect(df$lab_specimen_source, "venous"))) {
+    if (any(stringr::str_detect(df$lab_specimen_source, "venous"))) {
       # If any test results are venous or venous equivalent, take the highest of those tests
       df %>%
-        filter(str_detect(df$lab_specimen_source, "venous")) %>%
-        filter(lab_result_number == max(lab_result_number)) %>%
-        arrange(desc(lab_collection_date)) %>%
-        slice(1)
+        dplyr::filter(stringr::str_detect(df$lab_specimen_source, "venous")) %>%
+        dplyr::filter(lab_result_number == max(lab_result_number)) %>%
+        dplyr::arrange(dplyr::desc(lab_collection_date)) %>%
+        dplyr::slice(1)
     } else if (all(df$lab_specimen_source == "Blood - capillary")) {
       # If all test results are capillary, take the highest test
       df %>%
-        filter(lab_result_number == max(lab_result_number)) %>%
-        arrange(desc(lab_collection_date)) %>%
-        slice(1)
+        dplyr::filter(lab_result_number == max(lab_result_number)) %>%
+        dplyr::arrange(dplyr::desc(lab_collection_date)) %>%
+        dplyr::slice(1)
     } else {
       message(paste("Unexpected specimen source combination found for `patient_id`", pid_unq[i]))
     }
   }
 
-  if (!silent) {
-    pbmax <- length(pid_unq)
-    pb <- txtProgressBar(1, pbmax, width = 50, style = 3)
-  }
+  if (!silent) pb <- utils::txtProgressBar(1, length(pid_unq), width = 50, style = 3)
 
   for (i in 1:length(pid_unq)) {
     # All tests for each `patient_id`
     df_tests <- df %>%
-      filter(patient_id == pid_unq[i]) %>%
-      arrange(lab_collection_date)
+      dplyr::filter(patient_id == pid_unq[i]) %>%
+      dplyr::arrange(lab_collection_date)
 
     if (nrow(df_tests) == 1) {
       df_tests_unq <- rbind(df_tests_unq, df_tests)
@@ -92,7 +95,7 @@ pick_highest_confirmed_test <- function(df, silent = FALSE) {
         df_tests <- df_tests[-test_seq, ]
 
         r <- r + 1
-      } # end of while
+      } # end: while
 
       # Pick one test from the aggregate of all sequences
       df_max2 <- pick_max_result(df_max)
@@ -101,10 +104,10 @@ pick_highest_confirmed_test <- function(df, silent = FALSE) {
       # df_max2$lab_collection_date <- as.Date(df_max2$lab_collection_date, origin = "1970-01-01")
 
       df_tests_unq <- rbind(df_tests_unq, df_max2)
-    } # end of else
+    } # end: else
 
-    if (!silent) setTxtProgressBar(pb, i)
-  } # end of for
+    if (!silent) utils::setTxtProgressBar(pb, i)
+  } # end: for
 
   if (!silent) close(pb)
 

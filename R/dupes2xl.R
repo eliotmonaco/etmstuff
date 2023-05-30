@@ -10,9 +10,6 @@
 #' @return Nothing is returned in R. An Excel workbook is created using the `filename` and `path` provided as function arguments.
 #' @export
 #'
-#' @importFrom openxlsx addWorksheet loadWorkbook removeWorksheet saveWorkbook writeData
-#' @importFrom RDCOMClient COMCreate createCOMReference
-#'
 #' @family undupe functions
 #' @examples
 #' n_rows <- 20
@@ -27,35 +24,36 @@
 #' \dontrun{
 #' dupes2xl(undupe[["df_dupesets"]], filename = f, path = p)
 #' }
+#'
 dupes2xl <- function(df, filename, path = NULL, visible = FALSE) {
-  xlpath <- paste0(path, filename, ".xlsm")
-  # xlpath <- paste0(gsub("/", "\\\\", getwd()), "\\", gsub("/", "\\\\", path), filename, ".xlsm")
+  xl_path <- paste0(path, filename, ".xlsm")
+  # xl_path <- paste0(gsub("/", "\\\\", getwd()), "\\", gsub("/", "\\\\", path), filename, ".xlsm")
 
   # Open macro template file and load data
-  wb <- loadWorkbook(paste0(path, "dupes2xl_template.xlsm"))
-  addWorksheet(wb, "Dupesets")
-  writeData(wb, "Dupesets", df)
-  removeWorksheet(wb, "Sheet1")
-  saveWorkbook(wb, paste0(path, filename, ".xlsm"))
+  wb <- openxlsx::loadWorkbook(paste0(path, "dupes2xl_template.xlsm"))
+  openxlsx::addWorksheet(wb, "Dupesets")
+  openxlsx::writeData(wb, "Dupesets", df)
+  openxlsx::removeWorksheet(wb, "Sheet1")
+  openxlsx::saveWorkbook(wb, paste0(path, filename, ".xlsm"))
 
   # Open connection to Excel and open file
-  xlApp <- COMCreate("Excel.Application")
-  xlWbk <- xlApp$Workbooks()$Open(xlpath)
+  xl_app <- RDCOMClient::COMCreate("Excel.Application")
+  xl_wb <- xl_app$Workbooks()$Open(xl_path)
 
   # View workbook (optional - may slow down format_dupesets macro)
   if (visible) {
-    xlApp[["Visible"]] <- TRUE
+    xl_app[["Visible"]] <- TRUE
   }
 
   # Run macros
-  xlApp$Run("ThisWorkbook.create_table")
-  xlApp$Run("ThisWorkbook.format_dupesets")
+  xl_app$Run("ThisWorkbook.create_table")
+  xl_app$Run("ThisWorkbook.format_dupesets")
 
   # Close and save
-  xlWbk$Close(SaveChanges = TRUE)
-  xlApp$Quit()
+  xl_wb$Close(SaveChanges = TRUE)
+  xl_app$Quit()
 
   # Release resources
-  rm(xlWbk, xlApp)
+  rm(xl_wb, xl_app)
   gc()
 }
