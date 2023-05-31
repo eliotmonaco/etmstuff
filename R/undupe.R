@@ -58,7 +58,7 @@ undupe <- function(df, visible_vars = NULL, invisible_vars = NULL) {
 
   # Add `n_row` as unique row ID and to indicate original row order
   df <- df %>%
-    dplyr::mutate(n_row = row_number())
+    dplyr::mutate(n_row = dplyr::row_number())
 
   # Add duplicate ID variable
   df["dupe_id"] <- apply(
