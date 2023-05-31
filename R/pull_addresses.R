@@ -37,7 +37,7 @@ pull_addresses <- function(df) {
         zip = current_address_zip, county = current_address_county
       )) %>%
     dplyr::relocate(county, .after = zip) %>%
-    standardize(uppercase = FALSE, vars_ignore = c("recno", "address_src")) %>%
+    standardize(uppercase = FALSE, var_ignore = c("recno", "address_src")) %>%
     # Remove insufficient addresses
     dplyr::filter(!is.na(street) & (!is.na(city) | !is.na(zip)))
 }

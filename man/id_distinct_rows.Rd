@@ -4,12 +4,12 @@
 \alias{id_distinct_rows}
 \title{Assign a sequential ID to distinct rows}
 \usage{
-id_distinct_rows(df, vars, id_name)
+id_distinct_rows(df, var, id_name)
 }
 \arguments{
 \item{df}{A dataframe.}
 
-\item{vars}{A vector of variable names that the new ID will be based on.}
+\item{var}{A vector of variable names that the new ID will be based on.}
 
 \item{id_name}{A name for the new ID variable.}
 }
@@ -17,7 +17,7 @@ id_distinct_rows(df, vars, id_name)
 A dataframe.
 }
 \description{
-Assign a sequential ID number to distinct rows in \code{df} based on selected variables (\code{vars}). The new ID is a string, with the number of characters equal to \code{nchar(nrow(df))} (if there are 100 rows, the new ID will have three characters).
+Assign a sequential ID number to distinct rows in \code{df} based on selected variables (\code{var}). The new ID is a string, with the number of characters equal to \code{nchar(nrow(df))} (if there are 100 rows, the new ID will have three characters).
 }
 \examples{
 n_rows <- 20
@@ -26,6 +26,6 @@ df <- data.frame(
   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
   z = rep("ignore this", length.out = n_rows)
 )
-df_new <- id_distinct_rows(df, vars = c("x", "y"), id_name = "new_id")
+df_new <- id_distinct_rows(df, var = c("x", "y"), id_name = "new_id")
 
 }

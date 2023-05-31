@@ -6,8 +6,8 @@
 \usage{
 standardize(
   df,
-  vars = NULL,
-  vars_ignore = NULL,
+  var = NULL,
+  var_ignore = NULL,
   uppercase = TRUE,
   silent = FALSE
 )
@@ -15,9 +15,9 @@ standardize(
 \arguments{
 \item{df}{A dataframe.}
 
-\item{vars}{A character vector naming which variables to standardize.}
+\item{var}{A character vector naming which variables to standardize.}
 
-\item{vars_ignore}{A character vector naming which variables to ignore.}
+\item{var_ignore}{A character vector naming which variables to ignore.}
 
 \item{uppercase}{Logical: change text to uppercase if \code{TRUE} (default).}
 
@@ -27,7 +27,7 @@ standardize(
 A dataframe.
 }
 \description{
-Remove excess spaces from strings, replace empty cells with \code{NA}, and convert strings to uppercase (optional). If neither \code{vars} nor \code{vars_ignore} are supplied, all character variables in \code{df} are standardized.
+Remove excess spaces from strings, replace empty cells with \code{NA}, and convert strings to uppercase (optional). If neither \code{var} nor \code{var_ignore} are supplied, all character variables in \code{df} are standardized.
 }
 \examples{
 df <- data.frame(

@@ -30,7 +30,7 @@
 #'   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
 #'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 #' )
-#' undupe <- undupe(df, visible_vars = c("x", "y"))
+#' undupe <- undupe(df, visible_var = c("x", "y"))
 #' df_count <- count_conflicts(undupe[["df_dupesets"]])
 #'
 count_conflicts <- function(df, ignore_empty = TRUE, silent = FALSE) {
@@ -48,14 +48,14 @@ count_conflicts <- function(df, ignore_empty = TRUE, silent = FALSE) {
   seq <- sapply(X = 1:length(dupe_ids), FUN = f_seq)
 
   if ("dupe_order" %in% colnames(df)) {
-    vars_rm <- c("dupe_id", "dupe_order")
+    var_rm <- c("dupe_id", "dupe_order")
   } else {
-    vars_rm <- "dupe_id"
+    var_rm <- "dupe_id"
   }
 
   # Remove columns that shouldn't be counted
   df <- df %>%
-    dplyr::select(-dplyr::all_of(vars_rm))
+    dplyr::select(-dplyr::all_of(var_rm))
 
   # Create dataframe to hold counts of dupesets with conflicts
   df_ct <- data.frame(

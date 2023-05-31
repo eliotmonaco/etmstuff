@@ -13,12 +13,12 @@
 # @examples
 #'
 pick_highest_confirmed_test <- function(df, silent = FALSE) {
-  vars <- c(
+  var <- c(
     "recno", "patient_id",
     "lab_collection_date", "lab_specimen_source",
     "lab_result_symbol", "lab_result_number")
 
-  var_check(df, var = vars)
+  var_check(df, var = var)
 
   # Unique `patient_id`s
   pid_unq <- df %>%

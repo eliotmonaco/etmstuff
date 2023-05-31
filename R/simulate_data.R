@@ -108,7 +108,7 @@ simulate_data <- function(rows, dirty = FALSE) {
     df$zip[n] <- sample(10000:99999, length(n), replace = TRUE)
   }
 
-  df <- id_distinct_rows(df, vars = colnames(df), id_name = "address_id")
+  df <- id_distinct_rows(df, var = colnames(df), id_name = "address_id")
 
   df %>%
     dplyr::relocate(address_id)

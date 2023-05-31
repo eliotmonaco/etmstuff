@@ -14,7 +14,7 @@
 config_epitrax <- function(df) {
   if (!assertive::is_data.frame(df)) stop("`df` must be a dataframe", call. = FALSE)
 
-  vars_date <- c(
+  date_var <- c(
     "patient_birth_date",
     "treatment_date",
     "lab_collection_date",
@@ -31,7 +31,7 @@ config_epitrax <- function(df) {
     "patient_results_reported_to_LHD"
   )
 
-  var_check(df, var = vars_date)
+  var_check(df, var = date_var)
 
   df$hash_value <- apply(
     X = df,
@@ -51,8 +51,8 @@ config_epitrax <- function(df) {
 
   message("Data wrangling: `recno` column added")
 
-  df[, vars_date] <- lapply(
-    X = df[, vars_date],
+  df[, date_var] <- lapply(
+    X = df[, date_var],
     FUN = as.Date,
     format = "%Y-%m-%d %H:%M:%S",
     origin = "1970-01-01"

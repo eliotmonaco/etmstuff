@@ -19,7 +19,7 @@
 #'
 pattern_check_df <- function(df, pattern, ignore_case = FALSE) {
   # Empty vector to hold names of variables in which `pattern` is found
-  vars <- c()
+  var <- c()
 
   for (i in 1:ncol(df)) {
     pattern_in_col <- any(
@@ -30,7 +30,7 @@ pattern_check_df <- function(df, pattern, ignore_case = FALSE) {
       na.rm = TRUE
     )
     if (pattern_in_col) {
-      vars <- c(vars, colnames(df)[i])
+      var <- c(var, colnames(df)[i])
     }
     # Progress indicator
     message(
@@ -44,12 +44,12 @@ pattern_check_df <- function(df, pattern, ignore_case = FALSE) {
   message()
 
   # Output
-  if (length(vars) == 0) {
+  if (length(var) == 0) {
     message("Pattern not found in dataframe")
   } else {
     message(paste(
       "Pattern found in:",
-      paste(vars, collapse = ", ")
+      paste(var, collapse = ", ")
     ))
   }
 }

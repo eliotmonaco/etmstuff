@@ -21,7 +21,7 @@
 #'   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
 #'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 #' )
-#' undupe <- undupe(df, visible_vars = c("x", "y"))
+#' undupe <- undupe(df, visible_var = c("x", "y"))
 #' df_isolated <- isolate_conflicts(undupe[["df_dupesets"]], var = "z")
 #'
 isolate_conflicts <- function(df, var, ignore_empty = TRUE, silent = FALSE) {
