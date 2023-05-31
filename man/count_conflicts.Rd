@@ -40,7 +40,7 @@ df <- data.frame(
   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 )
-undupe <- undupe(df, visible_vars = c("x", "y"))
+undupe <- undupe(df, visible_var = c("x", "y"))
 df_count <- count_conflicts(undupe[["df_dupesets"]])
 
 }

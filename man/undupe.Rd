@@ -4,14 +4,14 @@
 \alias{undupe}
 \title{Unduplicate a dataframe based on selected variables}
 \usage{
-undupe(df, visible_vars = NULL, invisible_vars = NULL)
+undupe(df, visible_var = NULL, invisible_var = NULL)
 }
 \arguments{
 \item{df}{A dataframe.}
 
-\item{visible_vars}{A character vector of variable names from \code{df} whose values must match for rows to be considered duplicates.}
+\item{visible_var}{A character vector of variable names from \code{df} whose values must match for rows to be considered duplicates.}
 
-\item{invisible_vars}{A character vector of variable names from \code{df} whose values will be ignored during deduplication. All other variables in \code{df} will be visible during deduplication.}
+\item{invisible_var}{A character vector of variable names from \code{df} whose values will be ignored during deduplication. All other variables in \code{df} will be visible during deduplication.}
 }
 \value{
 A list containing three dataframes:
@@ -29,13 +29,13 @@ When deduplicating a dataframe, one set of variables is "visible" to the process
 
 \code{undupe()} allows two methods of setting the visible and invisible variables:
 \itemize{
-\item In \code{visible_vars}, provide the names of variables whose values must match to be evaluated as duplicates.
-\item In \code{invisible_vars}, provide the names of variables to ignore, in which case all other variables in df become visible during deduplication.
+\item In \code{visible_var}, provide the names of variables whose values must match to be evaluated as duplicates.
+\item In \code{invisible_var}, provide the names of variables to ignore, in which case all other variables in df become visible during deduplication.
 }
 
 Only one of these arguments may be used.
 
-\code{undupe()} adds an identifier in \code{dupe_id} to each row based on the unique values in the varibles provided in \code{visible_vars}. It also adds an integer in \code{dupe_order} which sequentially numbers each member of a dupeset.
+\code{undupe()} adds an identifier in \code{dupe_id} to each row based on the unique values in the varibles provided in \code{visible_var}. It also adds an integer in \code{dupe_order} which sequentially numbers each member of a dupeset.
 
 To produce \code{df_distinct}, \code{undupe()} uses \code{\link[dplyr:distinct]{dplyr::distinct()}}, which returns the first of a set of distinct/unique rows (dupesets) in a dataframe.
 }
@@ -46,7 +46,7 @@ df <- data.frame(
   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 )
-undupe_list <- undupe(df, visible_vars = c("x", "y"))
+undupe_list <- undupe(df, visible_var = c("x", "y"))
 
 }
 \seealso{
