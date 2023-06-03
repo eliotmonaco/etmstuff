@@ -23,8 +23,11 @@ This function checks an address component in \code{df$var} against elements in a
 }
 \seealso{
 Other address processing functions: 
+\code{\link{build_md_url}()},
 \code{\link{clean_values}()},
+\code{\link{parse_street_addresses}()},
 \code{\link{pull_addresses}()},
-\code{\link{replace_values}()}
+\code{\link{replace_values}()},
+\code{\link{submit_to_md}()}
 }
 \concept{address processing functions}

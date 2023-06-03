@@ -23,8 +23,11 @@ Replace the dirty address values in \code{df$var} with the cleaned values in \co
 }
 \seealso{
 Other address processing functions: 
+\code{\link{build_md_url}()},
 \code{\link{clean_values}()},
+\code{\link{parse_street_addresses}()},
 \code{\link{pull_addresses}()},
+\code{\link{submit_to_md}()},
 \code{\link{validate_values}()}
 }
 \concept{address processing functions}

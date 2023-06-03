@@ -23,8 +23,11 @@ This function applies a pattern to clean street address strings in \code{df$var}
 }
 \seealso{
 Other address processing functions: 
+\code{\link{build_md_url}()},
+\code{\link{parse_street_addresses}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},
+\code{\link{submit_to_md}()},
 \code{\link{validate_values}()}
 }
 \concept{address processing functions}
