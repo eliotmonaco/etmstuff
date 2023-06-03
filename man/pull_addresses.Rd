@@ -15,20 +15,26 @@ A dataframe of addresses and keys.
 \description{
 Subset address fields from EpiTrax data. The returned dataframe has one row per address. \code{recno} and the added variable \code{address_src} serve as a key to link each address to the original record. Addresses with insufficient data for geocoding are omitted.
 }
-\section{Address processing workflow}{
+\section{Address validation workflow}{
 
 \enumerate{
 \item \code{\link[=pull_addresses]{pull_addresses()}}
+\item Clean addresses
+\itemize{
+\item \code{\link[=validate_values]{validate_values()}}
+\item \code{\link[=clean_values]{clean_values()}}
+\item \code{\link[=replace_values]{replace_values()}}
+}
 \item \code{\link[=parse_street_addresses]{parse_street_addresses()}}
-\item compare...
+\item compare function...
 \item \code{\link[=build_md_url]{build_md_url()}}
 \item \code{\link[=submit_to_md]{submit_to_md()}}
 }
 }
 
-\section{Address validation and geocoding}{
+\section{Melissa Data}{
 
-The address processing workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for the request are either of these value combinations:
+The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for requests are either of these value combinations:
 \itemize{
 \item \code{street}, \code{city}, and \code{state}
 \item \code{street} and \code{zip}

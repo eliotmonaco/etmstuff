@@ -4,12 +4,27 @@
 \alias{build_md_url}
 \title{Build a Melissa Data Personator URL request}
 \usage{
-build_md_url(df, row_id)
+build_md_url(
+  df,
+  row_id,
+  street = "street_geo",
+  city = "city",
+  state = "state",
+  zip = "zip"
+)
 }
 \arguments{
-\item{df}{A dataframe of addresses including the \code{street_geo} variable.}
+\item{df}{A dataframe of cleaned addresses.}
 
-\item{row_id}{A unique row identifier. Should be \code{address_id}.}
+\item{row_id}{A unique row identifier variable name.}
+
+\item{street}{The name of the variable containing the full street address.}
+
+\item{city}{The name of the variable containing the city.}
+
+\item{state}{The name of the variable containing the state.}
+
+\item{zip}{The name of the variable containing the zip code.}
 }
 \value{
 A vector of URLs.
@@ -17,20 +32,26 @@ A vector of URLs.
 \description{
 Build a URL to query the Melissa Data Personator Consumer Web Service API. The URL is a request for a response from the Personator service in a JSON format.
 }
-\section{Address processing workflow}{
+\section{Address validation workflow}{
 
 \enumerate{
 \item \code{\link[=pull_addresses]{pull_addresses()}}
+\item Clean addresses
+\itemize{
+\item \code{\link[=validate_values]{validate_values()}}
+\item \code{\link[=clean_values]{clean_values()}}
+\item \code{\link[=replace_values]{replace_values()}}
+}
 \item \code{\link[=parse_street_addresses]{parse_street_addresses()}}
-\item compare...
+\item compare function...
 \item \code{\link[=build_md_url]{build_md_url()}}
 \item \code{\link[=submit_to_md]{submit_to_md()}}
 }
 }
 
-\section{Address validation and geocoding}{
+\section{Melissa Data}{
 
-The address processing workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for the request are either of these value combinations:
+The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for requests are either of these value combinations:
 \itemize{
 \item \code{street}, \code{city}, and \code{state}
 \item \code{street} and \code{zip}

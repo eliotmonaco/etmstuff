@@ -24,7 +24,7 @@ usethis::use_github()
 
 
 
-## Documentation ####
+## Document ####
 
 library(devtools)
 
@@ -51,30 +51,6 @@ remove.packages("etmstuff")
 devtools::install()
 
 library(etmstuff)
-
-
-
-## Internal data ####
-
-directions_cardinal <- readRDS("../etmstuff_aux/helpers/directions_cardinal.rds")
-directions_ordinal <- readRDS("../etmstuff_aux/helpers/directions_ordinal.rds")
-epitrax_variables <- readRDS("../etmstuff_aux/helpers/epitrax_variables.rds")
-ks_cities <- readRDS("../etmstuff_aux/helpers/ks_cities.rds")
-ks_zipcodes <- readRDS("../etmstuff_aux/helpers/ks_zipcodes.rds")
-regex_pobox <- readRDS("../etmstuff_aux/helpers/regex_pobox.rds")
-regex_various <- readRDS("../etmstuff_aux/helpers/regex_various.rds")
-street_suffix <- readRDS("../etmstuff_aux/helpers/street_suffix.rds")
-directions <- readRDS("../etmstuff_aux/helpers/directions.rds")
-common_streets <- readRDS("../etmstuff_aux/helpers/common_streets.rds")
-common_street_suffixes <- readRDS("../etmstuff_aux/helpers/common_street_suffixes.rds")
-common_unit_prefixes <- readRDS("../etmstuff_aux/helpers/common_unit_prefixes.rds")
-
-usethis::use_data(directions_cardinal, directions_ordinal,
-                  epitrax_variables,
-                  ks_cities, ks_zipcodes,
-                  regex_pobox, regex_various,
-                  directions, common_streets, common_street_suffixes, common_unit_prefixes,
-                  internal = T, overwrite = T)
 
 
 

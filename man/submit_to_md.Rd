@@ -4,10 +4,12 @@
 \alias{submit_to_md}
 \title{Submit requests to Melissa Data Personator}
 \usage{
-submit_to_md(df)
+submit_to_md(df, url = "md_url")
 }
 \arguments{
 \item{df}{A dataframe with the variable \code{md_url}.}
+
+\item{url}{The name of the variable containing the URL requests for Melissa Data Personator.}
 }
 \value{
 A dataframe with responses from Melissa Data in additional columns.
@@ -15,20 +17,26 @@ A dataframe with responses from Melissa Data in additional columns.
 \description{
 This function submits the URL requests created by \code{\link[=build_md_url]{build_md_url()}} to the Melissa Data Personator Consumer Web Service API. The response is added to \code{df} as additional columns.
 }
-\section{Address processing workflow}{
+\section{Address validation workflow}{
 
 \enumerate{
 \item \code{\link[=pull_addresses]{pull_addresses()}}
+\item Clean addresses
+\itemize{
+\item \code{\link[=validate_values]{validate_values()}}
+\item \code{\link[=clean_values]{clean_values()}}
+\item \code{\link[=replace_values]{replace_values()}}
+}
 \item \code{\link[=parse_street_addresses]{parse_street_addresses()}}
-\item compare...
+\item compare function...
 \item \code{\link[=build_md_url]{build_md_url()}}
 \item \code{\link[=submit_to_md]{submit_to_md()}}
 }
 }
 
-\section{Address validation and geocoding}{
+\section{Melissa Data}{
 
-The address processing workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for the request are either of these value combinations:
+The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for requests are either of these value combinations:
 \itemize{
 \item \code{street}, \code{city}, and \code{state}
 \item \code{street} and \code{zip}

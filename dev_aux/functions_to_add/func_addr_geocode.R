@@ -1,8 +1,3 @@
-#### postmastr_prep() ####
-
-
-
-
 
 #### postmastr_compare() ####
 
@@ -25,18 +20,6 @@ postmastr_compare <- function(df, ref1, ref2) {
     select(-new)
 
 }
-
-
-
-#### build_md_url() ####
-
-
-
-
-
-#### geocode_md() ####
-
-
 
 
 

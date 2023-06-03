@@ -4,38 +4,44 @@
 \alias{parse_street_addresses}
 \title{Parse street addresses using \code{postmastr} workflow}
 \usage{
-parse_street_addresses(df, ref)
+parse_street_addresses(df, street = "street")
 }
 \arguments{
 \item{df}{A dataframe of addresses.}
 
-\item{ref}{This will be changed...}
+\item{street}{The street address variable name.}
 }
 \value{
-TBD...
+A dataframe.
 }
 \description{
-Parse street addresses using functions from the \code{postmastr} package. \code{df} requires an \code{address_id} variable before using \code{parse_street_addresses()}.
+Parse street addresses using functions from the \code{postmastr} package. \code{df} requires an \code{address_id} variable before using \code{parse_street_addresses()}. The output contains a new variable, \code{street_unit}.
 
 \code{postmastr} is only available in a development version from GitHub.
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{remotes::install_github("slu-openGIS/postmastr")
 }\if{html}{\out{</div>}}
 }
-\section{Address processing workflow}{
+\section{Address validation workflow}{
 
 \enumerate{
 \item \code{\link[=pull_addresses]{pull_addresses()}}
+\item Clean addresses
+\itemize{
+\item \code{\link[=validate_values]{validate_values()}}
+\item \code{\link[=clean_values]{clean_values()}}
+\item \code{\link[=replace_values]{replace_values()}}
+}
 \item \code{\link[=parse_street_addresses]{parse_street_addresses()}}
-\item compare...
+\item compare function...
 \item \code{\link[=build_md_url]{build_md_url()}}
 \item \code{\link[=submit_to_md]{submit_to_md()}}
 }
 }
 
-\section{Address validation and geocoding}{
+\section{Melissa Data}{
 
-The address processing workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for the request are either of these value combinations:
+The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for requests are either of these value combinations:
 \itemize{
 \item \code{street}, \code{city}, and \code{state}
 \item \code{street} and \code{zip}

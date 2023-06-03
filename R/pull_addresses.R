@@ -3,15 +3,20 @@
 #' @description
 #' Subset address fields from EpiTrax data. The returned dataframe has one row per address. `recno` and the added variable `address_src` serve as a key to link each address to the original record. Addresses with insufficient data for geocoding are omitted.
 #'
-#' @section Address processing workflow:
-#' 1. [pull_addresses()]
-#' 2. [parse_street_addresses()]
-#' 3. compare...
-#' 4. [build_md_url()]
-#' 5. [submit_to_md()]
+#' @section Address validation workflow:
 #'
-#' @section Address validation and geocoding:
-#' The address processing workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for the request are either of these value combinations:
+#' 1. [pull_addresses()]
+#' 2. Clean addresses
+#'     - [validate_values()]
+#'     - [clean_values()]
+#'     - [replace_values()]
+#' 3. [parse_street_addresses()]
+#' 4. compare function...
+#' 5. [build_md_url()]
+#' 6. [submit_to_md()]
+#'
+#' @section Melissa Data:
+#' The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for requests are either of these value combinations:
 #'
 #' * `street`, `city`, and `state`
 #' * `street` and `zip`
