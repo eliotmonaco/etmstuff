@@ -3,6 +3,12 @@
 #' @description
 #' Parse street addresses using functions from the `postmastr` package. `df` requires an `address_id` variable before using `parse_street_addresses()`.
 #'
+#' `postmastr` is only available in a development version from GitHub.
+#'
+#' ```
+#' remotes::install_github("slu-openGIS/postmastr")
+#' ```
+#'
 #' @inheritSection pull_addresses Address processing workflow
 #' @inheritSection pull_addresses Address validation and geocoding
 #'

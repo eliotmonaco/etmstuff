@@ -16,6 +16,11 @@ TBD...
 }
 \description{
 Parse street addresses using functions from the \code{postmastr} package. \code{df} requires an \code{address_id} variable before using \code{parse_street_addresses()}.
+
+\code{postmastr} is only available in a development version from GitHub.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{remotes::install_github("slu-openGIS/postmastr")
+}\if{html}{\out{</div>}}
 }
 \section{Address processing workflow}{
 
@@ -36,7 +41,7 @@ The address processing workflow prepares addresses for validation by the Melissa
 \item \code{street} and \code{zip}
 }
 
-More information is at https://wiki.melissadata.com/index.php?title=Personator_Consumer
+More information is at \url{https://wiki.melissadata.com/index.php?title=Personator_Consumer}.
 }
 
 \seealso{

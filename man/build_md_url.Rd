@@ -36,7 +36,7 @@ The address processing workflow prepares addresses for validation by the Melissa
 \item \code{street} and \code{zip}
 }
 
-More information is at https://wiki.melissadata.com/index.php?title=Personator_Consumer
+More information is at \url{https://wiki.melissadata.com/index.php?title=Personator_Consumer}.
 }
 
 \seealso{

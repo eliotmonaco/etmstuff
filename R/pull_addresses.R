@@ -16,7 +16,7 @@
 #' * `street`, `city`, and `state`
 #' * `street` and `zip`
 #'
-#' More information is at https://wiki.melissadata.com/index.php?title=Personator_Consumer
+#' More information is at <https://wiki.melissadata.com/index.php?title=Personator_Consumer>.
 #'
 #' @param df A dataframe of records from EpiTrax.
 #'

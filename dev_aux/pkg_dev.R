@@ -29,7 +29,7 @@ usethis::use_github()
 library(devtools)
 
 # Adds package name to DESCRIPTION file
-usethis::use_package("postmastr")
+usethis::use_package("")
 
 # Adds package and function names to NAMESPACE file
 usethis::use_import_from("", "")
@@ -42,53 +42,9 @@ devtools::load_all()
 
 
 
-## Testing ####
-
-devtools::check()
-
-devtools::load_all()
-
-library(tidyverse)
-
-
-# Sim data for Epitrax?
-
-
-filename <- "dupesets_data"
-path <- "helpers/"
-
-xlpath <- paste0(gsub("/", "\\\\", getwd()), "\\", gsub("/", "\\\\", path), filename, ".xlsm")
-
-
-
-df_addr <- df_addr_full %>%
-  distinct(address_id, .keep_all = T)
-
-df <- clean_values(df = df_addr,
-                   var = "street",
-                   id_var = "address_id",
-                   type = "pobox")
-
-df_addr4 <- replace_values(df = df_addr,
-                           var = "street",
-                           id_var = "address_id",
-                           source = df)
-
-all.equal(df_addr2, df_addr4)
-
-dfA <- validate_values(df = df,
-                       var = "city",
-                       type = "city")
-
-dfA <- validate_values(df = df,
-                       var = "zip",
-                       type = "zip")
-
-df <- simulate_data(rows = 1000, dirty = T)
-
-
-
 ## Install & load package ####
+
+# Ctrl + Shift + B to build
 
 remove.packages("etmstuff")
 
@@ -171,6 +127,45 @@ devtools::loaded_packages()
 # Rename all id argument names to "row_id"?
 
 
+
+
+library(tidyverse)
+
+
+# Sim data for Epitrax?
+
+
+filename <- "dupesets_data"
+path <- "helpers/"
+
+xlpath <- paste0(gsub("/", "\\\\", getwd()), "\\", gsub("/", "\\\\", path), filename, ".xlsm")
+
+
+
+df_addr <- df_addr_full %>%
+  distinct(address_id, .keep_all = T)
+
+df <- clean_values(df = df_addr,
+                   var = "street",
+                   id_var = "address_id",
+                   type = "pobox")
+
+df_addr4 <- replace_values(df = df_addr,
+                           var = "street",
+                           id_var = "address_id",
+                           source = df)
+
+all.equal(df_addr2, df_addr4)
+
+dfA <- validate_values(df = df,
+                       var = "city",
+                       type = "city")
+
+dfA <- validate_values(df = df,
+                       var = "zip",
+                       type = "zip")
+
+df <- simulate_data(rows = 1000, dirty = T)
 
 
 
