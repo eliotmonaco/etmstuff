@@ -1,9 +1,9 @@
 #' Parse street addresses using `postmastr` workflow
 #'
 #' @description
-#' Parse street addresses using functions from the `postmastr` package. `df` requires an `address_id` variable before using `parse_street_addresses()`. The output contains a new variable, `street_unit`.
+#' Parse street addresses using functions from the `postmastr` package. `df` requires an `address_id` variable before using `parse_street_addresses()`. The output contains a new variable, `street_unit`, which combines both `street` and `unit`.
 #'
-#' `postmastr` is only available in a development version from GitHub.
+#' `postmastr` is available in a development version from GitHub.
 #'
 #' ```
 #' remotes::install_github("slu-openGIS/postmastr")
@@ -53,11 +53,13 @@ parse_street_addresses <- function(df, street = "street") {
   # Add parsed columns back to `df`
   df <- postmastr::pm_replace(df, source = df_pm_id)
 
-  # Combine parsed elements back to a single string
-  df <- postmastr::pm_rebuild(df, output = "short", keep_parsed = "no")
-
-  # ???
-  df$street_geo <- df_gc_full$pm.address # What is `df_gc_full`??????????????
+  # Recombine parsed elements into a single string
+  df <- postmastr::pm_rebuild(
+    df,
+    output = "short",
+    new_address = "street_unit_pm",
+    keep_parsed = "yes"
+  )
 
   df
 }

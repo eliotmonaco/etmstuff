@@ -7,7 +7,7 @@
 build_md_url(
   df,
   row_id,
-  street = "street_geo",
+  street = "street_unit_final",
   city = "city",
   state = "state",
   zip = "zip"
@@ -63,6 +63,7 @@ More information is at \url{https://wiki.melissadata.com/index.php?title=Persona
 \seealso{
 Other address processing functions: 
 \code{\link{clean_values}()},
+\code{\link{compare_parsed_street}()},
 \code{\link{parse_street_addresses}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},

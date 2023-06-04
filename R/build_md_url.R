@@ -21,7 +21,7 @@
 #'
 build_md_url <- function(df,
                          row_id,
-                         street = "street_geo",
+                         street = "street_unit_final",
                          city = "city",
                          state = "state",
                          zip = "zip") {

@@ -15,9 +15,9 @@ parse_street_addresses(df, street = "street")
 A dataframe.
 }
 \description{
-Parse street addresses using functions from the \code{postmastr} package. \code{df} requires an \code{address_id} variable before using \code{parse_street_addresses()}. The output contains a new variable, \code{street_unit}.
+Parse street addresses using functions from the \code{postmastr} package. \code{df} requires an \code{address_id} variable before using \code{parse_street_addresses()}. The output contains a new variable, \code{street_unit}, which combines both \code{street} and \code{unit}.
 
-\code{postmastr} is only available in a development version from GitHub.
+\code{postmastr} is available in a development version from GitHub.
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{remotes::install_github("slu-openGIS/postmastr")
 }\if{html}{\out{</div>}}
@@ -54,6 +54,7 @@ More information is at \url{https://wiki.melissadata.com/index.php?title=Persona
 Other address processing functions: 
 \code{\link{build_md_url}()},
 \code{\link{clean_values}()},
+\code{\link{compare_parsed_street}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},
 \code{\link{submit_to_md}()},

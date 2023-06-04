@@ -1,27 +1,4 @@
 
-#### postmastr_compare() ####
-
-postmastr_compare <- function(df, ref1, ref2) {
-
-  var_check(df, var = c("address_id", "street_unit", "pm.address"))
-
-  suppressWarnings({
-    library(dplyr)
-  })
-
-  p1 <- setNames(ref1$replacement, paste0("(?<=^\\d{1,7}\\s)", ref1$pattern, "(?=\\s)"))
-  p2 <- setNames(ref2$replacement, paste0("(?<=\\s)", ref2$pattern, "$"))
-
-  df$new <- stringr::str_replace_all(df$street_unit, stringr::regex(p1, ignore_case = TRUE))
-  df$new <- stringr::str_replace_all(df$new, stringr::regex(p2, ignore_case = TRUE))
-
-  df %>%
-    filter(stringr::str_to_upper(new) != stringr::str_to_upper(street_geo)) %>%
-    select(-new)
-
-}
-
-
 
 #### explore_md_results() ####
 

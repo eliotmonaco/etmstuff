@@ -49,6 +49,7 @@ More information is at \url{https://wiki.melissadata.com/index.php?title=Persona
 Other address processing functions: 
 \code{\link{build_md_url}()},
 \code{\link{clean_values}()},
+\code{\link{compare_parsed_street}()},
 \code{\link{parse_street_addresses}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},
