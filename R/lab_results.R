@@ -28,7 +28,7 @@ check_lab_results <- function(df, var) {
   df %>%
     dplyr::filter(!stringr::str_detect(.data[[var]], p) |
       !stringr::str_detect(.data[[var]], "\\d")) %>%
-    dplyr::relocate(dplyr::starts_with("lab_result")) %>%
+    dplyr::relocate(tidyselect::starts_with("lab_result")) %>%
     dplyr::arrange(.data[[var]])
 }
 
@@ -55,7 +55,7 @@ clean_lab_results <- function(df, var) {
   df %>%
     dplyr::mutate(lab_result_clean = f(.data[[var]])) %>%
     dplyr::mutate(lab_result_clean = stringr::str_remove_all(lab_result_clean, p)) %>%
-    dplyr::relocate(lab_result_clean, .after = dplyr::all_of(var))
+    dplyr::relocate(lab_result_clean, .after = tidyselect::all_of(var))
 }
 
 #' @export
@@ -101,6 +101,6 @@ parse_lab_results <- function(df, var) {
   df %>%
     dplyr::relocate(
       lab_result_symbol, lab_result_number,
-      .after = dplyr::all_of(var)
+      .after = tidyselect::all_of(var)
     )
 }

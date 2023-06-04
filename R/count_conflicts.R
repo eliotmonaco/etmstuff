@@ -55,7 +55,7 @@ count_conflicts <- function(df, ignore_empty = TRUE, silent = FALSE) {
 
   # Remove columns that shouldn't be counted
   df <- df %>%
-    dplyr::select(-dplyr::all_of(var_rm))
+    dplyr::select(-tidyselect::all_of(var_rm))
 
   # Create dataframe to hold counts of dupesets with conflicts
   df_ct <- data.frame(

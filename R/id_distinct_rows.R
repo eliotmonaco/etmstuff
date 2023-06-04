@@ -24,7 +24,7 @@ id_distinct_rows <- function(df, var, id_name) {
   var_check(df, var = var)
 
   df_ids <- df %>%
-    dplyr::select(dplyr::all_of(var)) %>%
+    dplyr::select(tidyselect::all_of(var)) %>%
     dplyr::distinct() %>%
     dplyr::mutate({{ id_name }} := formatC(
       x = 1:nrow(.),

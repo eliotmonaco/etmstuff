@@ -63,5 +63,5 @@ validate_values <- function(df, var, type, max_dist = 0.1) {
 
   df2 %>%
     dplyr::select(-n_row) %>%
-    dplyr::relocate(replacement_text, .after = dplyr::all_of(var))
+    dplyr::relocate(replacement_text, .after = tidyselect::all_of(var))
 }

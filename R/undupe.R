@@ -72,7 +72,7 @@ undupe <- function(df, visible_var = NULL, invisible_var = NULL) {
 
   # Subset distinct rows
   df_distinct <- df %>%
-    dplyr::distinct(dplyr::across(dplyr::all_of(visible_var)), .keep_all = TRUE)
+    dplyr::distinct(dplyr::across(tidyselect::all_of(visible_var)), .keep_all = TRUE)
 
   # Convert duplicate ID to a factor to preserve original order in `group_by()`
   df$dupe_id <- factor(df$dupe_id, levels = unique(df$dupe_id))

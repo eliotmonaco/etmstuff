@@ -62,7 +62,7 @@ config_epitrax <- function(df) {
 
   list(
     data = df %>%
-      dplyr::select(recno, hash_value, dplyr::everything()),
+      dplyr::select(recno, hash_value, tidyselect::everything()),
     keys = df %>%
       dplyr::select(recno, hash_value, patient_record_number) %>%
       dplyr::mutate(timestamp = Sys.time())

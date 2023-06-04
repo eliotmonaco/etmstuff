@@ -31,7 +31,7 @@ clean_values <- function(df, var, id_var, type) {
   }
 
   df2 <- df %>%
-    dplyr::select(dplyr::all_of(c(id_var, var)))
+    dplyr::select(tidyselect::all_of(c(id_var, var)))
 
   p <- paste(ref$pattern, collapse = "|")
 
@@ -66,7 +66,7 @@ clean_values <- function(df, var, id_var, type) {
     dplyr::filter(removed_text != "") %>%
     dplyr::left_join(
       df %>%
-        dplyr::select(-dplyr::all_of(var)),
+        dplyr::select(-tidyselect::all_of(var)),
       by = id_var
     ) %>%
     dplyr::relocate(replacement_text, .before = removed_text)
