@@ -2,32 +2,38 @@
 % Please edit documentation in R/calculate_age.R
 \name{calculate_age}
 \alias{calculate_age}
-\title{Add an age column to a dataframe}
+\title{Calculate age}
 \usage{
-calculate_age(df, d1, d2)
+calculate_age(d1, d2)
 }
 \arguments{
-\item{df}{A dataframe.}
+\item{d1}{A vector containing the birth or start date for the age calculation.}
 
-\item{d1}{A variable name from \code{df} with the birth/start date for the age calculation.}
-
-\item{d2}{A variable name from \code{df} with the end date for the age calculation.}
+\item{d2}{A vector containing the end date for the age calculation.}
 }
 \value{
-A dataframe with a new variable, \code{df$age}.
+A numeric vector.
 }
 \description{
-Calculates age as (\code{d2} - \code{d1}) / 365.25. For EpiTrax data, \code{d1 = "patient_birth_date"} and \code{d2 = "lab_collection_date"}.
+Calculate age from two date vectors. The formula used is \code{(d2 - d1) / 365.25}.
 }
 \examples{
-df <- data.frame(
-  DOB = sample(seq.Date(as.Date("1970-01-01"), as.Date("1980-01-01"),
+start <- sample(
+  seq.Date(
+    from = as.Date("1970-01-01"),
+    to = as.Date("1980-01-01"),
     by = "day"
-  ), size = 10),
-  event = sample(seq.Date(as.Date("1990-01-01"), as.Date("2020-01-01"),
-    by = "day"
-  ), size = 10)
+  ),
+  size = 10
 )
-df_new <- calculate_age(df, d1 = "DOB", d2 = "event")
+end <- sample(
+  seq.Date(
+    from = as.Date("1990-01-01"),
+    to = as.Date("2020-01-01"),
+    by = "day"
+  ),
+  size = 10
+)
+calculate_age(d1 = start, d2 = end)
 
 }

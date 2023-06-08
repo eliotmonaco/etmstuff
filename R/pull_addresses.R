@@ -1,7 +1,7 @@
 #' Pull addresses from EpiTrax data
 #'
 #' @description
-#' Subset address fields from EpiTrax data. The returned dataframe has one row per address. `recno` and the added variable `address_src` serve as a key to link each address to the original record. Addresses with insufficient data for geocoding are omitted.
+#' Subset the "lab_collection" address fields from EpiTrax data. The returned dataframe has one row per address. Addresses with insufficient data for validation via Melissa Data are omitted.
 #'
 #' @section Address validation workflow:
 #'
@@ -11,7 +11,7 @@
 #'     - [clean_values()]
 #'     - [replace_values()]
 #' 3. [parse_street_addresses()]
-#' 4. compare function...
+#' 4. [compare_parsed_street()]
 #' 5. [build_md_url()]
 #' 6. [submit_to_md()]
 #'
@@ -24,6 +24,7 @@
 #' More information is at <https://wiki.melissadata.com/index.php?title=Personator_Consumer>.
 #'
 #' @param df A dataframe of records from EpiTrax.
+#' @param row_id The name of the unique identifier for rows.
 #'
 #' @return A dataframe of addresses and keys.
 #' @export
@@ -33,42 +34,23 @@
 #' @family address processing functions
 # @examples
 #'
-pull_addresses <- function(df) {
+pull_addresses <- function(df, row_id) {
   var_check(df, var = c(
-    "recno",
+    row_id,
     "lab_collection_street", "lab_collection_unit_number", "lab_collection_city",
-    "lab_collection_state", "lab_collection_postal_code", "lab_collection_county",
-    "current_address_street", "current_address_unit_number", "current_address_city",
-    "current_address_state", "current_address_zip", "current_address_county"
+    "lab_collection_state", "lab_collection_postal_code", "lab_collection_county"
   ))
 
-  # Subset and stack addresses
   df %>%
-    # Address at lab collection
-    dplyr::select(recno, lab_collection_street:lab_collection_postal_code) %>%
-    dplyr::mutate(address_src = "1_lab") %>%
-    dplyr::rename(
-      street = lab_collection_street,
-      unit = lab_collection_unit_number,
-      city = lab_collection_city,
-      state = lab_collection_state,
-      zip = lab_collection_postal_code,
-      county = lab_collection_county
+    dplyr::mutate(
+      street = stringr::str_squish(lab_collection_street),
+      unit = stringr::str_squish(lab_collection_unit_number),
+      city = stringr::str_squish(lab_collection_city),
+      state = stringr::str_squish(lab_collection_state),
+      zip = stringr::str_squish(lab_collection_postal_code),
+      county = stringr::str_squish(lab_collection_county)
     ) %>%
-    dplyr::full_join(df %>%
-      # Current address
-      dplyr::select(recno, current_address_street:current_address_zip) %>%
-      dplyr::mutate(address_src = "2_cur") %>%
-      dplyr::rename(
-        street = current_address_street,
-        unit = current_address_unit_number,
-        city = current_address_city,
-        state = current_address_state,
-        zip = current_address_zip,
-        county = current_address_county
-      )) %>%
-    dplyr::relocate(county, .after = zip) %>%
-    standardize(uppercase = FALSE, var_ignore = c("recno", "address_src")) %>%
+    dplyr::select(tidyselect::all_of(row_id), street, unit, city, state, zip, county) %>%
     # Remove insufficient addresses
     dplyr::filter(!is.na(street) & (!is.na(city) | !is.na(zip)))
 }

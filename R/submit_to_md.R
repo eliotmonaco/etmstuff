@@ -16,7 +16,6 @@
 # @examples
 #'
 submit_to_md <- function(df, url = "md_url") {
-
   var_check(df, var = url)
 
   # Submit URLs to the Melissa Data Personator API
@@ -32,7 +31,6 @@ submit_to_md <- function(df, url = "md_url") {
   # Combine Melissa Data results by row
   df2 <- as.data.frame(do.call(rbind, df2))
 
-  # Combine results columns to `df`
+  # Add results columns to `df`
   cbind(df, df2)
-
 }

@@ -4,16 +4,18 @@
 \alias{pull_addresses}
 \title{Pull addresses from EpiTrax data}
 \usage{
-pull_addresses(df)
+pull_addresses(df, row_id)
 }
 \arguments{
 \item{df}{A dataframe of records from EpiTrax.}
+
+\item{row_id}{The name of the unique identifier for rows.}
 }
 \value{
 A dataframe of addresses and keys.
 }
 \description{
-Subset address fields from EpiTrax data. The returned dataframe has one row per address. \code{recno} and the added variable \code{address_src} serve as a key to link each address to the original record. Addresses with insufficient data for geocoding are omitted.
+Subset the "lab_collection" address fields from EpiTrax data. The returned dataframe has one row per address. Addresses with insufficient data for validation via Melissa Data are omitted.
 }
 \section{Address validation workflow}{
 
@@ -26,7 +28,7 @@ Subset address fields from EpiTrax data. The returned dataframe has one row per 
 \item \code{\link[=replace_values]{replace_values()}}
 }
 \item \code{\link[=parse_street_addresses]{parse_street_addresses()}}
-\item compare function...
+\item \code{\link[=compare_parsed_street]{compare_parsed_street()}}
 \item \code{\link[=build_md_url]{build_md_url()}}
 \item \code{\link[=submit_to_md]{submit_to_md()}}
 }

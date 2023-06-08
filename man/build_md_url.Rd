@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_md_url.R
 \name{build_md_url}
 \alias{build_md_url}
-\title{Build a Melissa Data Personator URL request}
+\title{Build a Melissa Data Personator request URL}
 \usage{
 build_md_url(
   df,
@@ -30,7 +30,7 @@ build_md_url(
 A vector of URLs.
 }
 \description{
-Build a URL to query the Melissa Data Personator Consumer Web Service API. The URL is a request for a response from the Personator service in a JSON format.
+Build a URL to query the Melissa Data Personator Consumer Web Service API. The URL is a request for a response from the Personator service in JSON format.
 }
 \section{Address validation workflow}{
 
@@ -43,7 +43,7 @@ Build a URL to query the Melissa Data Personator Consumer Web Service API. The U
 \item \code{\link[=replace_values]{replace_values()}}
 }
 \item \code{\link[=parse_street_addresses]{parse_street_addresses()}}
-\item compare function...
+\item \code{\link[=compare_parsed_street]{compare_parsed_street()}}
 \item \code{\link[=build_md_url]{build_md_url()}}
 \item \code{\link[=submit_to_md]{submit_to_md()}}
 }

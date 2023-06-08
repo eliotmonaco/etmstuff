@@ -24,20 +24,18 @@ utils::globalVariables(
     "first_investigation_started_date", "last_investigation_completed_lhd_date",
     "first_accepted_by_lhd_date", "last_approved_by_lhd_date", "last_routed_to_lhd_date",
     "patient_results_reported_to_LHD",
-    # calculate_age()
-    "d1_is_na", "d2_is_na", "age",
     # clean_lab_results()
     "lab_result_clean",
     # clean_values()
     "removed_text", "replacement_text",
     # config_epitrax()
-    "recno", "hash_value",
+    "src_row_id", "src_record_id",
     # count_conflicts()
     "n",
     # created by parse_lab_results()
     "lab_result_symbol", "lab_result_number",
     # pull_addresses()
-    "street", "city", "zip", "county",
+    "street", "unit", "city", "state", "zip", "county",
     # simulate_data()
     "address_id",
     # undupe()

@@ -34,7 +34,7 @@ Compare the street address pre- and post-parsing
 \item \code{\link[=replace_values]{replace_values()}}
 }
 \item \code{\link[=parse_street_addresses]{parse_street_addresses()}}
-\item compare function...
+\item \code{\link[=compare_parsed_street]{compare_parsed_street()}}
 \item \code{\link[=build_md_url]{build_md_url()}}
 \item \code{\link[=submit_to_md]{submit_to_md()}}
 }

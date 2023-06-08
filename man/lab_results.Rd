@@ -16,16 +16,16 @@ parse_lab_results(df, var)
 \arguments{
 \item{df}{A dataframe.}
 
-\item{var}{A variable name from \code{df} containing lab results.}
+\item{var}{The variable name from \code{df} with lab results to check, clean, or parse.}
 }
 \value{
 A dataframe.
 }
 \description{
 \itemize{
-\item \code{check_lab_results()} finds unexpected values in the results, i.e., anything that isn't a number, sometimes preceded by \code{<} or \code{>}.
-\item \code{clean_lab_results()} removes the most common unexpected values from the results and converts a \verb{Not detected} (or similar) result to \code{0}. The cleaned results appear in a new variable, \code{lab_results_cleaned}.
-\item \code{parse_lab_results()} splits the cleaned lab results into two new variables: \code{lab_results_symbol}, containing either \code{<}, \code{>}, or \code{NA}, and \code{lab_results_number}, containing the numeric result.
+\item \code{check_lab_results()} finds unexpected values in the lab results and returns a dataframe with only those records.
+\item \code{clean_lab_results()} cleans common errors in the results and converts "Not/None detected" to \code{0}. The cleaned results appear in a new variable, \code{lab_results_cleaned}.
+\item \code{parse_lab_results()} creates two new variables: \code{lab_results_symbol}, containing the comparison operator (\code{<} or \code{>}), and \code{lab_results_number}, containing the numeric result.
 }
 }
 \concept{lab result processing functions}

@@ -1,6 +1,6 @@
 #' Configure the raw EpiTrax data file
 #'
-#' Adds the variables `recno`, a unique identifier for each row, and `hash_value`, a unique identifier for the combination of variables in each row. Formats all date columns.
+#' Adds the variables `src_row_id`, a unique identifier for each row, and `src_record_id`, a unique identifier for the combination of variables in each row. Formats all date columns.
 #'
 #' @param df A dataframe.
 #'
@@ -33,23 +33,20 @@ config_epitrax <- function(df) {
 
   var_check(df, var = date_var)
 
-  df$hash_value <- apply(
-    X = df,
-    MARGIN = 1,
-    FUN = digest::digest,
-    algo = "md5")
-
-  message("Data wrangling: `hash_value` column added")
-
   df <- df %>%
-    dplyr::mutate(recno = formatC(
+    dplyr::mutate(src_row_id = formatC(
       x = 1:nrow(.),
       digits = 0,
       width = 6,
-      flag = "0")) %>%
-    dplyr::filter(!is.na(patient_record_number))
+      flag = "0"
+    ))
 
-  message("Data wrangling: `recno` column added")
+  df$src_record_id <- apply(
+    X = df,
+    MARGIN = 1,
+    FUN = digest::digest,
+    algo = "md5"
+  )
 
   df[, date_var] <- lapply(
     X = df[, date_var],
@@ -58,13 +55,19 @@ config_epitrax <- function(df) {
     origin = "1970-01-01"
   )
 
-  message("Data wrangling: date columns formatted")
+  message(
+    "Configuration complete\n",
+    " - `src_row_id` added\n",
+    " - `src_record_id` added\n",
+    " - Date variables formatted\n",
+    " - Columns reordered"
+  )
 
   list(
     data = df %>%
-      dplyr::select(recno, hash_value, tidyselect::everything()),
+      dplyr::select(src_row_id, tidyselect::all_of(epitrax_variables_reordered), src_record_id),
     keys = df %>%
-      dplyr::select(recno, hash_value, patient_record_number) %>%
+      dplyr::select(src_row_id, patient_id, patient_record_number, src_record_id) %>%
       dplyr::mutate(timestamp = Sys.time())
   )
 }

@@ -3,6 +3,7 @@
 directions_cardinal <- readRDS("dev_aux/helpers/directions_cardinal.rds")
 directions_ordinal <- readRDS("dev_aux/helpers/directions_ordinal.rds")
 epitrax_variables <- readRDS("dev_aux/helpers/epitrax_variables.rds")
+epitrax_variables_reordered <- readRDS("dev_aux/helpers/epitrax_variables_reordered.rds")
 postmastr_directions <- readRDS("dev_aux/helpers/postmastr_directions.rds")
 ks_cities <- readRDS("dev_aux/helpers/ks_cities.rds")
 ks_zipcodes <- readRDS("dev_aux/helpers/ks_zipcodes.rds")
@@ -18,6 +19,7 @@ usethis::use_data(
   directions_cardinal,
   directions_ordinal,
   epitrax_variables,
+  epitrax_variables_reordered,
   postmastr_directions,
   ks_cities,
   ks_zipcodes,

@@ -1,7 +1,7 @@
-#' Build a Melissa Data Personator URL request
+#' Build a Melissa Data Personator request URL
 #'
 #' @description
-#' Build a URL to query the Melissa Data Personator Consumer Web Service API. The URL is a request for a response from the Personator service in a JSON format.
+#' Build a URL to query the Melissa Data Personator Consumer Web Service API. The URL is a request for a response from the Personator service in JSON format.
 #'
 #' @inheritSection pull_addresses Address validation workflow
 #' @inheritSection pull_addresses Melissa Data
