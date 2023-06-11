@@ -25,6 +25,7 @@ usethis::use_data(
   ks_zipcodes,
   regex_pobox,
   regex_various,
+  street_suffix,
   directions,
   common_streets,
   common_street_suffixes,

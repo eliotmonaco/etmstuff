@@ -33,6 +33,15 @@ config_epitrax <- function(df) {
 
   var_check(df, var = date_var)
 
+  # Add `record_id_src` (hash ID)
+  df$record_id_src <- apply(
+    X = df,
+    MARGIN = 1,
+    FUN = digest::digest,
+    algo = "md5"
+  )
+
+  # Add `row_id_src` (row number ID)
   df <- df %>%
     dplyr::mutate(row_id_src = formatC(
       x = 1:nrow(.),
@@ -41,13 +50,7 @@ config_epitrax <- function(df) {
       flag = "0"
     ))
 
-  df$record_id_src <- apply(
-    X = df,
-    MARGIN = 1,
-    FUN = digest::digest,
-    algo = "md5"
-  )
-
+  # Format dates
   df[, date_var] <- lapply(
     X = df[, date_var],
     FUN = as.Date,
@@ -63,6 +66,7 @@ config_epitrax <- function(df) {
     " - Columns reordered"
   )
 
+  # Return list containing `data` & `keys`
   list(
     data = df %>%
       dplyr::select(row_id_src, tidyselect::all_of(epitrax_variables_reordered), record_id_src),

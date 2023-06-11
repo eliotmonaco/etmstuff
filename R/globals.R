@@ -28,6 +28,8 @@ utils::globalVariables(
     "lab_result_clean",
     # clean_values()
     "removed_text", "replacement_text",
+    # compare_parsed_street()
+    "temp",
     # config_epitrax()
     "row_id_src", "record_id_src",
     # count_conflicts()

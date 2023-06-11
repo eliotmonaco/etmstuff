@@ -16,27 +16,29 @@
 # @examples
 #'
 compare_parsed_street <- function(df, street1 = "street_unit", street2 = "street_unit_final") {
-
   var_check(df, var = c(street1, street2))
 
-  p1 <- setNames(
+  p1 <- stats::setNames(
     directions_cardinal$replacement,
-    paste0("(?<=^\\d{1,7}\\s)", directions_cardinal$pattern, "(?=\\s)"))
+    paste0("(?<=^\\d{1,7}\\s)", directions_cardinal$pattern, "(?=\\s)")
+  )
 
-  p2 <- setNames(
+  p2 <- stats::setNames(
     street_suffix$replacement,
-    paste0("(?<=\\s)", street_suffix$pattern, "$"))
+    paste0("(?<=\\s)", street_suffix$pattern, "$")
+  )
 
-  df$new <- stringr::str_replace_all(
+  df$temp <- stringr::str_replace_all(
     df[[street1]],
-    stringr::regex(p1, ignore_case = TRUE))
+    stringr::regex(p1, ignore_case = TRUE)
+  )
 
-  df$new <- stringr::str_replace_all(
-    df$new,
-    stringr::regex(p2, ignore_case = TRUE))
+  df$temp <- stringr::str_replace_all(
+    df$temp,
+    stringr::regex(p2, ignore_case = TRUE)
+  )
 
   df %>%
-    dplyr::filter(stringr::str_to_upper(new) != stringr::str_to_upper(.data[[street2]])) %>%
-    dplyr::select(-new)
-
+    dplyr::filter(stringr::str_to_upper(temp) != stringr::str_to_upper(.data[[street2]])) %>%
+    dplyr::select(-temp)
 }
