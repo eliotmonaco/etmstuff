@@ -26,8 +26,6 @@ usethis::use_github()
 
 ## Document ####
 
-library(devtools)
-
 # Adds package name to DESCRIPTION file
 usethis::use_package("tidyselect")
 
@@ -36,21 +34,15 @@ usethis::use_import_from("", "")
 
 devtools::document()
 
-devtools::check()
+
+
+## Load/check/build package ####
 
 devtools::load_all()
 
+devtools::check()
 
-
-## Install & load package ####
-
-# Ctrl + Shift + B to build
-
-remove.packages("etmstuff")
-
-devtools::install()
-
-library(etmstuff)
+# Build: CTRL+SHFT+B
 
 
 
@@ -83,7 +75,7 @@ saveRDS(common_unit_prefixes, "../etmstuff_aux/helpers/common_unit_prefixes.rds"
 
 ## globals.R ####
 
-epitrax_variables <- readRDS("../etmstuff_aux/helpers/epitrax_variables.rds")
+epitrax_variables <- readRDS("dev_aux/helpers/epitrax_variables.rds")
 
 message(paste(paste0('"', epitrax_variables, '"'), collapse = ", "))
 
@@ -96,6 +88,12 @@ usethis::use_build_ignore(c("dev_aux"))
 
 
 ## Extra ####
+
+remove.packages("etmstuff")
+
+devtools::install()
+
+library(etmstuff)
 
 devtools::loaded_packages()
 

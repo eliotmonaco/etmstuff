@@ -13,5 +13,5 @@ config_epitrax(df)
 A list containing two dataframes: \code{data} and \code{keys}.
 }
 \description{
-Adds the variables \code{src_row_id}, a unique identifier for each row, and \code{src_record_id}, a unique identifier for the combination of variables in each row. Formats all date columns.
+Adds the variables \code{row_id_src}, a unique identifier for each row, and \code{record_id_src}, a unique identifier for the combination of variables in each row. Formats all date columns.
 }

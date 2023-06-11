@@ -29,7 +29,7 @@ utils::globalVariables(
     # clean_values()
     "removed_text", "replacement_text",
     # config_epitrax()
-    "src_row_id", "src_record_id",
+    "row_id_src", "record_id_src",
     # count_conflicts()
     "n",
     # created by parse_lab_results()

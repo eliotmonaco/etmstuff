@@ -1,6 +1,6 @@
 #' Configure the raw EpiTrax data file
 #'
-#' Adds the variables `src_row_id`, a unique identifier for each row, and `src_record_id`, a unique identifier for the combination of variables in each row. Formats all date columns.
+#' Adds the variables `row_id_src`, a unique identifier for each row, and `record_id_src`, a unique identifier for the combination of variables in each row. Formats all date columns.
 #'
 #' @param df A dataframe.
 #'
@@ -34,14 +34,14 @@ config_epitrax <- function(df) {
   var_check(df, var = date_var)
 
   df <- df %>%
-    dplyr::mutate(src_row_id = formatC(
+    dplyr::mutate(row_id_src = formatC(
       x = 1:nrow(.),
       digits = 0,
       width = 6,
       flag = "0"
     ))
 
-  df$src_record_id <- apply(
+  df$record_id_src <- apply(
     X = df,
     MARGIN = 1,
     FUN = digest::digest,
@@ -57,17 +57,17 @@ config_epitrax <- function(df) {
 
   message(
     "Configuration complete\n",
-    " - `src_row_id` added\n",
-    " - `src_record_id` added\n",
+    " - `row_id_src` added\n",
+    " - `record_id_src` added\n",
     " - Date variables formatted\n",
     " - Columns reordered"
   )
 
   list(
     data = df %>%
-      dplyr::select(src_row_id, tidyselect::all_of(epitrax_variables_reordered), src_record_id),
+      dplyr::select(row_id_src, tidyselect::all_of(epitrax_variables_reordered), record_id_src),
     keys = df %>%
-      dplyr::select(src_row_id, patient_id, patient_record_number, src_record_id) %>%
+      dplyr::select(row_id_src, patient_id, patient_record_number, record_id_src) %>%
       dplyr::mutate(timestamp = Sys.time())
   )
 }
