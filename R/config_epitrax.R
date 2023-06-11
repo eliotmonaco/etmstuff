@@ -1,10 +1,20 @@
-#' Configure the raw EpiTrax data file
+#' Configure the EpiTrax source file
 #'
-#' Adds the variables `row_id_src`, a unique identifier for each row, and `record_id_src`, a unique identifier for the combination of variables in each row. Formats all date columns.
+#' This function configures the EpiTrax source file in preparation for data processing. It does the following:
+#'
+#' * Adds a unique identifier (`record_id_src`) based on the values in the unmodified source file.
+#' * Adds a unique row identifier (`row_id_src`).
+#' * Formats all date variables as "YYYY-MM-DD".
+#' * Reorders the columns according to `epitrax_variables_reordered`.
 #'
 #' @param df A dataframe.
 #'
-#' @return A list containing two dataframes: `data` and `keys`.
+#' @return
+#' A list containing two dataframes:
+#'
+#' * `data` contains all original variables, `row_id_src`, and `record_id_src`.
+#' * `keys` contains `row_id_src`, `patient_id`, `patient_record_number`, and `record_id_src`.
+#'
 #' @export
 #'
 #' @importFrom magrittr %>%
@@ -33,7 +43,7 @@ config_epitrax <- function(df) {
 
   var_check(df, var = date_var)
 
-  # Add `record_id_src` (hash ID)
+  # Add `record_id_src`, a unique record identifier based on a hash function
   df$record_id_src <- apply(
     X = df,
     MARGIN = 1,
@@ -41,7 +51,7 @@ config_epitrax <- function(df) {
     algo = "md5"
   )
 
-  # Add `row_id_src` (row number ID)
+  # Add `row_id_src`, a unique row identifier (sequential)
   df <- df %>%
     dplyr::mutate(row_id_src = formatC(
       x = 1:nrow(.),
@@ -60,18 +70,26 @@ config_epitrax <- function(df) {
 
   message(
     "Configuration complete\n",
-    " - `row_id_src` added\n",
     " - `record_id_src` added\n",
+    " - `row_id_src` added\n",
     " - Date variables formatted\n",
     " - Columns reordered"
   )
 
-  # Return list containing `data` & `keys`
   list(
+    # `data` contains all variables, reordered
     data = df %>%
-      dplyr::select(row_id_src, tidyselect::all_of(epitrax_variables_reordered), record_id_src),
+      dplyr::select(
+        row_id_src,
+        tidyselect::all_of(epitrax_variables_reordered),
+        record_id_src),
+    # `keys` contains ID variables only
     keys = df %>%
-      dplyr::select(row_id_src, patient_id, patient_record_number, record_id_src) %>%
+      dplyr::select(
+        row_id_src,
+        patient_id,
+        patient_record_number,
+        record_id_src) %>%
       dplyr::mutate(timestamp = Sys.time())
   )
 }

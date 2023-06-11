@@ -2,7 +2,7 @@
 % Please edit documentation in R/config_epitrax.R
 \name{config_epitrax}
 \alias{config_epitrax}
-\title{Configure the raw EpiTrax data file}
+\title{Configure the EpiTrax source file}
 \usage{
 config_epitrax(df)
 }
@@ -10,8 +10,20 @@ config_epitrax(df)
 \item{df}{A dataframe.}
 }
 \value{
-A list containing two dataframes: \code{data} and \code{keys}.
+A list containing two dataframes:
+\itemize{
+\item \code{data} contains all original variables, \code{row_id_src}, and \code{record_id_src}.
+\item \code{keys} contains \code{row_id_src}, \code{patient_id}, \code{patient_record_number}, and \code{record_id_src}.
+}
 }
 \description{
-Adds the variables \code{row_id_src}, a unique identifier for each row, and \code{record_id_src}, a unique identifier for the combination of variables in each row. Formats all date columns.
+This function configures the EpiTrax source file in preparation for data processing. It does the following:
+}
+\details{
+\itemize{
+\item Adds a unique identifier (\code{record_id_src}) based on the values in the unmodified source file.
+\item Adds a unique row identifier (\code{row_id_src}).
+\item Formats all date variables as "YYYY-MM-DD".
+\item Reorders the columns according to \code{epitrax_variables_reordered}.
+}
 }
