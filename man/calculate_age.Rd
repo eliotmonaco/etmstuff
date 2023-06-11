@@ -26,6 +26,7 @@ start <- sample(
   ),
   size = 10
 )
+
 end <- sample(
   seq.Date(
     from = as.Date("1990-01-01"),
@@ -34,6 +35,7 @@ end <- sample(
   ),
   size = 10
 )
+
 calculate_age(d1 = start, d2 = end)
 
 }

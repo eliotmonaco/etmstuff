@@ -19,6 +19,7 @@
 #'   ),
 #'   size = 10
 #' )
+#'
 #' end <- sample(
 #'   seq.Date(
 #'     from = as.Date("1990-01-01"),
@@ -27,12 +28,18 @@
 #'   ),
 #'   size = 10
 #' )
+#'
 #' calculate_age(d1 = start, d2 = end)
 #'
 calculate_age <- function(d1, d2) {
-  # Check if vectors are formateed as dates
+  # Check if vectors are formatted as dates
   if (!lubridate::is.Date(d1) | !lubridate::is.Date(d2)) {
     stop("`d1` and `d2` must be formatted as dates", call. = FALSE)
+  }
+
+  # Check if vectors are the same length
+  if (length(d1) != length(d2)) {
+    stop("`d1` and `d2` must be the same length", call. = FALSE)
   }
 
   # Check for NAs
