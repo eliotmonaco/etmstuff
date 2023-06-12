@@ -4,7 +4,7 @@
 #'
 #' @param df A dataframe of addresses.
 #' @param var A variable name in `df` containing street addresses.
-#' @param id_var A variable name in `df` that serves as a unique row identifier.
+#' @param row_id A variable name in `df` that serves as a unique row identifier.
 #' @param type The type of cleaning to perform.
 #'
 #' @return A dataframe containing only the rows that have been cleaned.
@@ -15,8 +15,8 @@
 #' @family address processing functions
 # @examples
 #'
-clean_values <- function(df, var, id_var, type) {
-  var_check(df, var = c(var, id_var))
+clean_street_address <- function(df, var = "street", type, row_id) {
+  var_check(df, var = c(var, row_id))
 
   if (type == "pobox") {
     ref <- regex_pobox
@@ -31,7 +31,7 @@ clean_values <- function(df, var, id_var, type) {
   }
 
   df2 <- df %>%
-    dplyr::select(tidyselect::all_of(c(id_var, var)))
+    dplyr::select(tidyselect::all_of(c(row_id, var)))
 
   p <- paste(ref$pattern, collapse = "|")
 
@@ -67,7 +67,7 @@ clean_values <- function(df, var, id_var, type) {
     dplyr::left_join(
       df %>%
         dplyr::select(-tidyselect::all_of(var)),
-      by = id_var
+      by = row_id
     ) %>%
     dplyr::relocate(replacement_text, .before = removed_text)
 }

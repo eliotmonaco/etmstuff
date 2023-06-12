@@ -4,7 +4,7 @@
 \alias{validate_values}
 \title{Validate address components}
 \usage{
-validate_values(df, var, type, max_dist = 0.1)
+validate_values(df, var, type = var, max_dist = 0.1)
 }
 \arguments{
 \item{df}{A dataframe of addresses.}
@@ -24,7 +24,7 @@ This function checks an address component in \code{df$var} against elements in a
 \seealso{
 Other address processing functions: 
 \code{\link{build_md_url}()},
-\code{\link{clean_values}()},
+\code{\link{clean_street_address}()},
 \code{\link{compare_parsed_street}()},
 \code{\link{parse_street_addresses}()},
 \code{\link{pull_addresses}()},

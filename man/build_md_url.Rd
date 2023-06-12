@@ -39,7 +39,7 @@ Build a URL to query the Melissa Data Personator Consumer Web Service API. The U
 \item Clean addresses
 \itemize{
 \item \code{\link[=validate_values]{validate_values()}}
-\item \code{\link[=clean_values]{clean_values()}}
+\item \code{\link[=clean_street_address]{clean_street_address()}}
 \item \code{\link[=replace_values]{replace_values()}}
 }
 \item \code{\link[=parse_street_addresses]{parse_street_addresses()}}
@@ -62,7 +62,7 @@ More information is at \url{https://wiki.melissadata.com/index.php?title=Persona
 
 \seealso{
 Other address processing functions: 
-\code{\link{clean_values}()},
+\code{\link{clean_street_address}()},
 \code{\link{compare_parsed_street}()},
 \code{\link{parse_street_addresses}()},
 \code{\link{pull_addresses}()},

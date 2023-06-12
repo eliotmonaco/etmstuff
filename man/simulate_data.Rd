@@ -15,7 +15,7 @@ simulate_data(rows, dirty = FALSE)
 A dataframe.
 }
 \description{
-Create a dataframe of simulated addresses. Street names are from \code{common_streets}, which is based on a list of the most common street names in the US. City and zip code pairs are from \code{ks_cities}, which is the reference list used to check cities in \code{\link[=validate_values]{validate_values()}}. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using \code{sample()}. By setting \code{dirty = TRUE}, the function will alter values in \code{street}, \code{city}, and \code{zip} for the purpose of testing \code{\link[=validate_values]{validate_values()}} and \code{\link[=clean_values]{clean_values()}}.
+Create a dataframe of simulated addresses. Street names are from \code{common_streets}, which is based on a list of the most common street names in the US. City and zip code pairs are from \code{ks_cities}, which is the reference list used to check cities in \code{\link[=validate_values]{validate_values()}}. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using \code{sample()}. By setting \code{dirty = TRUE}, the function will alter values in \code{street}, \code{city}, and \code{zip} for the purpose of testing \code{\link[=validate_values]{validate_values()}} and \code{\link[=clean_street_address]{clean_street_address()}}.
 }
 \examples{
 df <- simulate_data(rows = 1000, dirty = TRUE)

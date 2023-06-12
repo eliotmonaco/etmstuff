@@ -26,7 +26,7 @@ utils::globalVariables(
     "patient_results_reported_to_LHD",
     # clean_lab_results()
     "lab_result_clean",
-    # clean_values()
+    # clean_street_address()
     "removed_text", "replacement_text",
     # compare_parsed_street()
     "temp",

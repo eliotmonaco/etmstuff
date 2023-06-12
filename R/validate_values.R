@@ -15,13 +15,13 @@
 #' @family address processing functions
 # @examples
 #'
-validate_values <- function(df, var, type, max_dist = 0.1) {
+validate_values <- function(df, var, type = var, max_dist = 0.1) {
   var_check(df, var = var)
 
   if (type == "city") {
     ref <- ks_cities$name
   } else if (type == "zip") {
-    ref <- ks_zipcodes$zip
+    ref <- ks_zipcodes
   } else {
     m <- '`type` must be one of c("city", "zip")'
     stop(m, call. = FALSE)
@@ -51,7 +51,7 @@ validate_values <- function(df, var, type, max_dist = 0.1) {
     if (purrr::is_empty(matches)) {
       NA
     } else {
-      paste(unique(matches), collapse = " ")
+      paste(unique(matches), collapse = " | ")
     }
   }
 
