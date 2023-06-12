@@ -58,8 +58,9 @@ check_date_seq <- function(df, dates, row_id = NULL) {
   df <- df[which(!Vectorize(isTRUE)(df$dates_in_seq)), ]
 
   if (nrow(df) == 0) {
-    message("Dates are in the expected sequence in all rows")
-  } else {
-    df
+    return(message("Dates are in the expected sequence in all rows"))
+    stop()
   }
+
+  df
 }

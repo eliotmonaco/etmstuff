@@ -104,10 +104,13 @@ undupe <- function(df, visible_var = NULL, invisible_var = NULL) {
 
   list(
     # Original dataframe
-    df_full = df,
+    df_full = df %>%
+      dplyr::select(-n_row),
     # Distinct rows only
-    df_distinct = df_distinct,
+    df_distinct = df_distinct %>%
+      dplyr::select(-n_row),
     # Dupesets only
-    df_dupesets = df_dupesets
+    df_dupesets = df_dupesets %>%
+      dplyr::select(-n_row)
   )
 }
