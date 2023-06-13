@@ -32,11 +32,6 @@
 #'   )
 #' )
 #'
-#' dfA[1, ] <- c(1, as.Date(Sys.Date()), as.Date(Sys.Date()))
-#' dfA[3, 3] <- dfA[2, 2] <- NA
-#'
-#' dfB <- check_date_seq(dfA, dates = c("d1", "d2"), row_id = "id")
-#'
 check_date_seq <- function(df, dates, row_id = NULL) {
   var_check(df, var = c(row_id, dates))
 

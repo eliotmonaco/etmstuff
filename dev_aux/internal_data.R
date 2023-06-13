@@ -35,6 +35,69 @@ usethis::use_data(
 
 
 
+# Modify `regex_various` ####
 
+library(tidyverse)
+
+
+## Concatenated number/direction & number/word
+
+new <- data.frame(
+  pattern = c(
+    "(?<=^\\d{1,1000})[ENSW]\\b",
+    "(?<=^\\d{1,1000})[:alpha:]{2,}"
+  ),
+  replacement = c("", "")
+)
+
+rownames(new) <- c("num_dir", "num_word")
+
+regex_various <- regex_various %>%
+  bind_rows(new)
+
+saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
+
+
+## Embedded punctuation
+
+new <- data.frame(
+  pattern = "(?<=[:alnum:])[:punct:]+(?=[:alnum:])",
+  replacement = " "
+)
+
+rownames(new) <- "embed_punct"
+
+regex_various <- regex_various %>%
+  bind_rows(new)
+
+saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
+
+
+## Unknown address
+
+new <- data.frame(
+  pattern = "^.*(9999|address|needed|unknown).*$",
+  replacement = ""
+)
+
+rownames(new) <- "unknown"
+
+regex_various <- regex_various %>%
+  bind_rows(new)
+
+saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
+
+
+# regex_various <- regex_various[-12,]
+
+
+
+# Modify `ks_cities` ####
+
+new_cities <- toupper(c("Bavaria", "Blaine", "Carlton", "Petrolia", "Quincy", "Radium", "Gas"))
+
+ks_cities <- sort(unique(c(ks_cities, new_cities)))
+
+saveRDS(ks_cities, "dev_aux/helpers/ks_cities.rds")
 
 

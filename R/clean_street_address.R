@@ -5,7 +5,7 @@
 #' @param df A dataframe of addresses.
 #' @param var A variable name in `df` containing street addresses.
 #' @param row_id A variable name in `df` that serves as a unique row identifier.
-#' @param type The type of cleaning to perform.
+#' @param type The type of cleaning to perform. One of ...
 #'
 #' @return A dataframe containing only the rows that have been cleaned.
 #' @export
@@ -25,13 +25,14 @@ clean_street_address <- function(df, var = "street", type, row_id) {
   } else if (type %in% rownames(regex_various)) {
     ref <- regex_various[which(rownames(regex_various) == type), ]
   } else {
-    types <- c("pobox", rownames(regex_various))
+    types <- c("pobox", "ordinal_dir", rownames(regex_various))
     m <- paste0("`type` must be one of c(", paste0('"', paste(types, collapse = '", "'), '"'), ")")
     stop(m, call. = FALSE)
   }
 
   df2 <- df %>%
-    dplyr::select(tidyselect::all_of(c(row_id, var)))
+    dplyr::select(tidyselect::all_of(c(row_id, var))) %>%
+    dplyr::filter(!is.na(.data[[var]]))
 
   p <- paste(ref$pattern, collapse = "|")
 

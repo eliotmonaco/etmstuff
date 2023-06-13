@@ -19,7 +19,7 @@ validate_values <- function(df, var, type = var, max_dist = 0.1) {
   var_check(df, var = var)
 
   if (type == "city") {
-    ref <- ks_cities$name
+    ref <- ks_cities
   } else if (type == "zip") {
     ref <- ks_zipcodes
   } else {

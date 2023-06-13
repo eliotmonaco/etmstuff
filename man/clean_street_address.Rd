@@ -11,7 +11,7 @@ clean_street_address(df, var = "street", type, row_id)
 
 \item{var}{A variable name in \code{df} containing street addresses.}
 
-\item{type}{The type of cleaning to perform.}
+\item{type}{The type of cleaning to perform. One of ...}
 
 \item{row_id}{A variable name in \code{df} that serves as a unique row identifier.}
 }

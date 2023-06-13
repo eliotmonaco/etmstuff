@@ -41,7 +41,7 @@ pattern_check_df <- function(df, pattern, ignore_case = FALSE) {
   }
 
   # New line after progress indicator is finished
-  message()
+  message("\nAll columns checked")
 
   # Output
   if (length(var) == 0) {
