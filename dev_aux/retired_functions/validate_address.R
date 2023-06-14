@@ -4,8 +4,8 @@
 #'
 #' @param df A dataframe of addresses.
 #' @param var A variable name in `df` containing the address component to validate.
-#' @param type The type of address component to validate. One of `c("city", "zip")`. Defaults to value in `var`.
-#' @param max_dist A value passed to `max.distance` in [agrep()] that determines the "maximum distance allowed for a match" to the elements in the reference list.
+#' @param type The type of address component to validate.
+#' @param max_dist A value passed to `max.distance` in `agrep()` that determines the "maximum distance allowed for a match" to the elements in the reference list.
 #'
 #' @return A dataframe with a column of possible matches to replace the values in `var`.
 #' @export
@@ -18,7 +18,6 @@
 validate_address <- function(df, var, type = var, max_dist = 0.1) {
   var_check(df, var = var)
 
-  # Load `ref` based on `type`
   if (type == "city") {
     ref <- ks_cities
   } else if (type == "zip") {
@@ -28,10 +27,13 @@ validate_address <- function(df, var, type = var, max_dist = 0.1) {
     stop(m, call. = FALSE)
   }
 
-  # Subset values in `var` not found in `ref` (ignoring case)
-  df2 <- df %>%
-    dplyr::filter(is.na(.data[[var]])) %>%
-    dplyr::filter(!toupper(.data[[var]]) %in% toupper(ref))
+  df <- df %>%
+    dplyr::mutate(n_row = dplyr::row_number())
+
+  df2 <- df[!(stringr::str_to_upper(df[[var]]) %in% stringr::str_to_upper(ref)), ]
+
+  # df2 <- df2 %>%
+  #   filter(.data[[var]] != "")
 
   if (nrow(df2) == 0) {
     return(message("No invalid values found"))
@@ -60,5 +62,6 @@ validate_address <- function(df, var, type = var, max_dist = 0.1) {
     ref_list = ref, max_dist = max_dist)
 
   df2 %>%
+    dplyr::select(-n_row) %>%
     dplyr::relocate(replacement_text, .after = tidyselect::all_of(var))
 }

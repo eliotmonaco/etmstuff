@@ -2,10 +2,16 @@
 #'
 #' This function applies a pattern to clean street address strings in `df$var` based on the `type` chosen. The returned dataframe has two new columns, `removed_text` and `replacement_text`. Only cleaned rows are returned. After visually confirming the results and making any needed adjustments to the returned dataframe, use [replace_values()] to substitute the value in `replacement_text` for the original value in `var`.
 #'
+#' ```{r echo=FALSE}
+#' types <- sort(c("pobox", "ordinal_dir", rownames(regex_various)))
+#' types <- paste0('"', paste(types, collapse = '", "'), '"')
+#' types <- paste0("c(", types, ")")
+#' ```
+#'
 #' @param df A dataframe of addresses.
 #' @param var A variable name in `df` containing street addresses.
-#' @param row_id A variable name in `df` that serves as a unique row identifier.
-#' @param type The type of cleaning to perform. One of ...
+#' @param type The type of cleaning to perform. One of ``r types``.
+#' @param row_id A variable name in `df` that serves as a unique row identifier. Defaults to `address_id`.
 #'
 #' @return A dataframe containing only the rows that have been cleaned.
 #' @export
@@ -15,9 +21,10 @@
 #' @family address processing functions
 # @examples
 #'
-clean_street_address <- function(df, var = "street", type, row_id) {
+clean_street_address <- function(df, var = "street", type, row_id = "address_id") {
   var_check(df, var = c(var, row_id))
 
+  # Load `ref` based on `type`
   if (type == "pobox") {
     ref <- regex_pobox
   } else if (type == "ordinal_dir") {
@@ -25,7 +32,7 @@ clean_street_address <- function(df, var = "street", type, row_id) {
   } else if (type %in% rownames(regex_various)) {
     ref <- regex_various[which(rownames(regex_various) == type), ]
   } else {
-    types <- c("pobox", "ordinal_dir", rownames(regex_various))
+    types <- sort(c("pobox", "ordinal_dir", rownames(regex_various)))
     m <- paste0("`type` must be one of c(", paste0('"', paste(types, collapse = '", "'), '"'), ")")
     stop(m, call. = FALSE)
   }
@@ -48,7 +55,11 @@ clean_street_address <- function(df, var = "street", type, row_id) {
 
   p <- stats::setNames(ref$replacement, ref$pattern)
 
-  df2[3] <- tidyr::unite(as.data.frame(extracted), "removed_text", sep = " ")
+  df2[3] <- tidyr::unite(
+    as.data.frame(extracted),
+    col = "removed_text",
+    sep = " ")
+
   df2$removed_text <- stringr::str_squish(df2$removed_text)
 
   z <- "[[:punct:]\\s]*"
@@ -59,7 +70,8 @@ clean_street_address <- function(df, var = "street", type, row_id) {
       stringr::str_replace_all(
         df2[[var]],
         stringr::regex(p, ignore_case = TRUE)
-      ), punct
+      ),
+      punct
     )
   )
 

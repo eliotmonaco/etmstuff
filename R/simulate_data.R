@@ -1,6 +1,6 @@
 #' Simulate addresses to test functions
 #'
-#' Create a dataframe of simulated addresses. Street names are from `common_streets`, which is based on a list of the most common street names in the US. City and zip code pairs are from `ks_cities`, which is the reference list used to check cities in [validate_values()]. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using `sample()`. By setting `dirty = TRUE`, the function will alter values in `street`, `city`, and `zip` for the purpose of testing [validate_values()] and [clean_street_address()].
+#' Create a dataframe of simulated addresses. Street names are from `common_streets`, which is based on a list of the most common street names in the US. Cities and zip codes are from `ks_cities` and `ks_zipcodes`, which are the reference lists used to check those components in [validate_address()]. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using `sample()`. By setting `dirty = TRUE`, the function will alter values in `street`, `city`, and `zip` for the purpose of testing [validate_address()] and [clean_street_address()].
 #'
 #' @param rows An integer to set the number of rows in the output.
 #' @param dirty A logical value: creates dirty data in `street`, `city`, and `zip` when set to `TRUE`.
@@ -65,12 +65,12 @@ simulate_data <- function(rows, dirty = FALSE) {
   df$unit[n] <- units
 
   # Create `city` and `zip` columns
-  n <- sample(nrow(ks_cities), rows, replace = TRUE)
+  # n <- sample(length(ks_cities), rows, replace = TRUE)
   df <- cbind(
     df,
     data.frame(
-      city = stringr::str_to_title(ks_cities[n, "name"]),
-      zip = ks_cities[n, "zip"]
+      city = sample(stringr::str_to_title(ks_cities), rows, replace = TRUE),
+      zip = sample(ks_zipcodes, rows, replace = TRUE)
     )
   )
 

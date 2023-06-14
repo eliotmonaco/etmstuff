@@ -38,7 +38,7 @@ Build a URL to query the Melissa Data Personator Consumer Web Service API. The U
 \item \code{\link[=pull_addresses]{pull_addresses()}}
 \item Clean addresses
 \itemize{
-\item \code{\link[=validate_values]{validate_values()}}
+\item \code{\link[=validate_address]{validate_address()}}
 \item \code{\link[=clean_street_address]{clean_street_address()}}
 \item \code{\link[=replace_values]{replace_values()}}
 }
@@ -68,6 +68,6 @@ Other address processing functions:
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},
 \code{\link{submit_to_md}()},
-\code{\link{validate_values}()}
+\code{\link{validate_address}()}
 }
 \concept{address processing functions}

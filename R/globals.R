@@ -42,7 +42,7 @@ utils::globalVariables(
     "address_id",
     # undupe()
     "dupe_id", "dupe_order",
-    # validate_values()
+    # validate_address()
     "n_row"
   )
 )

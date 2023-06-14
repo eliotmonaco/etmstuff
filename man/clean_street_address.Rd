@@ -4,22 +4,25 @@
 \alias{clean_street_address}
 \title{Clean addresses in a dataframe}
 \usage{
-clean_street_address(df, var = "street", type, row_id)
+clean_street_address(df, var = "street", type, row_id = "address_id")
 }
 \arguments{
 \item{df}{A dataframe of addresses.}
 
 \item{var}{A variable name in \code{df} containing street addresses.}
 
-\item{type}{The type of cleaning to perform. One of ...}
+\item{type}{The type of cleaning to perform. One of \code{c("concat1", "concat2", "embed_punct", "fraction", "nondigit", "num", "num_dir", "num_word", "ordinal_dir", "phone", "pobox", "punct", "symbol", "unit", "unknown")}.}
 
-\item{row_id}{A variable name in \code{df} that serves as a unique row identifier.}
+\item{row_id}{A variable name in \code{df} that serves as a unique row identifier. Defaults to \code{address_id}.}
 }
 \value{
 A dataframe containing only the rows that have been cleaned.
 }
 \description{
 This function applies a pattern to clean street address strings in \code{df$var} based on the \code{type} chosen. The returned dataframe has two new columns, \code{removed_text} and \code{replacement_text}. Only cleaned rows are returned. After visually confirming the results and making any needed adjustments to the returned dataframe, use \code{\link[=replace_values]{replace_values()}} to substitute the value in \code{replacement_text} for the original value in \code{var}.
+}
+\details{
+
 }
 \seealso{
 Other address processing functions: 
@@ -29,6 +32,6 @@ Other address processing functions:
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},
 \code{\link{submit_to_md}()},
-\code{\link{validate_values}()}
+\code{\link{validate_address}()}
 }
 \concept{address processing functions}

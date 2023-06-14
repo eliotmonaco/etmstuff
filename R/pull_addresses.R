@@ -7,7 +7,7 @@
 #'
 #' 1. [pull_addresses()]
 #' 2. Clean addresses
-#'     - [validate_values()]
+#'     - [validate_address()]
 #'     - [clean_street_address()]
 #'     - [replace_values()]
 #' 3. [parse_street_addresses()]
