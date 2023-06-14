@@ -39,7 +39,8 @@ compare_parsed_street <- function(df, pre = "street", post = "street_parsed") {
   )
 
   df %>%
-    dplyr::filter(toupper(temp) != toupper(.data[[post]])) %>%
+    dplyr::filter(toupper(temp) != toupper(.data[[post]]) |
+                    (!is.na(temp) & is.na(.data[[post]]))) %>%
     dplyr::select(-temp) %>%
     dplyr::relocate(tidyselect::all_of(post), .after = tidyselect::all_of(pre))
 }

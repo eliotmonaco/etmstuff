@@ -8,7 +8,8 @@
 #'
 #' @param df A dataframe of cleaned addresses.
 #' @param row_id A unique row identifier variable name.
-#' @param street The name of the variable containing the full street address.
+#' @param street The name of the variable containing the street address. Unit information should be included if the `unit` argument is left `NULL`.
+#' @param unit The name of the variable containing the unit component of the street address (if the unit is not already included in `street`).
 #' @param city The name of the variable containing the city.
 #' @param state The name of the variable containing the state.
 #' @param zip The name of the variable containing the zip code.
@@ -20,12 +21,25 @@
 # @examples
 #'
 build_md_url <- function(df,
-                         row_id,
-                         street = "street_unit_final",
+                         row_id = "md_id",
+                         street = "street",
+                         unit = NULL,
                          city = "city",
                          state = "state",
                          zip = "zip") {
-  var_check(df, var = c(row_id, street, city, state, zip))
+  var_check(df, var = c(row_id, street, unit, city, state, zip))
+
+  # If `unit` is provided, unite `street` and `unit`
+  if (!is.null(unit)) {
+    df <- tidyr::unite(
+      df,
+      col = "street",
+      tidyselect::all_of(c(street, unit)),
+      sep = " ",
+      remove = FALSE,
+      na.rm = TRUE
+    )
+  }
 
   f <- function(r) {
     paste0(

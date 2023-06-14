@@ -71,5 +71,7 @@ parse_street_addresses <- function(df, street = "street") {
     keep_parsed = "yes"
   )
 
+  df$street_parsed[which(df$street_parsed == "")] <- NA
+
   df
 }

@@ -6,8 +6,9 @@
 \usage{
 build_md_url(
   df,
-  row_id,
-  street = "street_unit_final",
+  row_id = "md_id",
+  street = "street",
+  unit = NULL,
   city = "city",
   state = "state",
   zip = "zip"
@@ -18,7 +19,9 @@ build_md_url(
 
 \item{row_id}{A unique row identifier variable name.}
 
-\item{street}{The name of the variable containing the full street address.}
+\item{street}{The name of the variable containing the street address. Unit information should be included if the \code{unit} argument is left \code{NULL}.}
+
+\item{unit}{The name of the variable containing the unit component of the street address (if the unit is not already included in \code{street}).}
 
 \item{city}{The name of the variable containing the city.}
 
