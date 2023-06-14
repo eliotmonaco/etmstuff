@@ -4,21 +4,17 @@
 \alias{compare_parsed_street}
 \title{Compare the street address pre- and post-parsing}
 \usage{
-compare_parsed_street(
-  df,
-  street1 = "street_unit",
-  street2 = "street_unit_final"
-)
+compare_parsed_street(df, pre = "street", post = "street_parsed")
 }
 \arguments{
 \item{df}{A dataframe of addresses.}
 
-\item{street1}{The pre-parsing street variable.}
+\item{pre}{The pre-parsing street variable. Defaults to \code{street}.}
 
-\item{street2}{The post-parsing street variable.}
+\item{post}{The post-parsing street variable. Defaults to \code{street_parsed}.}
 }
 \value{
-A dataframe containing rows in which \code{street1 != street2}.
+A dataframe containing rows in which \code{pre != post}.
 }
 \description{
 Compare the street address pre- and post-parsing

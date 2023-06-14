@@ -24,6 +24,8 @@
 clean_street_address <- function(df, var = "street", type, row_id = "address_id") {
   var_check(df, var = c(var, row_id))
 
+  col_order_src <- colnames(df)
+
   # Load `ref` based on `type`
   if (type == "pobox") {
     ref <- regex_pobox
@@ -58,7 +60,8 @@ clean_street_address <- function(df, var = "street", type, row_id = "address_id"
   df2[3] <- tidyr::unite(
     as.data.frame(extracted),
     col = "removed_text",
-    sep = " ")
+    sep = " "
+  )
 
   df2$removed_text <- stringr::str_squish(df2$removed_text)
 
@@ -75,6 +78,13 @@ clean_street_address <- function(df, var = "street", type, row_id = "address_id"
     )
   )
 
+  df2$replacement_text[which(df2$replacement_text == "")] <- NA
+
+  # Column order of returned dataframe
+  n <- which(col_order_src == var)
+  cols1 <- col_order_src[1:n]
+  cols2 <- col_order_src[(n + 1):length(col_order_src)]
+
   df2 %>%
     dplyr::filter(removed_text != "") %>%
     dplyr::left_join(
@@ -82,5 +92,10 @@ clean_street_address <- function(df, var = "street", type, row_id = "address_id"
         dplyr::select(-tidyselect::all_of(var)),
       by = row_id
     ) %>%
-    dplyr::relocate(replacement_text, .before = removed_text)
+    # dplyr::relocate(replacement_text, .before = removed_text) %>%
+    dplyr::select(
+      tidyselect::all_of(cols1),
+      replacement_text, removed_text,
+      tidyselect::all_of(cols2)
+    )
 }

@@ -37,7 +37,7 @@ utils::globalVariables(
     # created by parse_lab_results()
     "lab_result_symbol", "lab_result_number",
     # pull_addresses()
-    "street", "unit", "city", "state", "zip", "county",
+    "street_src", "street", "unit", "city", "state", "zip", "county",
     # simulate_data()
     "address_id",
     # undupe()

@@ -4,7 +4,7 @@
 #'
 #' @param df A dataframe of addresses.
 #' @param var A variable name in `df` whose values will be replaced.
-#' @param row_id A variable name in `df` that serves as a unique row identifier.
+#' @param row_id A variable name in `df` that serves as a unique row identifier. Defaults to `address_id`.
 #' @param source A dataframe with the variable `replacement_text`.
 #'
 #' @return A dataframe.
@@ -15,7 +15,7 @@
 #' @family address processing functions
 # @examples
 #'
-replace_values <- function(df, var, row_id, source) {
+replace_values <- function(df, var, row_id = "address_id", source) {
   var_check(df, var = c(var, row_id))
   var_check(source, var = "replacement_text")
 

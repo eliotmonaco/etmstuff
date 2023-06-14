@@ -24,25 +24,35 @@
 parse_street_addresses <- function(df, street = "street") {
   var_check(df, var = street)
 
-  # Combine `street` and `unit` into one field
-  df$street_unit <- stringr::str_trim(
-    paste(
-      df[[street]],
-      tidyr::replace_na(df$unit, "")
-    )
+  # Add `pm.id` (row ID) and `pm.uid` (unique address ID)
+  df_pm_id <- postmastr::pm_identify(
+    df,
+    var = "street",
+    locale = "us"
   )
 
-  # Add `pm.id` (row ID) and `pm.uid` (unique address ID)
-  df_pm_id <- postmastr::pm_identify(df, var = "street_unit", locale = "us")
-
   # Deduplicate addresses
-  df <- postmastr::pm_prep(df_pm_id, var = "street_unit", type = "street")
+  df <- df_pm_id %>%
+    dplyr::select(pm.uid, pm.address = street) %>%
+    dplyr::distinct(pm.uid, .keep_all = TRUE)
 
   # Parse house numbers
   df <- postmastr::pm_house_parse(df)
 
+  # Extract fractional house numbers
+  p <- "^\\d/\\d"
+  df$frac <- stringr::str_extract(df$pm.address, p)
+  df <- tidyr::unite(
+    df,
+    col = "pm.house",
+    sep = " ",
+    tidyselect::all_of(c("pm.house", "frac")),
+    na.rm = TRUE
+  )
+  df$pm.address <- stringr::str_squish(stringr::str_remove(df$pm.address, p))
+
   # Parse street directions
-  df <- postmastr::pm_streetDir_parse(df, dictionary = postmastr_directions)
+  df <- postmastr::pm_streetDir_parse(df, dictionary = pm_direction_dictionary)
 
   # Parse street suffixes
   df <- postmastr::pm_streetSuf_parse(df)
@@ -57,7 +67,7 @@ parse_street_addresses <- function(df, street = "street") {
   df <- postmastr::pm_rebuild(
     df,
     output = "short",
-    new_address = "street_unit_pm",
+    new_address = "street_parsed",
     keep_parsed = "yes"
   )
 

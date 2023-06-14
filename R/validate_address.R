@@ -28,15 +28,10 @@ validate_address <- function(df, var, type = var, max_dist = 0.1) {
     stop(m, call. = FALSE)
   }
 
-  # df <- df %>%
-  #   dplyr::mutate(n_row = dplyr::row_number())
-
+  # Filter values in `var` not found in `ref` (ignoring case)
   df2 <- df %>%
     dplyr::filter(!is.na(.data[[var]])) %>%
     dplyr::filter(!toupper(.data[[var]]) %in% toupper(ref))
-
-  # Subset values in `var` not found in `ref` (ignoring case)
-  # df2 <- df[!(stringr::str_to_upper(df[[var]]) %in% stringr::str_to_upper(ref)), ]
 
   if (nrow(df2) == 0) {
     return(message("No invalid values found"))
@@ -62,9 +57,9 @@ validate_address <- function(df, var, type = var, max_dist = 0.1) {
     X = 1:nrow(df2),
     FUN = f,
     df = df2, source = var,
-    ref_list = ref, max_dist = max_dist)
+    ref_list = ref, max_dist = max_dist
+  )
 
   df2 %>%
-    # dplyr::select(-n_row) %>%
     dplyr::relocate(replacement_text, .after = tidyselect::all_of(var))
 }

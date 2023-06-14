@@ -4,14 +4,14 @@
 \alias{replace_values}
 \title{Replace dirty addresses with cleaned addresses}
 \usage{
-replace_values(df, var, row_id, source)
+replace_values(df, var, row_id = "address_id", source)
 }
 \arguments{
 \item{df}{A dataframe of addresses.}
 
 \item{var}{A variable name in \code{df} whose values will be replaced.}
 
-\item{row_id}{A variable name in \code{df} that serves as a unique row identifier.}
+\item{row_id}{A variable name in \code{df} that serves as a unique row identifier. Defaults to \code{address_id}.}
 
 \item{source}{A dataframe with the variable \code{replacement_text}.}
 }

@@ -4,7 +4,7 @@ directions_cardinal <- readRDS("dev_aux/helpers/directions_cardinal.rds")
 directions_ordinal <- readRDS("dev_aux/helpers/directions_ordinal.rds")
 epitrax_variables <- readRDS("dev_aux/helpers/epitrax_variables.rds")
 epitrax_variables_reordered <- readRDS("dev_aux/helpers/epitrax_variables_reordered.rds")
-postmastr_directions <- readRDS("dev_aux/helpers/postmastr_directions.rds")
+pm_direction_dictionary <- readRDS("dev_aux/helpers/pm_direction_dictionary.rds")
 ks_cities <- readRDS("dev_aux/helpers/ks_cities.rds")
 ks_zipcodes <- readRDS("dev_aux/helpers/ks_zipcodes.rds")
 regex_pobox <- readRDS("dev_aux/helpers/regex_pobox.rds")
@@ -20,7 +20,7 @@ usethis::use_data(
   directions_ordinal,
   epitrax_variables,
   epitrax_variables_reordered,
-  postmastr_directions,
+  pm_direction_dictionary,
   ks_cities,
   ks_zipcodes,
   regex_pobox,
@@ -99,5 +99,29 @@ new_cities <- toupper(c("Bavaria", "Blaine", "Carlton", "Petrolia", "Quincy", "R
 ks_cities <- sort(unique(c(ks_cities, new_cities)))
 
 saveRDS(ks_cities, "dev_aux/helpers/ks_cities.rds")
+
+
+
+# Modify `pm_direction_dictionary` ####
+
+pm_direction_dictionary <- postmastr::dic_us_dir
+
+pm_dd_add <- data.frame(
+  dir.output = c("NE", "NW", "SE", "SW"),
+  dir.input = c("Ne", "Nw", "Se", "Sw")
+)
+
+pm_direction_dictionary <- pm_direction_dictionary %>%
+  bind_rows(pm_dd_add)
+
+saveRDS(pm_direction_dictionary, "dev_aux/helpers/pm_direction_dictionary.rds")
+
+
+
+
+
+
+
+
 
 

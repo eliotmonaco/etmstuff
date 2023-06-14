@@ -4,10 +4,10 @@
 #' @inheritSection pull_addresses Melissa Data
 #'
 #' @param df A dataframe of addresses.
-#' @param street1 The pre-parsing street variable.
-#' @param street2 The post-parsing street variable.
+#' @param pre The pre-parsing street variable. Defaults to `street`.
+#' @param post The post-parsing street variable. Defaults to `street_parsed`.
 #'
-#' @return A dataframe containing rows in which `street1 != street2`.
+#' @return A dataframe containing rows in which `pre != post`.
 #' @export
 #'
 #' @importFrom magrittr %>%
@@ -15,8 +15,8 @@
 #' @family address processing functions
 # @examples
 #'
-compare_parsed_street <- function(df, street1 = "street_unit", street2 = "street_unit_final") {
-  var_check(df, var = c(street1, street2))
+compare_parsed_street <- function(df, pre = "street", post = "street_parsed") {
+  var_check(df, var = c(pre, post))
 
   p1 <- stats::setNames(
     directions_cardinal$replacement,
@@ -29,7 +29,7 @@ compare_parsed_street <- function(df, street1 = "street_unit", street2 = "street
   )
 
   df$temp <- stringr::str_replace_all(
-    df[[street1]],
+    df[[pre]],
     stringr::regex(p1, ignore_case = TRUE)
   )
 
@@ -39,6 +39,7 @@ compare_parsed_street <- function(df, street1 = "street_unit", street2 = "street
   )
 
   df %>%
-    dplyr::filter(stringr::str_to_upper(temp) != stringr::str_to_upper(.data[[street2]])) %>%
-    dplyr::select(-temp)
+    dplyr::filter(toupper(temp) != toupper(.data[[post]])) %>%
+    dplyr::select(-temp) %>%
+    dplyr::relocate(tidyselect::all_of(post), .after = tidyselect::all_of(pre))
 }
