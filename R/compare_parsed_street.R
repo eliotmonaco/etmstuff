@@ -4,7 +4,7 @@
 #' @inheritSection pull_addresses Melissa Data
 #'
 #' @param df A dataframe of addresses.
-#' @param pre The pre-parsing street variable. Defaults to `street`.
+#' @param pre The pre-parsing street variable. Defaults to `street_cleaned`.
 #' @param post The post-parsing street variable. Defaults to `street_parsed`.
 #'
 #' @return A dataframe containing rows in which `pre != post`.
@@ -15,7 +15,7 @@
 #' @family address processing functions
 # @examples
 #'
-compare_parsed_street <- function(df, pre = "street", post = "street_parsed") {
+compare_parsed_street <- function(df, pre = "street_cleaned", post = "street_parsed") {
   var_check(df, var = c(pre, post))
 
   p1 <- stats::setNames(

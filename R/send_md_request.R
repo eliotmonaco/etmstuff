@@ -15,7 +15,7 @@
 #' @family address processing functions
 # @examples
 #'
-submit_to_md <- function(df, url = "md_url") {
+send_md_request <- function(df, url = "md_url") {
   var_check(df, var = url)
 
   # Submit URLs to the Melissa Data Personator API

@@ -28,7 +28,7 @@ Other address processing functions:
 \code{\link{compare_parsed_street}()},
 \code{\link{parse_street_addresses}()},
 \code{\link{pull_addresses}()},
-\code{\link{submit_to_md}()},
+\code{\link{send_md_request}()},
 \code{\link{validate_address}()}
 }
 \concept{address processing functions}

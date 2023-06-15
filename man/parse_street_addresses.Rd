@@ -35,7 +35,7 @@ Parse street addresses using functions from the \code{postmastr} package. \code{
 \item \code{\link[=parse_street_addresses]{parse_street_addresses()}}
 \item \code{\link[=compare_parsed_street]{compare_parsed_street()}}
 \item \code{\link[=build_md_url]{build_md_url()}}
-\item \code{\link[=submit_to_md]{submit_to_md()}}
+\item \code{\link[=send_md_request]{send_md_request()}}
 }
 }
 
@@ -57,7 +57,7 @@ Other address processing functions:
 \code{\link{compare_parsed_street}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},
-\code{\link{submit_to_md}()},
+\code{\link{send_md_request}()},
 \code{\link{validate_address}()}
 }
 \concept{address processing functions}

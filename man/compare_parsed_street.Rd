@@ -4,12 +4,12 @@
 \alias{compare_parsed_street}
 \title{Compare the street address pre- and post-parsing}
 \usage{
-compare_parsed_street(df, pre = "street", post = "street_parsed")
+compare_parsed_street(df, pre = "street_cleaned", post = "street_parsed")
 }
 \arguments{
 \item{df}{A dataframe of addresses.}
 
-\item{pre}{The pre-parsing street variable. Defaults to \code{street}.}
+\item{pre}{The pre-parsing street variable. Defaults to \code{street_cleaned}.}
 
 \item{post}{The post-parsing street variable. Defaults to \code{street_parsed}.}
 }
@@ -32,7 +32,7 @@ Compare the street address pre- and post-parsing
 \item \code{\link[=parse_street_addresses]{parse_street_addresses()}}
 \item \code{\link[=compare_parsed_street]{compare_parsed_street()}}
 \item \code{\link[=build_md_url]{build_md_url()}}
-\item \code{\link[=submit_to_md]{submit_to_md()}}
+\item \code{\link[=send_md_request]{send_md_request()}}
 }
 }
 
@@ -54,7 +54,7 @@ Other address processing functions:
 \code{\link{parse_street_addresses}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},
-\code{\link{submit_to_md}()},
+\code{\link{send_md_request}()},
 \code{\link{validate_address}()}
 }
 \concept{address processing functions}
