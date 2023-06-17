@@ -42,7 +42,7 @@ devtools::load_all()
 
 devtools::check()
 
-# Build: CTRL+SHFT+B
+# Build: CTRL+SHIFT+B
 
 
 

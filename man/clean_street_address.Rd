@@ -21,9 +21,6 @@ A dataframe containing only the rows that have been cleaned.
 \description{
 This function applies a pattern to clean street address strings in \code{df$var} based on the \code{type} chosen. The returned dataframe has two new columns, \code{removed_text} and \code{replacement_text}. Only cleaned rows are returned. After visually confirming the results and making any needed adjustments to the returned dataframe, use \code{\link[=replace_values]{replace_values()}} to substitute the value in \code{replacement_text} for the original value in \code{var}.
 }
-\details{
-
-}
 \seealso{
 Other address processing functions: 
 \code{\link{build_md_url}()},

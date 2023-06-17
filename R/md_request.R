@@ -8,6 +8,7 @@
 #'
 #' @param df A dataframe with the variable `md_url`.
 #' @param url The name of the variable containing the URL requests for Melissa Data Personator.
+#' @param url_open_mode See help for [url()] and Details section of the help for [download.file()] for an explanation of why `"wb"` may be necessary when running on Windows.
 #'
 #' @return A dataframe with responses from Melissa Data in additional columns.
 #' @export
@@ -15,12 +16,18 @@
 #' @family address processing functions
 # @examples
 #'
-send_md_request <- function(df, url = "md_url") {
+send_md_request <- function(df, url = "md_url", url_open_mode = "") {
   var_check(df, var = url)
 
   # Submit URLs to the Melissa Data Personator API
   f <- function(r) {
-    json_data <- jsonlite::fromJSON(url(r[url]), flatten = TRUE)
+    json_data <- jsonlite::fromJSON(
+      url(
+        r[url],
+        open = url_open_mode
+      ),
+      flatten = TRUE
+    )
     df_json <- as.data.frame(json_data)
     colnames(df_json) <- stringr::str_remove(colnames(df_json), "Records\\.")
     df_json

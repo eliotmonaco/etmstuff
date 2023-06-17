@@ -1,3 +1,27 @@
+library(tidyverse)
+
+df_md <- df_addr_processed %>%
+  filter(sufficient_address) %>%
+  select(
+    md_id = address_id,
+    street = street_final,
+    unit:county
+  )
+
+df_md$md_url <- build_md_url(df_md, unit = "unit")
+
+
+
+x <- md_request(df_md$md_url[1])
+
+
+
+
+
+
+
+
+
 # Import EpiTrax source file
 epitrax_raw <- readr::read_csv(
   unz(
