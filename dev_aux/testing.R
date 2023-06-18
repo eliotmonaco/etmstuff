@@ -1,4 +1,45 @@
-# Test md_request functions ####
+# classify_test_reason ####
+
+debugonce(classify_test_reason)
+df <- classify_test_reason(
+  bl_data_2023q1_distinct,
+  bl_ref_val = 3.5,
+  max_interval = 92
+)
+
+
+
+# stoppage ####
+
+
+
+# Removed from for loop, line 68. df_lookup was the dataframe filtered to create all_tests (where df1 %>% bind_rows(df2) is now)
+
+# From df_lookup (df1 + df2)
+df_lookup <- rbind(
+  df1 %>%
+    dplyr::select(
+      row_id_src,
+      patient_id,
+      tidyselect::starts_with("lab"),
+      test_reason_ks
+    ),
+  df2 %>%
+    dplyr::select(
+      row_id_src,
+      patient_id,
+      tidyselect::starts_with("lab"),
+      test_reason_ks
+    )
+)
+
+
+
+
+
+
+
+# md_request functions ####
 
 library(tidyverse)
 
@@ -30,7 +71,7 @@ dfB <- send_md_request(df_test)
 
 
 
-# Test calculate_age() ####
+# calculate_age ####
 
 # Import EpiTrax source file
 epitrax_raw <- readr::read_csv(
@@ -67,7 +108,7 @@ epitrax_data$age <- calculate_age(
 
 
 
-# Test lab_results functions ####
+# lab_results functions ####
 
 df <- check_lab_results(epitrax_data, var = "lab_result_value")
 
