@@ -1,3 +1,5 @@
+# Test md_request functions ####
+
 library(tidyverse)
 
 df_md <- df_addr_processed %>%
@@ -10,17 +12,25 @@ df_md <- df_addr_processed %>%
 
 df_md$md_url <- build_md_url(df_md, unit = "unit")
 
-
+df_md$md_url <- str_replace(df_md$md_url, "https", "http")
 
 x <- md_request(df_md$md_url[1])
 
+df_test <- df_md[1:10,]
+df_test$md_url[1] <- "garbage"
+df_test$md_url[4] <- "garbage"
+df_test$md_url[7] <- NA
+
+dfA <- md_batch_request(df_test)
+
+dfB <- send_md_request(df_test)
+# Causes:
+# Error in url(r[url], open = url_open_mode) :
+# URL scheme unsupported by this method
 
 
 
-
-
-
-
+# Test calculate_age() ####
 
 # Import EpiTrax source file
 epitrax_raw <- readr::read_csv(
@@ -57,6 +67,7 @@ epitrax_data$age <- calculate_age(
 
 
 
+# Test lab_results functions ####
 
 df <- check_lab_results(epitrax_data, var = "lab_result_value")
 
@@ -73,14 +84,7 @@ df <- pull_addresses(epitrax_data, row_id = "src_row_id")
 
 
 
-
-
-
-
-
-
-
-
+# Not sure ####
 
 library(tidyverse)
 

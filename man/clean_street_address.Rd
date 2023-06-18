@@ -25,6 +25,7 @@ This function applies a pattern to clean street address strings in \code{df$var}
 Other address processing functions: 
 \code{\link{build_md_url}()},
 \code{\link{compare_parsed_street}()},
+\code{\link{md_request}()},
 \code{\link{parse_street_addresses}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},

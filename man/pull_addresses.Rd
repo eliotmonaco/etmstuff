@@ -30,7 +30,7 @@ Subset the complete address at lab collection from EpiTrax data. Addresses with 
 \item \code{\link[=parse_street_addresses]{parse_street_addresses()}}
 \item \code{\link[=compare_parsed_street]{compare_parsed_street()}}
 \item \code{\link[=build_md_url]{build_md_url()}}
-\item \code{\link[=send_md_request]{send_md_request()}}
+\item \code{\link[=md_batch_request]{md_batch_request()}}
 }
 }
 
@@ -50,6 +50,7 @@ Other address processing functions:
 \code{\link{build_md_url}()},
 \code{\link{clean_street_address}()},
 \code{\link{compare_parsed_street}()},
+\code{\link{md_request}()},
 \code{\link{parse_street_addresses}()},
 \code{\link{replace_values}()},
 \code{\link{send_md_request}()},

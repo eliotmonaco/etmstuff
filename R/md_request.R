@@ -1,36 +1,38 @@
-#' Submit requests to Melissa Data Personator
+#' Send requests to the Melissa Data Personator API
 #'
 #' @description
-#' This function submits the URL requests created by [build_md_url()] to the Melissa Data Personator Consumer Web Service API. The response is added to `df` as additional columns.
+#' These functions send the URL requests created by [build_md_url()] to the Melissa Data Personator Consumer Web Service API. `md_request()` sends a single request. `md_batch_request()` sends multiple requests and adds the responses from Melissa Data to `df` as additional columns.
 #'
 #' @inheritSection pull_addresses Address validation workflow
 #' @inheritSection pull_addresses Melissa Data
 #'
-#' @param df A dataframe with the variable `md_url`.
-#' @param url The name of the variable containing the URL requests for Melissa Data Personator.
-#' @param url_open_mode See help for [url()] and Details section of the help for [download.file()] for an explanation of why `"wb"` may be necessary when running on Windows.
+#' @param df A dataframe.
+#' @param var_url The name of the variable in `df` containing the URL requests for Melissa Data Personator. Defaults to `md_url`.
+#' @param url A single URL request for Melissa Data Personator.
 #'
-#' @return A dataframe with responses from Melissa Data in additional columns.
-#' @export
+#' @return A dataframe with a single or multiple responses from Melissa Data Personator.
 #'
-#' @family address processing functions
 # @examples
 #'
-send_md_request <- function(df, url = "md_url", url_open_mode = "") {
-  var_check(df, var = url)
+#' @name md_request
+NULL
+
+#' @export
+#' @rdname md_request
+#' @family address processing functions
+md_batch_request <- function(df, var_url = "md_url") {
+  var_check(df, var = var_url)
 
   # Submit URLs to the Melissa Data Personator API
   f <- function(r) {
-    json_data <- jsonlite::fromJSON(
-      url(
-        r[url],
-        open = url_open_mode
-      ),
-      flatten = TRUE
+    tryCatch(
+      {
+        md_request(r[var_url])
+      },
+      error = function(e) {
+        NA
+      }
     )
-    df_json <- as.data.frame(json_data)
-    colnames(df_json) <- stringr::str_remove(colnames(df_json), "Records\\.")
-    df_json
   }
 
   df2 <- apply(df, 1, f, simplify = TRUE)
@@ -40,4 +42,19 @@ send_md_request <- function(df, url = "md_url", url_open_mode = "") {
 
   # Add results columns to `df`
   cbind(df, df2)
+}
+
+#' @export
+#' @rdname md_request
+#' @family address processing functions
+md_request <- function(url) {
+  x <- jsonlite::fromJSON(
+    url(url),
+    flatten = TRUE
+  )
+
+  cbind(
+    data.frame(x$Records),
+    as.data.frame(x[2:5])
+  )
 }
