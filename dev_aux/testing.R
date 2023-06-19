@@ -7,6 +7,23 @@ df <- classify_test_reason(
   max_interval = 92
 )
 
+# 2335363
+
+
+
+
+# Check
+
+df_check <- df %>%
+  filter(test_reason == "CHECK")
+
+df_check2 <- bl_data_2023q1_distinct %>%
+  filter(patient_id %in% df_check$patient_id)
+
+
+
+
+
 
 
 # stoppage ####
@@ -35,7 +52,17 @@ df_lookup <- rbind(
 
 
 
+# format lab_collection_date with time ####
 
+as.Date(epitrax_raw$lab_collection_date[100000],
+        format = "%Y-%m-%d %H:%M:%S",
+        origin = "1970-01-01")
+
+as.POSIXct(epitrax_raw$lab_collection_date[100000],
+           origin = "1970-01-01")
+
+df <- epitrax_raw %>%
+  filter(patient_id == "2335363")
 
 
 

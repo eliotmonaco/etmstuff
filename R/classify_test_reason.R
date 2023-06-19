@@ -1,18 +1,27 @@
-#' Title
+#' Impute the reasons for a series of blood lead tests
 #'
-#' @param df1 The dataframe targeted for classification.
-#' @param df2 A dataframe classified previously.
-#' @param bl_ref_val
-#' @param max_interval
+#' @param df The dataframe targeted for classification.
+#' @param df2 A dataframe classified previously (optional).
+#' @param bl_ref_val The blood lead reference value in mcg/dL (numeric). A blood lead test result >= `bl_rev_val` is elevated.
+#' @param max_interval The maximum number of days between tests belonging to the same test sequence (an integer).
 #'
 #' @return
+#' A dataframe is returned with a new column, `test_reason`. Possible values are:
+#'
+#' * `cap_scrn`:
+#' * `ven_cfm_i`:
+#' * `ven_cfm_e`:
+#' * `ven_cfm_n`:
+#' * `ven_flw`:
+#'
 #' @export
 #'
-#' @examples
-classify_test_reason <- function(df1, df2 = NULL, bl_ref_val, max_interval) {
-  vars <- c("row_id_src", "patient_id", "lab_result_number", "lab_result_symbol", "test_reason_ks")
+# @examples
+#'
+classify_test_reason <- function(df, df2 = NULL, bl_ref_val, max_interval) {
+  vars <- c("row_id_src", "patient_id", "lab_result_number", "lab_result_symbol", "test_reason")
 
-  var_check(df1, var = vars[1:4])
+  var_check(df, var = vars[1:4])
 
   if (!is.null(df2)) {
     var_check(df2, var = vars)
@@ -20,9 +29,9 @@ classify_test_reason <- function(df1, df2 = NULL, bl_ref_val, max_interval) {
 
   blrv <- paste0("bl_reference_value_", Sys.Date())
 
-  # Add test_reason_ks (empty) & lab_result_elev (T/F)
-  df1 <- df1 %>%
-    dplyr::arrange(lab_collection_date, patient_id) %>%
+  # Add test_reason (empty) & lab_result_elev (T/F)
+  df <- df %>%
+    dplyr::arrange(lab_collection_date, patient_id, lab_specimen_source) %>%
     dplyr::mutate(
       lab_result_elev = dplyr::case_when(
         is.na(lab_result_symbol) & lab_result_number < bl_ref_val ~ FALSE,
@@ -33,12 +42,12 @@ classify_test_reason <- function(df1, df2 = NULL, bl_ref_val, max_interval) {
         lab_result_symbol == ">" & lab_result_number >= bl_ref_val ~ TRUE
       ),
       {{ blrv }} := bl_ref_val,
-      test_reason_ks = NA
+      test_reason = NA
     )
 
   if (!is.null(df2)) {
     df2 <- df2 %>%
-      dplyr::arrange(lab_collection_date, patient_id) %>%
+      dplyr::arrange(lab_collection_date, patient_id, lab_specimen_source) %>%
       dplyr::mutate(
         lab_result_elev = case_when(
           is.na(lab_result_symbol) & lab_result_number < bl_ref_val ~ FALSE,
@@ -52,54 +61,66 @@ classify_test_reason <- function(df1, df2 = NULL, bl_ref_val, max_interval) {
       )
   }
 
-  pb <- txtProgressBar(1, nrow(df1), width = 50, style = 3)
+  # Create `df` row with NA values for loop
+  df_na <- df[1,]
+  df_na[1,] <- NA
 
-  for (i in 1:nrow(df1)) {
-    id <- df1$patient_id[i]
-    t1 <- df1$lab_collection_date[i] - max_interval
-    t2 <- df1$lab_collection_date[i] - 1
-    src <- dplyr::case_when(
-      df1$lab_specimen_source[i] == "Blood - capillary" ~ "cap",
-      df1$lab_specimen_source[i] == "Blood - venous" ~ "ven",
-      TRUE ~ "unk"
-    )
+  pb <- txtProgressBar(1, nrow(df), width = 50, style = 3)
 
-    # All tests within prior `max_interval` days for same individual
-    all_tests <- df1 %>%
+  for (i in 1:nrow(df)) {
+    # Get previous (or same-day) test within `max_interval` for same `patient_id`
+    prevtest <- df %>%
       dplyr::bind_rows(df2) %>%
       dplyr::filter(
-        patient_id == id,
-        lab_collection_date >= t1,
-        lab_collection_date <= t2
-      )
+        patient_id == df$patient_id[i],
+        lab_collection_date <= df$lab_collection_date[i],
+        lab_collection_date >= df$lab_collection_date[i] - max_interval,
+        row_id_src != df$row_id_src[i]
+      ) %>%
+      dplyr::slice_max(lab_collection_date, n = 1, with_ties = TRUE)
 
-    if (nrow(all_tests) > 0) {
-      browser()
-      # Most recent test within prior `max_interval` days for same individual
-      prev_test <- all_tests %>%
-        dplyr::filter(lab_collection_date == max(lab_collection_date))
-      prev_rsn <- prev_test$test_reason_ks
-      prev_elev <- prev_test$lab_result_elev
-      prev_src <- dplyr::case_when(
-        prev_test$lab_specimen_source == "Blood - capillary" ~ "cap",
-        prev_test$lab_specimen_source == "Blood - venous" ~ "ven",
-        TRUE ~ "unk"
-      )
+    # what if there is >1 test on max(lab_collection_date)?
+    # what if spec src of prev test is unknown? of current test?
+
+    if (nrow(prevtest) == 0) {
+      prevtest <- df_na
+    } else if (nrow(prevtest) == 1) {
+      if (prevtest$lab_collection_date != df$lab_collection_date[i]) { # Previous test is NOT same-day
+        # Do nothing
+      } else { # Previous test IS same-day
+        if (prevtest$lab_specimen_source == "Blood - capillary" &
+            df$lab_specimen_source[i] == "Blood - venous") {
+          # Do nothing
+        } else if (prevtest$lab_specimen_source == "Blood - venous" &
+                   df$lab_specimen_source[i] == "Blood - capillary") {
+          prevtest <- df_na
+        } else {
+          df$test_reason[i] <- "CHECK"
+          next
+          # stop("\nUnexpected multiple same-day tests for `patient_id`: ", df$patient_id[i], call. = FALSE)
+        }
+      }
     } else {
-      prev_test <- all_tests
-      prev_rsn <- prev_elev <- prev_src <- NA
+      df$test_reason[i] <- "CHECK"
+      next
+      # stop("\nUnexpected multiple same-day tests for `patient_id`: ", df$patient_id[i], call. = FALSE)
     }
 
-    rsn <- dplyr::case_when(
-      nrow(prev_test) == 0 & src == "cap" ~ "cap_screening",
-      nrow(prev_test) == 0 & src == "ven" ~ "ven_confirm_initial",
-      nrow(prev_test) == 1 & src == "ven" & prev_rsn == "cap_screening" & prev_elev == TRUE ~ "ven_confirm_e",
-      nrow(prev_test) == 1 & src == "ven" & prev_rsn == "cap_screening" & prev_elev == FALSE ~ "ven_confirm_n",
-      nrow(prev_test) == 1 & src == "ven" & prev_src == "ven" ~ "ven_followup",
+    df$test_reason[i] <- rsn <- dplyr::case_when(
+      df$lab_specimen_source[i] == "Blood - capillary" &
+        is.na(prevtest$test_reason) ~ "cap_scrn",
+      df$lab_specimen_source[i] == "Blood - venous" &
+        is.na(prevtest$test_reason) ~ "ven_cfm_i",
+      df$lab_specimen_source[i] == "Blood - venous" &
+        prevtest$test_reason == "cap_scrn" &
+        prevtest$lab_result_elev ~ "ven_cfm_e",
+      df$lab_specimen_source[i] == "Blood - venous" &
+        prevtest$test_reason == "cap_scrn" &
+        !prevtest$lab_result_elev ~ "ven_cfm_n",
+      df$lab_specimen_source[i] == "Blood - venous" &
+        prevtest$lab_specimen_source == "Blood - venous" ~ "ven_flw",
       TRUE ~ "unknown/other"
     )
-
-    df1$test_reason_ks[i] <- rsn
 
     setTxtProgressBar(pb, i)
     # message(i) # If function gets hung, indicates which record
@@ -107,7 +128,7 @@ classify_test_reason <- function(df1, df2 = NULL, bl_ref_val, max_interval) {
 
   close(pb)
 
-  df1
+  df
 }
 
 
