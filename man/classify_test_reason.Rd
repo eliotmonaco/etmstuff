@@ -2,17 +2,29 @@
 % Please edit documentation in R/classify_test_reason.R
 \name{classify_test_reason}
 \alias{classify_test_reason}
-\title{Title}
+\title{Impute reasons for series of blood lead tests}
 \usage{
-classify_test_reason(df1, df2 = NULL, bl_ref_val, max_interval)
+classify_test_reason(df, df2 = NULL, bl_ref_val, max_interval)
 }
 \arguments{
-\item{df1}{The dataframe targeted for classification.}
+\item{df}{The dataframe targeted for classification.}
 
-\item{df2}{A dataframe classified previously.}
+\item{df2}{A dataframe classified previously (optional).}
 
-\item{max_interval}{}
+\item{bl_ref_val}{The blood lead reference value in mcg/dL (numeric). A blood lead test result >= \code{bl_rev_val} is elevated.}
+
+\item{max_interval}{The maximum number of days between tests belonging to the same test sequence (an integer).}
+}
+\value{
+A dataframe is returned with a new column, \code{test_reason}. Possible values are:
+\itemize{
+\item \code{cap_scrn}: a capillary screening test.
+\item \code{ven_cfm_i}: an initial confirmatory venous test (i.e., not preceded by a capillary screening test).
+\item \code{ven_cfm_e}: a confirmatory venous test following an elevated capillary screening test.
+\item \code{ven_cfm_n}: a confirmatory venous test following a non-elevated capillary screening test.
+\item \code{ven_flw}: a venous follow-up test.
+}
 }
 \description{
-Title
+Impute reasons for series of blood lead tests
 }

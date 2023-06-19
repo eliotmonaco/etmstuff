@@ -1,25 +1,31 @@
 # classify_test_reason ####
 
 debugonce(classify_test_reason)
-df <- classify_test_reason(
+
+df_tr <- classify_test_reason(
   bl_data_2023q1_distinct,
+  df2 = df_tr,
   bl_ref_val = 3.5,
   max_interval = 92
 )
 
-# 2335363
+
 
 
 
 
 # Check
 
-df_check <- df %>%
+df_check <- df_tr %>%
   filter(test_reason == "CHECK")
 
-df_check2 <- bl_data_2023q1_distinct %>%
+df_check <- bl_data_2023q1_distinct %>%
   filter(patient_id %in% df_check$patient_id)
 
+df_check2 <- df_tr %>%
+  filter(test_reason == "unknown/other")
+
+# 2335363
 
 
 
