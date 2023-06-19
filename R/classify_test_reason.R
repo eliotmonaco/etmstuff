@@ -9,6 +9,7 @@
 #' A dataframe is returned with a new column, `test_reason`. Possible values are:
 #'
 #' * `cap_scrn`: a capillary screening test.
+#' * `cap_cfm`: a confirmatory capillary test.
 #' * `ven_cfm_i`: an initial confirmatory venous test (i.e., not preceded by a capillary screening test).
 #' * `ven_cfm_e`: a confirmatory venous test following an elevated capillary screening test.
 #' * `ven_cfm_n`: a confirmatory venous test following a non-elevated capillary screening test.
@@ -57,57 +58,87 @@ classify_test_reason <- function(df, df2 = NULL, bl_ref_val, max_interval) {
   pb <- utils::txtProgressBar(1, nrow(df), width = 50, style = 3)
 
   for (i in 1:nrow(df)) {
-    # Get previous (or same-day) test within `max_interval` for same `patient_id`
-    prevtest <- df %>%
+    # Get all tests in the previous `max_interval` for the same `patient_id` (including same-day tests)
+    prev_int <- df %>%
       dplyr::bind_rows(df2) %>%
       dplyr::filter(
         patient_id == df$patient_id[i],
         lab_collection_date <= df$lab_collection_date[i],
         lab_collection_date >= df$lab_collection_date[i] - max_interval,
         row_id_src != df$row_id_src[i]
-      ) %>%
+      )
+
+    # Separate most recent test
+    prev_test1 <- prev_int %>%
       dplyr::slice_max(lab_collection_date, n = 1, with_ties = TRUE)
 
-    if (nrow(prevtest) == 0) {
+    if (nrow(prev_test1) == 0) {
       prevtest <- df_na
-    } else if (nrow(prevtest) == 1) {
-      if (prevtest$lab_collection_date != df$lab_collection_date[i]) {
+    } else if (nrow(prev_test1) == 1) {
+      if (prev_test1$lab_collection_date != df$lab_collection_date[i]) {
         # If previous test is NOT same-day...
-        # Do nothing
+        prevtest <- prev_test1
       } else {
         # If previous test IS same-day...
-        if (prevtest$lab_specimen_source == "Blood - capillary" &
+        if (prev_test1$lab_specimen_source == "Blood - capillary" &
             df$lab_specimen_source[i] == "Blood - venous") {
-          # Do nothing
-        } else if (prevtest$lab_specimen_source == "Blood - venous" &
+          prevtest <- prev_test1
+        } else if (prev_test1$lab_specimen_source == "Blood - venous" &
                    df$lab_specimen_source[i] == "Blood - capillary") {
-          prevtest <- df_na
+          # Get second most recent test
+          browser()
+          prev_test2 <- prev_int %>%
+            dplyr::anti_join(prev_test1, by = "row_id_src") %>%
+            dplyr::slice_max(lab_collection_date, n = 1, with_ties = TRUE)
+          if (nrow(prev_test2) == 0) {
+            prevtest <- df_na
+          } else if (nrow(prev_test2) == 1) {
+            prevtest <- prev_test2
+          } else {
+            if ("Blood - venous" %in% prev_test2$lab_specimen_source) {
+              prevtest <- prev_test2 %>%
+                dplyr::filter(lab_specimen_source == "Blood - venous") %>%
+                dplyr::slice_max(lab_result_number, n = 1, with_ties = FALSE)
+            } else {
+              prevtest <- prev_test2 %>%
+                dplyr::slice_max(lab_result_number, n = 1, with_ties = FALSE)
+            }
+          }
         } else {
-          df$test_reason[i] <- "CHECK"
+          # browser()
+          df$test_reason[i] <- "unknown/other"
           next
-          # stop("\nUnexpected multiple same-day tests for `patient_id`: ", df$patient_id[i], call. = FALSE)
         }
       }
     } else {
-      df$test_reason[i] <- "CHECK"
-      next
-      # stop("\nUnexpected multiple same-day tests for `patient_id`: ", df$patient_id[i], call. = FALSE)
+      if (all(prev_test1$lab_specimen_source == c("Blood - capillary", "Blood - venous"))) {
+        prevtest <- prev_test1 %>%
+          dplyr::filter(lab_specimen_source == "Blood - venous")
+      } else {
+        # browser()
+        df$test_reason[i] <- "unknown/other"
+        next
+      }
     }
 
     # Assign test reason
     df$test_reason[i] <- rsn <- dplyr::case_when(
-      df$lab_specimen_source[i] == "Blood - capillary" & # Current test = cap. No previous test.
+      df$lab_specimen_source[i] == "Blood - capillary" & # Current src = cap. Previous rsn = NA.
         is.na(prevtest$test_reason) ~ "cap_scrn",
-      df$lab_specimen_source[i] == "Blood - venous" &    # Current test = ven. No previous test.
+      df$lab_specimen_source[i] == "Blood - capillary" & # Current src = cap. Previous rsn = cap_scrn.
+        prevtest$test_reason == "cap_scrn" ~ "cap_cfm",
+      df$lab_specimen_source[i] == "Blood - venous" &    # Current src = ven. Previous rsn = NA.
         is.na(prevtest$test_reason) ~ "ven_cfm_i",
-      df$lab_specimen_source[i] == "Blood - venous" &    # Current test = ven. Previous test = cap. & elevated.
+      df$lab_specimen_source[i] == "Blood - venous" &    # Current src = ven. Previous rsn = cap_scrn AND result = elevated.
         prevtest$test_reason == "cap_scrn" &
         prevtest$lab_result_elev ~ "ven_cfm_e",
-      df$lab_specimen_source[i] == "Blood - venous" &    # Current test = ven. Previous test = cap. & non-elevated.
+      df$lab_specimen_source[i] == "Blood - venous" &    # Current src = ven. Previous rsn = cap_scrn AND result = non-elevated.
         prevtest$test_reason == "cap_scrn" &
         !prevtest$lab_result_elev ~ "ven_cfm_n",
-      df$lab_specimen_source[i] == "Blood - venous" &    # Current test = ven. Previous test = ven.
-        prevtest$lab_specimen_source == "Blood - venous" ~ "ven_flw",
+      df$lab_specimen_source[i] == "Blood - venous" &    # Current src = ven. Previous src = ven OR (previous rsn = cap_cfm AND result = elevated).
+        (prevtest$lab_specimen_source == "Blood - venous" |
+           (prevtest$test_reason == "cap_cfm" &
+              prevtest$lab_result_elev)) ~ "ven_flw",
       TRUE ~ "unknown/other"                             # All others
     )
 

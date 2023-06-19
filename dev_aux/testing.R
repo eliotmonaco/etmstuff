@@ -2,30 +2,111 @@
 
 debugonce(classify_test_reason)
 
-df_tr <- classify_test_reason(
+df_test <- classify_test_reason(
   bl_data_2023q1_distinct,
-  df2 = df_tr,
+  # bl_data_2023q1_distinct %>%
+  #   filter(patient_id == "1351889"),
+  # df2 = df_tr,
   bl_ref_val = 3.5,
-  max_interval = 92
+  max_interval = 90
 )
 
+df_tr <- classify_test_reason(
+  data,
+  # df2 = df_tr,
+  bl_ref_val = 3.5,
+  max_interval = 90
+)
 
+df_tr %>%
+  group_by(test_reason) %>%
+  count()
 
+df_check3 <- df_tr %>%
+  filter(patient_id == "3286568") %>%
+  arrange(patient_id, lab_collection_date, lab_specimen_source) %>%
+  select(patient_id, lab_collection_date, lab_specimen_source,
+         lab_result_symbol, lab_result_number, lab_name,
+         lab_result_elev, bl_ref_val, test_reason,
+         everything())
 
+df_check4 <- df_tr %>%
+  filter(patient_id == "2335363") %>%
+  arrange(patient_id, lab_collection_date, lab_specimen_source) %>%
+  select(patient_id, lab_collection_date, lab_specimen_source,
+         lab_result_symbol, lab_result_number, lab_name,
+         lab_result_elev, bl_ref_val, test_reason,
+         everything())
 
-
-# Check
+# Same person/day/src
 
 df_check <- df_tr %>%
   filter(test_reason == "CHECK")
 
-df_check <- bl_data_2023q1_distinct %>%
-  filter(patient_id %in% df_check$patient_id)
+df_check <- df_tr %>%
+  filter(patient_id %in% df_check$patient_id) %>%
+  arrange(patient_id, lab_collection_date, lab_specimen_source) %>%
+  select(patient_id, lab_collection_date, lab_specimen_source,
+         lab_result_symbol, lab_result_number, lab_name,
+         lab_result_elev, bl_ref_val, test_reason,
+         everything())
+
+# Capillary test out of expected sequence
 
 df_check2 <- df_tr %>%
   filter(test_reason == "unknown/other")
 
-# 2335363
+df_check2 <- df_tr %>%
+  filter(patient_id %in% df_check2$patient_id) %>%
+  arrange(patient_id, lab_collection_date, lab_specimen_source) %>%
+  select(patient_id, lab_collection_date, lab_specimen_source,
+         lab_result_symbol, lab_result_number, lab_name,
+         lab_result_elev, bl_ref_val, test_reason,
+         everything())
+
+
+
+xl_sheets <- list(
+  Same_src = df_check,
+  Unexp_cap = df_check2
+)
+
+file_path <- "../test_rsn_recs.xlsx"
+
+wb <- openxlsx::write.xlsx(
+  xl_sheets,
+  file_path,
+  asTable = T,
+  # tableStyle = "TableStyleMedium2",
+  firstRow = T
+)
+
+# for (i in 1:length(xl_sheets)) {
+#   openxlsx::setColWidths(
+#     wb,
+#     sheet = i,
+#     cols = 1:ncol(xl_sheets[[i]]),
+#     widths = "auto"#,
+#     # hidden = c(
+#     #   rep(T, times = 4),
+#     #   rep(F, times = ncol(df) - 4)
+#     # )
+#   )
+# }
+
+openxlsx::saveWorkbook(wb, file_path, overwrite = T)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
