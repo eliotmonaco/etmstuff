@@ -9,22 +9,26 @@ classify_test_reason(df, df2 = NULL, bl_ref_val, max_interval)
 \arguments{
 \item{df}{The dataframe targeted for classification.}
 
-\item{df2}{A dataframe classified previously (optional).}
+\item{df2}{A previously classified dataframe (optional).}
 
 \item{bl_ref_val}{The blood lead reference value in mcg/dL (numeric). A blood lead test result >= \code{bl_rev_val} is elevated.}
 
-\item{max_interval}{The maximum number of days between tests belonging to the same test sequence (an integer).}
+\item{max_interval}{The maximum number of days between tests belonging to the same test sequence (an integer). The recommended value is \code{90}.}
 }
 \value{
-A dataframe is returned with a new column, \code{test_reason}. Possible values are:
-\itemize{
-\item \code{cap_scrn}: a capillary screening test.
-\item \code{ven_cfm_i}: an initial confirmatory venous test (i.e., not preceded by a capillary screening test).
-\item \code{ven_cfm_e}: a confirmatory venous test following an elevated capillary screening test.
-\item \code{ven_cfm_n}: a confirmatory venous test following a non-elevated capillary screening test.
-\item \code{ven_flw}: a venous follow-up test.
-}
+The dataframe is returned with a new column, \code{test_reason}.
 }
 \description{
-Impute reasons for series of blood lead tests
+This function assigns a reason to each test in \code{df} based on the Kansas Department of Health and Environment's Elevated Blood Lead Investigation Guideline document. A possible sequence of tests for one person could begin with a capillary screening test, followed by a confirmatory venous test, which, if the result is elevated, could be followed by any number of venous follow-up tests until a non-elevated result is obtained. Each test in a sequence should be within a maximum of 90 days of the previous test, therefore it is recommended that \code{max_interval = 90} be provided in the function call. The reason assigned to each test depends on values in one or more previous tests, therefore it is recommended that prior data which has already been classified by this function be provided in \code{df2} for the most accurate results. It is also recommended that only values of \code{Blood - capillary} or \code{Blood - venous} be present in \code{lab_specimen_source}, as any other value will lead to a reason of \code{unknown/other} in subsequent tests.
+
+Possible \code{test_reason} values are
+\itemize{
+\item \code{cap_scrn}: a capillary screening test (must be the first test in a sequence).
+\item \code{ven_cfm_i}: an initial confirmatory venous test (must be the first test in a sequence).
+\item \code{cap_cfm}: a confirmatory capillary test (follows a \code{cap_scrn}).
+\item \code{ven_cfm_e}: a confirmatory venous test following an elevated \code{cap_scrn}.
+\item \code{ven_cfm_n}: a confirmatory venous test following a non-elevated \code{cap_scrn}.
+\item \code{ven_flw}: a venous follow-up test (follows any venous test or an elevated \code{cap_cfm}).
+\item \code{unknown/other}: a test that cannot be assigned another value.
+}
 }
