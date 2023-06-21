@@ -1,3 +1,20 @@
+
+
+
+# id_distinct_rows ####
+
+debugonce(id_distinct_rows)
+
+df <- id_distinct_rows(
+  df_addr_processed,
+  var = c("street", "unit", "city", "state", "zip"),
+  id_name = "address_registry_id",
+  seq_start = 10000001,
+  digits = 4
+)
+
+
+
 # classify_test_reason ####
 
 debugonce(classify_test_reason)

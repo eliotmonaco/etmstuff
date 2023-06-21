@@ -4,7 +4,7 @@
 \alias{id_distinct_rows}
 \title{Assign a sequential ID to distinct rows}
 \usage{
-id_distinct_rows(df, var, id_name)
+id_distinct_rows(df, var, id_name, seq_start = 1, digits = NULL)
 }
 \arguments{
 \item{df}{A dataframe.}
@@ -12,6 +12,10 @@ id_distinct_rows(df, var, id_name)
 \item{var}{A vector of variable names that the new ID will be based on.}
 
 \item{id_name}{A name for the new ID variable.}
+
+\item{seq_start}{An integer for the beginning of the ID sequence. Defaults to \code{1}.}
+
+\item{digits}{An integer for the number of digits in the ID (including leading zeros). Defaults to \code{nchar(nrow(df))}.}
 }
 \value{
 A dataframe.
