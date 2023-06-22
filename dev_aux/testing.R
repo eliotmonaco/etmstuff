@@ -17,6 +17,28 @@ df <- id_distinct_rows(
 
 # classify_test_reason ####
 
+library(tidyverse)
+library(etmstuff)
+
+data_core_tr_2015 <- subset_date_range(
+  data_core,
+  var = "lab_collection_date",
+  range = "2015"
+)
+
+debugonce(classify_test_reason)
+
+data_core_tr_2015 <- classify_test_reason(
+  data_core_tr_2015,
+  bl_ref_val = 5,
+  max_interval = 90
+)
+
+
+
+
+
+
 debugonce(classify_test_reason)
 
 df_test <- classify_test_reason(

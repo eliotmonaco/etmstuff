@@ -93,7 +93,7 @@ classify_test_reason <- function(df, df2 = NULL, bl_ref_val, max_interval) {
         } else if (prev_test1$lab_specimen_source == "Blood - venous" &
                    df$lab_specimen_source[i] == "Blood - capillary") {
           # Get second most recent test
-          browser()
+          # browser()
           prev_test2 <- prev_int %>%
             dplyr::anti_join(prev_test1, by = "row_id_src") %>%
             dplyr::slice_max(lab_collection_date, n = 1, with_ties = TRUE)
