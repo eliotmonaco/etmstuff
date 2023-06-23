@@ -2,6 +2,7 @@
 
 export(build_md_url)
 export(calculate_age)
+export(cbls_undupe)
 export(check_date_seq)
 export(check_lab_results)
 export(classify_test_reason)

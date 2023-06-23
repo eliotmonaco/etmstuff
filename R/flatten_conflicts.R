@@ -29,11 +29,7 @@
 #' undupe <- undupe(df, visible_var = c("x", "y"))
 #' df_flattened <- flatten_conflicts(undupe[["df_dupesets"]], var = "z", dupe_id = "dupe_id")
 #'
-flatten_conflicts <- function(df,
-                              var,
-                              dupe_id,
-                              sep = " | ",
-                              silent = FALSE) {
+flatten_conflicts <- function(df, var, dupe_id, sep = " | ", silent = FALSE) {
   var_check(df, var = c(var, dupe_id))
 
   # List of unique `dupe_id` values

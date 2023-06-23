@@ -19,6 +19,7 @@
 #' @param df A dataframe.
 #' @param visible_var A character vector of variable names from `df` whose values must match for rows to be considered duplicates.
 #' @param invisible_var A character vector of variable names from `df` whose values will be ignored during deduplication. All other variables in `df` will be visible during deduplication.
+#' @param prefix A string to add as a prefix to the new variable names, ending `"_id"` and `"_order"`. Defaults to `"dupe"`, creating `dupe_id` and `dupe_order`.
 #'
 #' @return
 #' A list containing three dataframes:
@@ -40,13 +41,20 @@
 #' )
 #' undupe_list <- undupe(df, visible_var = c("x", "y"))
 #'
-undupe <- function(df, visible_var = NULL, invisible_var = NULL) {
+undupe <- function(df, visible_var = NULL, invisible_var = NULL, prefix = "dupe") {
   # Are both `visible_var` & `invisible_var` provided?
   if (!is.null(visible_var) & !is.null(invisible_var)) {
-    stop("Only one of `visible_var` or `invisible_var` can be supplied", call. = F)
+    stop("Only one of `visible_var` or `invisible_var` can be provided", call. = F)
     # Are both `visible_var` & `invisible_var` missing?
   } else if (is.null(visible_var) & is.null(invisible_var)) {
-    stop("One of `visible_var` or `invisible_var` must be supplied", call. = F)
+    stop("One of `visible_var` or `invisible_var` must be provided", call. = F)
+  }
+
+  id_var <- paste(prefix, "id", sep = "_")
+  order_var <- paste(prefix, "order", sep = "_")
+
+  if (id_var %in% colnames(df)) {
+    stop("Provide an `id_var` that is not already a variable in `df`", call. = FALSE)
   }
 
   var_check(df, var = c(visible_var, invisible_var))
@@ -61,25 +69,26 @@ undupe <- function(df, visible_var = NULL, invisible_var = NULL) {
     dplyr::mutate(n_row = dplyr::row_number())
 
   # Add duplicate ID variable
-  df["dupe_id"] <- apply(
-    df %>% dplyr::select({{ visible_var }}),
+  df[id_var] <- apply(
+    df %>%
+      dplyr::select({{ visible_var }}),
     MARGIN = 1,
     FUN = digest::digest, algo = "md5"
   )
 
   # Add variable indicating sequential order within dupesets
-  df$dupe_order <- stats::ave(df$n_row, df$dupe_id, FUN = seq_along)
+  df[[order_var]] <- stats::ave(df$n_row, df[[id_var]], FUN = seq_along)
 
   # Subset distinct rows
   df_distinct <- df %>%
     dplyr::distinct(dplyr::across(tidyselect::all_of(visible_var)), .keep_all = TRUE)
 
   # Convert duplicate ID to a factor to preserve original order in `group_by()`
-  df$dupe_id <- factor(df$dupe_id, levels = unique(df$dupe_id))
+  df[[id_var]] <- factor(df[[id_var]], levels = unique(df[[id_var]]))
 
   # Pull the duplicate IDs associated with duplicates that occur n > 1 times in `df`
   df_dupe_ids <- df %>%
-    dplyr::group_by(dupe_id) %>%
+    dplyr::group_by(.data[[id_var]]) %>%
     dplyr::count() %>%
     dplyr::filter(n > 1) %>%
     dplyr::select(-n) %>%
@@ -90,12 +99,12 @@ undupe <- function(df, visible_var = NULL, invisible_var = NULL) {
 
   # Join rows from `df` that match IDs in `df_dupe_ids`
   df_dupesets <- df_dupe_ids %>%
-    dplyr::left_join(df, by = "dupe_id", multiple = "all") %>%
-    dplyr::relocate(dupe_id, .before = dupe_order)
+    dplyr::left_join(df, by = id_var, multiple = "all") %>%
+    dplyr::relocate(tidyselect::all_of(id_var), .before = tidyselect::all_of(order_var))
 
   # Convert duplicate IDs back to character
-  df$dupe_id <- as.character(df$dupe_id)
-  df_dupesets$dupe_id <- as.character(df_dupesets$dupe_id)
+  df[[id_var]] <- as.character(df[[id_var]])
+  df_dupesets[[id_var]] <- as.character(df_dupesets[[id_var]])
 
   if (nrow(df_dupesets) == 0) {
     return(message("No duplicates found"))

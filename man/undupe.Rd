@@ -4,7 +4,7 @@
 \alias{undupe}
 \title{Unduplicate a dataframe based on selected variables}
 \usage{
-undupe(df, visible_var = NULL, invisible_var = NULL)
+undupe(df, visible_var = NULL, invisible_var = NULL, prefix = "dupe")
 }
 \arguments{
 \item{df}{A dataframe.}
@@ -12,6 +12,8 @@ undupe(df, visible_var = NULL, invisible_var = NULL)
 \item{visible_var}{A character vector of variable names from \code{df} whose values must match for rows to be considered duplicates.}
 
 \item{invisible_var}{A character vector of variable names from \code{df} whose values will be ignored during deduplication. All other variables in \code{df} will be visible during deduplication.}
+
+\item{prefix}{A string to add as a prefix to the new variable names, ending \code{"_id"} and \code{"_order"}. Defaults to \code{"dupe"}, creating \code{dupe_id} and \code{dupe_order}.}
 }
 \value{
 A list containing three dataframes:

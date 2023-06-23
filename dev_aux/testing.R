@@ -1,3 +1,36 @@
+# undupe ####
+
+library(etmstuff)
+
+data <- subset_date_range(
+  epitrax_data,
+  var = "lab_collection_date",
+  range = "2023q1"
+)
+
+# Current version
+undp1 <- undupe(
+  data,
+  visible_var = c(
+    "patient_id",
+    "lab_collection_date",
+    "lab_result_value",
+    "lab_specimen_source"
+  )
+)
+
+# Test version
+undp2 <- undupe(
+  data,
+  visible_var = c(
+    "patient_id",
+    "lab_collection_date",
+    "lab_result_value",
+    "lab_specimen_source"
+  )
+)
+
+all.equal(undp1, undp2)
 
 
 
