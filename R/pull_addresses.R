@@ -24,7 +24,7 @@
 #' More information is at <https://wiki.melissadata.com/index.php?title=Personator_Consumer>.
 #'
 #' @param df A dataframe of records from EpiTrax.
-#' @param row_id The name of the unique identifier for rows. Defaults to `row_id_src`.
+#' @param row_id A unique row identifier variable in `df`. Defaults to `row_id_src`.
 #'
 #' @return A dataframe of addresses. Columns are renamed to their generic address components. `street_src` is an additional street variable intended to preserve the street address from the source data for comparison to the cleaned and parsed street addresses (created later).
 #' @export

@@ -1,3 +1,27 @@
+
+
+data %>%
+  dplyr::group_by(blood_lead_poisoning_form_col_bl_funding_source) %>%
+  dplyr::count() %>%
+  print(n = nrow(.))
+
+data_2023q1 <- subset_date_range(data, var = "lab_collection_date", range = "2023q1")
+
+key <- cbls_table_key(data_2023q1, action = "add")
+
+
+
+
+
+
+# cbls_check_table ####
+
+debugonce(cbls_check_table)
+
+df <- cbls_check_table(cbls_tbls_list[["df_2018q3_add"]])
+
+
+
 # undupe ####
 
 library(etmstuff)

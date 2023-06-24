@@ -4,7 +4,7 @@
 #'
 #' @param df A dataframe.
 #' @param dates A character vector containing the names of date variables in `df` listed in the expected sequence, i.e., early to late.
-#' @param row_id A variable name for a unique row identifier (optional).
+#' @param row_id A unique row identifier variable in `df` (optional).
 #'
 #' @return If any dates are out of sequence, a dataframe containing the affected rows is returned. Only the `row_id` and `dates` variables are returned from `df`.
 #' @export

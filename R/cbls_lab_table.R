@@ -1,3 +1,17 @@
+#' Create a CBLS Lab Results table
+#'
+#' @param df A dataframe of records prepared for CBLS submission.
+#' @param key A dataframe returned by [cbls_table_key()].
+#' @param row_id A unique row identifier variable in `df`.
+#' @param ref_labs A reference list of classified lab names.
+#'
+#' @return A dataframe formatted as a Lab Results table per CBLS guidelines.
+#' @export
+#'
+#' @importFrom magrittr %>%
+#'
+# @examples
+#'
 cbls_lab_table <- function(df, key, row_id, ref_labs) {
 
   var_check(df, var = c(
@@ -19,8 +33,8 @@ cbls_lab_table <- function(df, key, row_id, ref_labs) {
 
   # Add link variables and FILEID
   df_lab <- df %>%
-    select(tidyselect::all_of(row_id), patient_id) %>%
-    mutate(FILEID = "LAB")
+    dplyr::select(tidyselect::all_of(row_id), patient_id) %>%
+    dplyr::mutate(FILEID = "LAB")
 
   # Add basic format variables
   df_lab <- cbind(df_lab, key)
@@ -41,23 +55,18 @@ cbls_lab_table <- function(df, key, row_id, ref_labs) {
   df_lab$BLANK <- strrep(" ", 2)
 
   # LAB_FUND (required)
-  df_lab$LAB_FUND <- case_when(
-    str_detect(df$blood_lead_poisoning_form_col_bl_funding_source,
-               regex("Public", ignore_case = T)) |
-      !is.na(df$medicaid_id) ~ 1,                                  # 1 – Public, includes Medicaid
-    str_detect(df$blood_lead_poisoning_form_col_bl_funding_source,
-               regex("Private insurance", ignore_case = T)) ~ 2,   # 2 – Private insurance
-    str_detect(df$blood_lead_poisoning_form_col_bl_funding_source,
-               regex("Parent self-pay", ignore_case = T)) ~ 3,     # 3 – Parent self-pay
-    str_detect(df$blood_lead_poisoning_form_col_bl_funding_source,
-               regex("Unknown", ignore_case = T)) ~ 9,             # 9 – Unknown
-    str_detect(df$blood_lead_poisoning_form_col_bl_funding_source,
-               regex("B|Other|\\w+", ignore_case = T)) ~ 8,        # 8 – Other
-    T ~ 9                                                          # 9 – Unknown
+  df_lab$LAB_FUND <- dplyr::case_when(
+    blood_lead_poisoning_form_col_bl_funding_source == "Public" |
+      !is.na(df$medicaid_id) ~ 1,                                               # 1 – Public, includes Medicaid
+    blood_lead_poisoning_form_col_bl_funding_source == "Private insurance" ~ 2, # 2 – Private insurance
+    blood_lead_poisoning_form_col_bl_funding_source == "Parent self-pay" ~ 3,   # 3 – Parent self-pay
+    blood_lead_poisoning_form_col_bl_funding_source == "Unknown" ~ 9,           # 9 – Unknown
+    blood_lead_poisoning_form_col_bl_funding_source == "Other" ~ 8,             # 8 – Other
+    T ~ 9                                                                       # 9 – Unknown
   )
 
   # SAMP_TYPE (required)
-  df_lab$SAMP_TYPE <- case_when(
+  df_lab$SAMP_TYPE <- dplyr::case_when(
     df$lab_specimen_source == "Blood - venous" |
       df$lab_specimen_source == "Blood" ~ 1,           # 1 – Venous, blood lead
     df$lab_specimen_source == "Blood - capillary" ~ 2, # 2 – Capillary, blood lead
@@ -65,7 +74,7 @@ cbls_lab_table <- function(df, key, row_id, ref_labs) {
   )
 
   # TEST_RSN (required)
-  df_lab$TEST_RSN <- case_when(
+  df_lab$TEST_RSN <- dplyr::case_when(
     df$test_reason == "cap_scrn" |
       df$test_reason == "ven_cfm_i" ~ 1, # 1 – Screening (asymptomatic child without previous elevated level)
     df$test_reason == "ven_cfm_e" ~ 3,   # 3 – Confirmatory test following elevated value by fingerstick
@@ -75,12 +84,12 @@ cbls_lab_table <- function(df, key, row_id, ref_labs) {
 
   # LAB_TYPE (required)
   df <- df %>%
-    left_join(ref_labs, by = "lab_name")
+    dplyr::left_join(ref_labs, by = "lab_name")
 
   df_lab$LAB_TYPE <- df$lab_type
 
   # SCRN_SITE (required)
-  df_lab$SCRN_SITE <- case_when(
+  df_lab$SCRN_SITE <- dplyr::case_when(
     grepl(
       paste0(
         "Susan", "|", "Univ", "|", "Wesley", "|", "Stormo", "|", "Via Chr",
@@ -140,7 +149,7 @@ cbls_lab_table <- function(df, key, row_id, ref_labs) {
   # SAMP_ANAZ_DT (not required)
   lab_test_date <- format.Date(df$lab_test_date, "%Y%m%d")
 
-  df_lab$SAMP_ANAZ_DT <- case_when(
+  df_lab$SAMP_ANAZ_DT <- dplyr::case_when(
     str_detect(lab_test_date, "^\\d{8}$") ~ lab_test_date,
     T ~ strrep(" ", 8)
   )
@@ -159,7 +168,7 @@ cbls_lab_table <- function(df, key, row_id, ref_labs) {
   )
 
   # RST_INTPCODE (required)
-  df_lab$RST_INTPCODE <- case_when(
+  df_lab$RST_INTPCODE <- dplyr::case_when(
     is.na(df$lab_result_symbol) ~ 1, # 1 – Equal
     df$lab_result_symbol == "<" ~ 2, # 2 – Less Than
     df$lab_result_symbol == ">" ~ 3  # 3 – Greater Than

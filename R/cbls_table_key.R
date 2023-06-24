@@ -3,7 +3,7 @@
 #' This function populates values for the second through fifth variables (`ACTION` through `PGMID`) in each of the CBLS tables. A dataframe of one row is returned, which is then provided in the `key` argument of each CBLS table formatting function. Because the submission is quarterly, the function expects data from only one quarter of one year to be provided in `df`.
 #'
 #' @param df A dataframe of records ready for submission to CBLS.
-#' @param action The action for each record in the formatted table, `"add"`, `"change"`, or `"delete"`.
+#' @param action The action for each record in the formatted table: `"add"`, `"change"`, or `"delete"`.
 #'
 #' @return A dataframe with one row and four variables: `ACTION`, `QTR`, `RPT_YR`, and `PGMID`.
 #' @export
@@ -18,17 +18,19 @@
 #'       to = as.Date("2023-03-31"),
 #'       by = "day",
 #'     ),
-#'     size = 100
+#'     size = 10
 #'   )
 #' )
 #' cbls_key <- cbls_table_key(df, action = "add")
 #'
-cbls_table_key <- function(df, action = c("add", "change", "delete")) {
-  # actions <- c("add", "change", "delete")
-  #
-  # if (!action %in% actions) {
-  #   stop("`action` can only be \"add\", \"change\", or \"delete\"", call. = FALSE)
-  # }
+cbls_table_key <- function(df, action) {
+  actions <- c("add", "change", "delete")
+
+  if (length(action) != 1) {
+    stop("`action` must be a character vector of length == 1", call. = FALSE)
+  } else if (!action %in% actions) {
+    stop("`action` must be \"add\", \"change\", or \"delete\"", call. = FALSE)
+  }
 
   var_check(df, var = "lab_collection_date")
 

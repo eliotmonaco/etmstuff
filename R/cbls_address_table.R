@@ -1,6 +1,16 @@
-# `df` = data_core_clppp (the DF of all records included in the CLPPP submission)
-# `address_registry` = df_addresses (the DF of address_registry from the submission quarter with `address_registry_id`s)
-
+#' Create a CBLS Address table
+#'
+#' @param df A dataframe of records prepared for CBLS submission.
+#' @param key A dataframe returned by [cbls_table_key()].
+#' @param address_registry The CBLS Address Registry.
+#'
+#' @return A dataframe formatted as an Address table per CBLS guidelines.
+#' @export
+#'
+#' @importFrom magrittr %>%
+#'
+# @examples
+#'
 cbls_address_table <- function(df, key, address_registry) {
 
   var_check(df, var = c(
@@ -21,17 +31,17 @@ cbls_address_table <- function(df, key, address_registry) {
   var_check(key, var = c("ACTION", "QTR", "RPT_YR", "PGMID"))
 
   df <- df %>%
-    filter(address_registry_id != "00000000")
+    dplyr::filter(address_registry_id != "00000000")
 
   address_registry <- address_registry %>%
-    distinct(address_registry_id, .keep_all = T) %>%
-    mutate(census_tract = "")
+    dplyr::distinct(address_registry_id, .keep_all = T) %>%
+    dplyr::mutate(census_tract = "")
 
   df_add <- df %>%
-    select(address_registry_id) %>%
-    distinct() %>%
-    left_join(address_registry, by = "address_registry_id") %>%
-    select(
+    dplyr::select(address_registry_id) %>%
+    dplyr::distinct() %>%
+    dplyr::left_join(address_registry, by = "address_registry_id") %>%
+    dplyr::select(
       ADDR_ID = address_registry_id,
       CITY = city,
       CNTY_FIPS = FIPS,
@@ -39,7 +49,7 @@ cbls_address_table <- function(df, key, address_registry) {
       STATE = state,
       CENSUS = census_tract
     ) %>%
-    mutate(
+    dplyr::mutate(
       FILEID = "ADD",
       CITY = substr(
         str_pad(
@@ -77,6 +87,6 @@ cbls_address_table <- function(df, key, address_registry) {
   df_add$COMP_REN <- strrep(" ", 8)
 
   df_add %>%
-    relocate(FILEID)
+    dplyr::relocate(FILEID)
 
 }

@@ -2,6 +2,12 @@
 
 export(build_md_url)
 export(calculate_age)
+export(cbls_address_table)
+export(cbls_check_table)
+export(cbls_child_table)
+export(cbls_investigation_table)
+export(cbls_lab_table)
+export(cbls_table_key)
 export(cbls_undupe)
 export(check_date_seq)
 export(check_lab_results)

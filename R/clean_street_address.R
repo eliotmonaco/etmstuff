@@ -10,7 +10,7 @@
 #' types <- paste0("c(", types, ")")
 #' ```
 #' @param type The type of cleaning to perform. One of ``r types``.
-#' @param row_id A variable name in `df` that serves as a unique row identifier. Defaults to `address_id`.
+#' @param row_id A unique row identifier variable in `df`. Defaults to `address_id`.
 #'
 #' @return A dataframe containing only the rows that have been cleaned.
 #' @export

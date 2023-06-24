@@ -7,7 +7,7 @@
 #' @inheritSection pull_addresses Melissa Data
 #'
 #' @param df A dataframe of cleaned addresses.
-#' @param row_id A unique row identifier variable name.
+#' @param row_id A unique row identifier variable in `df`.
 #' @param street The name of the variable containing the street address. Unit information should be included if the `unit` argument is left `NULL`.
 #' @param unit The name of the variable containing the unit component of the street address (if the unit is not already included in `street`).
 #' @param city The name of the variable containing the city.

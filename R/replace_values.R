@@ -4,7 +4,7 @@
 #'
 #' @param df A dataframe of addresses.
 #' @param var A variable name in `df` whose values will be replaced.
-#' @param row_id A variable name in `df` that serves as a unique row identifier. Defaults to `address_id`.
+#' @param row_id A unique row identifier variable in `df`. Defaults to `address_id`.
 #' @param source A dataframe with the variable `replacement_text`.
 #'
 #' @return A dataframe.
