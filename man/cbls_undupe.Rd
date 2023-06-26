@@ -9,7 +9,7 @@ cbls_undupe(df, row_id)
 \arguments{
 \item{df}{A dataframe of records ready for submission to CBLS.}
 
-\item{row_id}{A unique row identifier variable.}
+\item{row_id}{A unique row identifier variable in \code{df}.}
 }
 \value{
 A dataframe with the added variable \code{cbls_dupe}.

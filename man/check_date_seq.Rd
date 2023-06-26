@@ -11,7 +11,7 @@ check_date_seq(df, dates, row_id = NULL)
 
 \item{dates}{A character vector containing the names of date variables in \code{df} listed in the expected sequence, i.e., early to late.}
 
-\item{row_id}{A variable name for a unique row identifier (optional).}
+\item{row_id}{A unique row identifier variable in \code{df} (optional).}
 }
 \value{
 If any dates are out of sequence, a dataframe containing the affected rows is returned. Only the \code{row_id} and \code{dates} variables are returned from \code{df}.

@@ -17,7 +17,7 @@ build_md_url(
 \arguments{
 \item{df}{A dataframe of cleaned addresses.}
 
-\item{row_id}{A unique row identifier variable name.}
+\item{row_id}{A unique row identifier variable in \code{df}.}
 
 \item{street}{The name of the variable containing the street address. Unit information should be included if the \code{unit} argument is left \code{NULL}.}
 

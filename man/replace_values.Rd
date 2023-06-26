@@ -11,7 +11,7 @@ replace_values(df, var, row_id = "address_id", source)
 
 \item{var}{A variable name in \code{df} whose values will be replaced.}
 
-\item{row_id}{A variable name in \code{df} that serves as a unique row identifier. Defaults to \code{address_id}.}
+\item{row_id}{A unique row identifier variable in \code{df}. Defaults to \code{address_id}.}
 
 \item{source}{A dataframe with the variable \code{replacement_text}.}
 }

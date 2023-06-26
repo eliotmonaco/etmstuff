@@ -9,7 +9,7 @@ pull_addresses(df, row_id = "row_id_src")
 \arguments{
 \item{df}{A dataframe of records from EpiTrax.}
 
-\item{row_id}{The name of the unique identifier for rows. Defaults to \code{row_id_src}.}
+\item{row_id}{A unique row identifier variable in \code{df}. Defaults to \code{row_id_src}.}
 }
 \value{
 A dataframe of addresses. Columns are renamed to their generic address components. \code{street_src} is an additional street variable intended to preserve the street address from the source data for comparison to the cleaned and parsed street addresses (created later).

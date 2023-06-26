@@ -13,7 +13,7 @@ clean_street_address(df, var = "street", type, row_id = "address_id")
 
 \item{type}{The type of cleaning to perform. One of \code{c("concat1", "concat2", "embed_punct", "fraction", "nondigit", "num", "num_dir", "num_word", "ordinal_dir", "phone", "pobox", "punct", "symbol", "unit", "unknown")}.}
 
-\item{row_id}{A variable name in \code{df} that serves as a unique row identifier. Defaults to \code{address_id}.}
+\item{row_id}{A unique row identifier variable in \code{df}. Defaults to \code{address_id}.}
 }
 \value{
 A dataframe containing only the rows that have been cleaned.
