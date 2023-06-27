@@ -21,7 +21,7 @@ standardize(
 
 \item{uppercase}{Logical: change text to uppercase if \code{TRUE} (default).}
 
-\item{silent}{Logical: silence output to console if \code{TRUE}.}
+\item{silent}{Logical: silence progress indicator if \code{TRUE}.}
 }
 \value{
 A dataframe.

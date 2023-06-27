@@ -8,7 +8,7 @@
 #' @param df A dataframe of dupesets returned by [undupe()].
 #' @param var A character vector of variable names in `df`.
 #' @param ignore_empty Logical: omit blank strings and `NA`s when finding conflicts if `TRUE`.
-#' @param silent Logical: silence output to console if `TRUE`.
+#' @param silent Logical: silence progress indicator if `TRUE`.
 #'
 #' @return A dataframe.
 #' @export

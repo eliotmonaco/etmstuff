@@ -11,7 +11,7 @@
 #' @param var A character vector of variable names in `df`.
 #' @param dupe_id The duplicate ID variable name, which groups all members of a duplicate set.
 #' @param sep A string to use as a separator between the aggregated values from a duplicate set. Defaults to `" | "`.
-#' @param silent Logical: silence output to console if `TRUE`.
+#' @param silent Logical: silence progress indicator if `TRUE`.
 #'
 #' @return A dataframe of flattened values, with one row per dupeset in `df` and one column per variable in `var`.
 #' @export
@@ -63,18 +63,15 @@ flatten_conflicts <- function(df, var, dupe_id, sep = " | ", silent = FALSE) {
       var = var[i],
       separator = sep,
       SIMPLIFY = TRUE)
-      # Progress indicator
-    if (!silent) {
+    if (!silent) { # Progress indicator
       message(
         "\r",
         paste("Column", i, "of", n_cols, "complete"),
         appendLF = FALSE
       )
+      if (i == n_cols) message("\n")
     }
   }
-
-  # New line after progress indicator is finished
-  message()
 
   df_flat
 }

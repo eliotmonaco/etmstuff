@@ -11,7 +11,7 @@ count_conflicts(df, ignore_empty = TRUE, silent = FALSE)
 
 \item{ignore_empty}{Logical: omit blank strings and \code{NA}s when finding conflicts if \code{TRUE}.}
 
-\item{silent}{Logical: silence output to console if \code{TRUE}.}
+\item{silent}{Logical: silence progress indicator if \code{TRUE}.}
 }
 \value{
 A dataframe with one row per variable in \code{df} (omitting \code{dupe_id} and \code{dupe_order}). The returned dataframe has three columns:

@@ -13,9 +13,9 @@ flatten_conflicts(df, var, dupe_id, sep = " | ", silent = FALSE)
 
 \item{dupe_id}{The duplicate ID variable name, which groups all members of a duplicate set.}
 
-\item{sep}{A string to use as a separator between the aggregated values from a duplicate set. The default is " | ".}
+\item{sep}{A string to use as a separator between the aggregated values from a duplicate set. Defaults to \code{" | "}.}
 
-\item{silent}{Logical: silence output to console if \code{TRUE}.}
+\item{silent}{Logical: silence progress indicator if \code{TRUE}.}
 }
 \value{
 A dataframe of flattened values, with one row per dupeset in \code{df} and one column per variable in \code{var}.
@@ -41,8 +41,8 @@ df <- data.frame(
   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 )
-undupe <- undupe(df, visible_var = c("x", "y"))
-df_flattened <- flatten_conflicts(undupe[["df_dupesets"]], var = "z", dupe_id = "dupe_id")
+undp <- undupe(df, visible_var = c("x", "y"))
+df_flat <- flatten_conflicts(undp[["df_dupesets"]], var = "z", dupe_id = "dupe_id")
 
 }
 \seealso{

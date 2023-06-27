@@ -4,7 +4,7 @@
 \alias{pattern_check_df}
 \title{Check dataframe columns for a pattern}
 \usage{
-pattern_check_df(df, pattern, ignore_case = FALSE)
+pattern_check_df(df, pattern, ignore_case = FALSE, silent = FALSE)
 }
 \arguments{
 \item{df}{A dataframe.}
@@ -12,6 +12,8 @@ pattern_check_df(df, pattern, ignore_case = FALSE)
 \item{pattern}{A pattern to search for, formatted as a regular expression.}
 
 \item{ignore_case}{Logical: ignore case in pattern search if \code{TRUE}.}
+
+\item{silent}{Logical: silence progress indicator if \code{TRUE}.}
 }
 \value{
 Returns a message listing which columns contain the pattern.

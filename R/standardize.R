@@ -6,7 +6,7 @@
 #' @param var A character vector naming which variables to standardize.
 #' @param var_ignore A character vector naming which variables to ignore.
 #' @param uppercase Logical: change text to uppercase if `TRUE` (default).
-#' @param silent Logical: silence output to console if `TRUE`.
+#' @param silent Logical: silence progress indicator if `TRUE`.
 #'
 #' @return A dataframe.
 #' @export

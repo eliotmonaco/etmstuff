@@ -4,7 +4,7 @@
 \alias{classify_test_reason}
 \title{Impute reasons for series of blood lead tests}
 \usage{
-classify_test_reason(df, df2 = NULL, bl_ref_val, max_interval)
+classify_test_reason(df, df2 = NULL, bl_ref_val, max_interval, silent = FALSE)
 }
 \arguments{
 \item{df}{The dataframe targeted for classification.}
@@ -14,6 +14,8 @@ classify_test_reason(df, df2 = NULL, bl_ref_val, max_interval)
 \item{bl_ref_val}{The blood lead reference value in mcg/dL (numeric). A blood lead test result >= \code{bl_rev_val} is elevated.}
 
 \item{max_interval}{The maximum number of days between tests belonging to the same test sequence (an integer). The recommended value is \code{90}.}
+
+\item{silent}{Logical: silence progress indicator if \code{TRUE}.}
 }
 \value{
 The dataframe is returned with a new column, \code{test_reason}.

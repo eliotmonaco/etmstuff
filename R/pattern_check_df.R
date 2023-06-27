@@ -5,6 +5,7 @@
 #' @param df A dataframe.
 #' @param pattern A pattern to search for, formatted as a regular expression.
 #' @param ignore_case Logical: ignore case in pattern search if `TRUE`.
+#' @param silent Logical: silence progress indicator if `TRUE`.
 #'
 #' @return Returns a message listing which columns contain the pattern.
 #' @export
@@ -17,7 +18,7 @@
 #' )
 #' pattern_check_df(df, "^one$")
 #'
-pattern_check_df <- function(df, pattern, ignore_case = FALSE) {
+pattern_check_df <- function(df, pattern, ignore_case = FALSE, silent = FALSE) {
   # Empty vector to hold names of variables in which `pattern` is found
   var <- c()
 
@@ -32,16 +33,18 @@ pattern_check_df <- function(df, pattern, ignore_case = FALSE) {
     if (pattern_in_col) {
       var <- c(var, colnames(df)[i])
     }
-    # Progress indicator
-    message(
-      "\r",
-      paste("Column", i, "of", ncol(df), "checked"),
-      appendLF = FALSE
-    )
+    if (!silent) { # Progress indicator
+      message(
+        "\r",
+        paste("Column", i, "of", ncol(df), "checked"),
+        appendLF = FALSE
+      )
+      if (i == ncol(df)) message("\n")
+    }
   }
 
   # New line after progress indicator is finished
-  message("\nAll columns checked")
+  message("All columns checked")
 
   # Output
   if (length(var) == 0) {

@@ -12,7 +12,7 @@
 #'
 #' @param df A dataframe of dupesets returned by [undupe()].
 #' @param ignore_empty Logical: omit blank strings and `NA`s when finding conflicts if `TRUE`.
-#' @param silent Logical: silence output to console if `TRUE`.
+#' @param silent Logical: silence progress indicator if `TRUE`.
 #'
 #' @return A dataframe with one row per variable in `df` (omitting `dupe_id` and `dupe_order`). The returned dataframe has three columns:
 #' * `var_name`: The variable name from `df`.

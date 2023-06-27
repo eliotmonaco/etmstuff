@@ -17,13 +17,14 @@
 #' @param df2 A previously classified dataframe (optional).
 #' @param bl_ref_val The blood lead reference value in mcg/dL (numeric). A blood lead test result >= `bl_rev_val` is elevated.
 #' @param max_interval The maximum number of days between tests belonging to the same test sequence (an integer). The recommended value is `90`.
+#' @param silent Logical: silence progress indicator if `TRUE`.
 #'
 #' @return The dataframe is returned with a new column, `test_reason`.
 #' @export
 #'
 # @examples
 #'
-classify_test_reason <- function(df, df2 = NULL, bl_ref_val, max_interval) {
+classify_test_reason <- function(df, df2 = NULL, bl_ref_val, max_interval, silent = FALSE) {
   vars <- c(
     "row_id_src", "patient_id", "lab_collection_date",
     "lab_result_symbol", "lab_result_number",
@@ -62,7 +63,7 @@ classify_test_reason <- function(df, df2 = NULL, bl_ref_val, max_interval) {
   df_na <- df[1,]
   df_na[1,] <- NA
 
-  pb <- utils::txtProgressBar(1, nrow(df), width = 50, style = 3)
+  if (!silent) pb <- utils::txtProgressBar(1, nrow(df), width = 50, style = 3)
 
   for (i in 1:nrow(df)) {
     # Get all tests in the previous `max_interval` for a person (including same-day tests)
@@ -149,10 +150,10 @@ classify_test_reason <- function(df, df2 = NULL, bl_ref_val, max_interval) {
       TRUE ~ "unknown/other"                                # All others
     )
 
-    utils::setTxtProgressBar(pb, i)
+    if (!silent) utils::setTxtProgressBar(pb, i)
   }
 
-  close(pb)
+  if (!silent) close(pb)
 
   df
 }
