@@ -2,7 +2,7 @@
 % Please edit documentation in R/cbls_undupe.R
 \name{cbls_undupe}
 \alias{cbls_undupe}
-\title{Undupe lab records prepared for CBLS submission}
+\title{Undupe records prepared for CBLS submission}
 \usage{
 cbls_undupe(df, row_id)
 }
@@ -12,7 +12,7 @@ cbls_undupe(df, row_id)
 \item{row_id}{A unique row identifier variable in \code{df}.}
 }
 \value{
-A dataframe with the added variable \code{cbls_dupe}.
+A dataframe with the added variable \code{cbls_duplicate}.
 }
 \description{
 This function deduplicates (using \code{\link[=undupe]{undupe()}}) a data set prepared for the CBLS submission, keeping only one record per child per sample date (\code{lab_collection_date}) as dictated by the CBLS submission guidelines. Records with an unknown sample type are ignored (the guidelines do not indicate how to evaluate records with an unknown sample type). A message is generated when all records in a dupeset have an unknown sample type.

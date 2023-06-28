@@ -6,10 +6,12 @@
 #' @return A list consisting of `df_data` (`df` plus the variable `child_registry_id`), and `df_registry` (the child registry plus any new children from `df`).
 #' @export
 #'
+#' @importFrom magrittr %>%
+#'
 # @examples
 #'
 merge_child_registry <- function(df, registry) {
-  var_check(df, var = c("patient_id", "lab_collection_date", "person_last_name"))
+  var_check(df, var = c("patient_id", "lab_collection_date"))
   var_check(registry, var = c("child_registry_id", "patient_id"))
 
   # Deduplicate registry
@@ -50,7 +52,7 @@ merge_child_registry <- function(df, registry) {
   # Reunite `df`
   df <- df_existing %>%
     dplyr::bind_rows(df_new) %>%
-    dplyr::arrange(lab_collection_date, person_last_name)
+    dplyr::arrange(lab_collection_date, patient_id)
 
   # Add new addresses to `registry`
   registry <- registry %>%

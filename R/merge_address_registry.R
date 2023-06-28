@@ -20,7 +20,7 @@ merge_address_registry <- function(df, registry) {
   f1 <- function(df, var) {
     df %>%
       dplyr::select(tidyselect::all_of(var)) %>%
-      dplyr::mutate(across(tidyselect::everything(), stringr::str_to_upper)) %>%
+      dplyr::mutate(dplyr::across(tidyselect::everything(), stringr::str_to_upper)) %>%
       tidyr::unite(
         col = "lookup",
         tidyselect::everything(),

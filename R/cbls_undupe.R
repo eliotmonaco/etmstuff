@@ -1,11 +1,11 @@
-#' Undupe lab records prepared for CBLS submission
+#' Undupe records prepared for CBLS submission
 #'
 #' This function deduplicates (using [undupe()]) a data set prepared for the CBLS submission, keeping only one record per child per sample date (`lab_collection_date`) as dictated by the CBLS submission guidelines. Records with an unknown sample type are ignored (the guidelines do not indicate how to evaluate records with an unknown sample type). A message is generated when all records in a dupeset have an unknown sample type.
 #'
 #' @param df A dataframe of records ready for submission to CBLS.
 #' @param row_id A unique row identifier variable in `df`.
 #'
-#' @return A dataframe with the added variable `cbls_dupe`.
+#' @return A dataframe with the added variable `cbls_duplicate`.
 #' @export
 #'
 #' @importFrom magrittr %>%
@@ -33,28 +33,26 @@ cbls_undupe <- function(df, row_id) {
 
   dupe_ids <- data.frame(id = unique(df_dupesets$cbls_dupe_id))
 
-  # Dataframe to hold retained duplicate tests
+  # Empty dataframe to hold duplicates that will be kept for the submission
   df_keep <- df[0, ]
 
   # Algorithm to resolve duplicate tests
   for (i in 1:nrow(dupe_ids)) {
-    id <- dupe_ids$id[i]
     df2 <- df_dupesets %>%
-      dplyr::filter(cbls_dupe_id == id)
-    # if (any(df2$SAMP_TYPE == 1)) {
-    if (any(stringr::str_detect(df2$lab_specimen_source, "Blood - venous"))) {
-      # If samples are all venous, take the highest test result.
-      # If samples are mixed capillary and venous, take the (highest) venous.
+      dplyr::filter(cbls_dupe_id == dupe_ids$id[i])
+    if (any(df2$lab_specimen_source == "Blood - venous")) {
+      # If samples are all venous, take the highest test result
+      # If samples are mixed capillary and venous, take the (highest) venous
       df2 <- df2 %>%
-        dplyr::filter(stringr::str_detect(df2$lab_specimen_source, "Blood - venous")) %>%
-        dplyr::filter(lab_result_number == max(lab_result_number))
-      df_keep <- rbind(df_keep, df2[1, ])
-    } else if (any(stringr::str_detect(df2$lab_specimen_source, "Blood - capillary"))) {
-      # If the samples are all capillary, take the lowest test result.
+        dplyr::filter(lab_specimen_source == "Blood - venous") %>%
+        dplyr::slice_max(lab_result_number, n = 1, with_ties = FALSE)
+      df_keep <- rbind(df_keep, df2)
+    } else if (any(df2$lab_specimen_source == "Blood - capillary")) {
+      # If the samples are all capillary, take the lowest test result
       df2 <- df2 %>%
-        dplyr::filter(stringr::str_detect(df2$lab_specimen_source, "Blood - capillary")) %>%
-        dplyr::filter(lab_result_number == min(lab_result_number))
-      df_keep <- rbind(df_keep, df2[1, ])
+        dplyr::filter(lab_specimen_source == "Blood - capillary") %>%
+        dplyr::slice_min(lab_result_number, n = 1, with_ties = FALSE)
+      df_keep <- rbind(df_keep, df2)
     } else {
       m <- paste0(
         "Unknown sample types in `df$", row_id, "`: ",
@@ -66,18 +64,18 @@ cbls_undupe <- function(df, row_id) {
 
   df_keep <- df_keep %>%
     dplyr::select(-c(cbls_dupe_id, cbls_dupe_order)) %>%
-    dplyr::mutate(cbls_dupe = "true_keep")
+    dplyr::mutate(cbls_duplicate = "true_keep")
 
   df_remove <- df_dupesets %>%
-    dplyr::anti_join(df_keep, by = "row_id_src") %>%
+    dplyr::anti_join(df_keep, by = row_id) %>%
     dplyr::select(-c(cbls_dupe_id, cbls_dupe_order)) %>%
-    dplyr::mutate(cbls_dupe = "true_remove")
+    dplyr::mutate(cbls_duplicate = "true_remove")
 
   df_nondupes <- df %>%
-    dplyr::anti_join(df_keep, by = "row_id_src") %>%
-    dplyr::anti_join(df_remove, by = "row_id_src") %>%
-    dplyr::mutate(cbls_dupe = "false")
+    dplyr::anti_join(df_keep, by = row_id) %>%
+    dplyr::anti_join(df_remove, by = row_id) %>%
+    dplyr::mutate(cbls_duplicate = "false")
 
   rbind(df_keep, df_remove, df_nondupes) %>%
-    dplyr::arrange(lab_collection_date, patient_id, cbls_dupe)
+    dplyr::arrange(lab_collection_date, patient_id, cbls_duplicate)
 }

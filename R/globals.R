@@ -24,6 +24,18 @@ utils::globalVariables(
     "first_investigation_started_date", "last_investigation_completed_lhd_date",
     "first_accepted_by_lhd_date", "last_approved_by_lhd_date", "last_routed_to_lhd_date",
     "patient_results_reported_to_LHD",
+    # ()
+    "",
+    # ()
+    "",
+    # ()
+    "",
+    # ()
+    "",
+    # ()
+    "",
+    # cbls_undupe()
+    "cbls_dupe_id", "cbls_dupe_order", "cbls_duplicate",
     # clean_lab_results()
     "lab_result_clean",
     # clean_street_address()
@@ -34,7 +46,11 @@ utils::globalVariables(
     "row_id_src", "record_id_src",
     # count_conflicts()
     "n",
-    # created by parse_lab_results()
+    # merge_address_registry ()
+    "address_registry_id", "lookup",
+    # merge_child_registry ()
+    "child_registry_id",
+    # parse_lab_results()
     "lab_result_symbol", "lab_result_number",
     # pull_addresses()
     "street_src", "street", "unit", "city", "state", "zip", "county",
@@ -46,3 +62,4 @@ utils::globalVariables(
     "n_row"
   )
 )
+cbls_undupe

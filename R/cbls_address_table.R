@@ -52,7 +52,7 @@ cbls_address_table <- function(df, key, address_registry) {
     dplyr::mutate(
       FILEID = "ADD",
       CITY = substr(
-        str_pad(
+        stringr::str_pad(
           toupper(CITY),
           width = 15,
           side = "right",
@@ -60,13 +60,13 @@ cbls_address_table <- function(df, key, address_registry) {
         ), 1, 15
       ),
       # CNTY_FIPS = substr(CNTY_FIPS, 3, 5),
-      ZIP = str_pad(
+      ZIP = stringr::str_pad(
         sub("-", "", ZIP),
         width = 9,
         side = "right",
         pad = " "
       ),
-      CENSUS = str_pad(
+      CENSUS = stringr::str_pad(
         CENSUS,
         width = 7,
         side = "right",

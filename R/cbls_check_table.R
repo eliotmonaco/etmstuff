@@ -15,7 +15,7 @@ cbls_check_table <- function(df) {
   var_check(df, var = c("FILEID", "ACTION", "QTR", "RPT_YR", "PGMID"))
 
   df <- df %>%
-    dplyr::select(FILEID:last_col())
+    dplyr::select(FILEID:tidyselect::last_col())
 
   # Concatenate values in each row
   df <- cbind(df, tidyr::unite(df, col = "all_chars", sep = ""))

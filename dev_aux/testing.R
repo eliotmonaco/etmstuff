@@ -4,6 +4,56 @@ library(etmstuff)
 
 
 
+# cbls_undupe ####
+
+debugonce(cbls_undupe)
+
+data_cbls_new_undupe <- cbls_undupe(data_cbls_preundupe, row_id = "dupe_id")
+
+all.equal(
+  data_cbls_new_undupe %>%
+    arrange(dupe_id),
+  data_cbls_old_undupe %>%
+    arrange(dupe_id)
+)
+
+ids <- data_cbls_new_undupe %>%
+  select(dupe_id, cbls_duplicate) %>%
+  left_join(
+    data_cbls_old_undupe %>%
+      select(dupe_id, cbls_dupe),
+    by = "dupe_id"
+  ) %>%
+  filter(cbls_duplicate != cbls_dupe) %>%
+  pull(dupe_id)
+
+dfA <- data_cbls_old_undupe %>%
+  filter(dupe_id %in% ids) %>%
+  arrange(dupe_id) %>%
+  relocate(cbls_dupe)
+
+dfB <- data_cbls_new_undupe %>%
+  filter(dupe_id %in% ids) %>%
+  arrange(dupe_id) %>%
+  relocate(cbls_duplicate)
+
+data_cbls_old_undupe %>%
+  group_by(cbls_dupe) %>%
+  count()
+
+data_cbls_new_undupe %>%
+  group_by(cbls_duplicate) %>%
+  count()
+
+
+
+
+
+
+# cbls_undupe ####
+
+
+
 # merge_child_registry ####
 
 data_cbls <- readRDS("../bl_2023q1/data/cbls/data_cbls_2023q1.rds")
@@ -124,9 +174,6 @@ data_core_tr_2015 <- classify_test_reason(
 
 
 
-
-
-
 debugonce(classify_test_reason)
 
 df_test <- classify_test_reason(
@@ -222,25 +269,6 @@ wb <- openxlsx::write.xlsx(
 # }
 
 openxlsx::saveWorkbook(wb, file_path, overwrite = T)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# stoppage ####
 
 
 

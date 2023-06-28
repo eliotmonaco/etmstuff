@@ -93,7 +93,7 @@ cbls_investigation_table <- function(df, key) {
       CLEAR_DATE = strrep(" ", 8),
       CLEAR_RSLT = strrep(" ", 1)
     ) %>%
-    mutate(
+    dplyr::mutate(
       XRF = dplyr::if_else(
         XRF == "000NA",
         true = "000.0",
@@ -132,7 +132,7 @@ cbls_investigation_table <- function(df, key) {
     )
 
   # Add basic format variables
-  df_inv <- cbind(basic_format, df_inv)
+  df_inv <- cbind(key, df_inv)
 
   df_inv %>%
     dplyr::relocate(FILEID)

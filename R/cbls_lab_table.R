@@ -158,7 +158,7 @@ cbls_lab_table <- function(df, key, row_id, ref_labs) {
   df_lab$RSLT_RPT_DT <- strrep(" ", 8)
 
   # RESULT (required)
-  df_lab$RESULT <- str_pad(
+  df_lab$RESULT <- stringr::str_pad(
     format(
       round(df$lab_result_number, digits = 2),
       nsmall = 2,
@@ -179,7 +179,7 @@ cbls_lab_table <- function(df, key, row_id, ref_labs) {
 
   # LAB_NAME (not required)
   df_lab$LAB_NAME <- substr(
-    str_pad(
+    stringr::str_pad(
       toupper(df$lab_name),
       width = 43,
       side = "right",
