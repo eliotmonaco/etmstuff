@@ -1,4 +1,38 @@
 
+library(tidyverse)
+library(etmstuff)
+
+
+
+# merge_child_registry ####
+
+data_cbls <- readRDS("../bl_2023q1/data/cbls/data_cbls_2023q1.rds")
+df_child_registry <- readRDS("../bl_2023q1/data/registries/df_child_registry.rds")
+
+debugonce(merge_child_registry)
+
+child_list <- merge_child_registry(data_cbls, registry = df_child_registry)
+
+df_data <- child_list[["df_data"]]
+df_registry <- child_list[["df_registry"]]
+
+
+
+# merge_address_registry ####
+
+df_addr_cbls <- readRDS("../bl_2023q1/data/addresses/df_addr_cbls.rds")
+df_address_registry <- readRDS("../bl_2023q1/data/registries/df_address_registry.rds")
+
+debugonce(merge_address_registry)
+
+addr_list <- merge_address_registry(df_addr_cbls, registry = df_address_registry)
+
+df_addr <- addr_list[["df_addr"]]
+df_registry <- addr_list[["df_registry"]]
+
+
+
+# cbls_table_key ####
 
 data %>%
   dplyr::group_by(blood_lead_poisoning_form_col_bl_funding_source) %>%
@@ -8,9 +42,6 @@ data %>%
 data_2023q1 <- subset_date_range(data, var = "lab_collection_date", range = "2023q1")
 
 key <- cbls_table_key(data_2023q1, action = "add")
-
-
-
 
 
 
