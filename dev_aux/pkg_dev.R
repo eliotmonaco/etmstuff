@@ -27,7 +27,7 @@ usethis::use_github()
 ## Document ####
 
 # Adds package name to DESCRIPTION file
-usethis::use_package("tidyselect")
+usethis::use_package("")
 
 # Adds package and function names to NAMESPACE file
 usethis::use_import_from("", "")

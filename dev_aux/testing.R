@@ -3,6 +3,9 @@ library(tidyverse)
 library(etmstuff)
 
 
+cbls_write_fwf(df_tbl_add, "tbl.txt")
+
+
 
 # cbls_investigation_table ####
 

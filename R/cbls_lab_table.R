@@ -14,7 +14,6 @@
 # @examples
 #'
 cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
-
   var_check(df, var = c(
     row_id, "patient_id", "age",
     "lab_collection_date", "lab_test_date",
@@ -58,29 +57,29 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
   # LAB_FUND (required)
   df_lab$LAB_FUND <- dplyr::case_when(
     df$blood_lead_poisoning_form_col_bl_funding_source == "Public" |
-      !is.na(df$medicaid_id) ~ 1,                                                  # 1 – Public, includes Medicaid
+      !is.na(df$medicaid_id) ~ 1, # 1 – Public, includes Medicaid
     df$blood_lead_poisoning_form_col_bl_funding_source == "Private insurance" ~ 2, # 2 – Private insurance
-    df$blood_lead_poisoning_form_col_bl_funding_source == "Parent self-pay" ~ 3,   # 3 – Parent self-pay
-    df$blood_lead_poisoning_form_col_bl_funding_source == "Unknown" ~ 9,           # 9 – Unknown
-    df$blood_lead_poisoning_form_col_bl_funding_source == "Other" ~ 8,             # 8 – Other
-    T ~ 9                                                                          # 9 – Unknown
+    df$blood_lead_poisoning_form_col_bl_funding_source == "Parent self-pay" ~ 3, # 3 – Parent self-pay
+    df$blood_lead_poisoning_form_col_bl_funding_source == "Unknown" ~ 9, # 9 – Unknown
+    df$blood_lead_poisoning_form_col_bl_funding_source == "Other" ~ 8, # 8 – Other
+    T ~ 9 # 9 – Unknown
   )
 
   # SAMP_TYPE (required)
   df_lab$SAMP_TYPE <- dplyr::case_when(
     df$lab_specimen_source == "Blood - venous" |
-      df$lab_specimen_source == "Blood" ~ 1,           # 1 – Venous, blood lead
+      df$lab_specimen_source == "Blood" ~ 1, # 1 – Venous, blood lead
     df$lab_specimen_source == "Blood - capillary" ~ 2, # 2 – Capillary, blood lead
-    T ~ 9                                              # 9 – Unknown
+    T ~ 9 # 9 – Unknown
   )
 
   # TEST_RSN (required)
   df_lab$TEST_RSN <- dplyr::case_when(
     df$test_reason == "cap_scrn" |
       df$test_reason == "ven_cfm_i" ~ 1, # 1 – Screening (asymptomatic child without previous elevated level)
-    df$test_reason == "ven_cfm_e" ~ 3,   # 3 – Confirmatory test following elevated value by fingerstick
-    df$test_reason == "ven_flw" ~ 4,     # 4 – Follow-up, child with confirmed elevated level
-    T ~ 9                                # 9 – Unknown/other
+    df$test_reason == "ven_cfm_e" ~ 3, # 3 – Confirmatory test following elevated value by fingerstick
+    df$test_reason == "ven_flw" ~ 4, # 4 – Follow-up, child with confirmed elevated level
+    T ~ 9 # 9 – Unknown/other
   )
 
   # LAB_TYPE (required)
@@ -196,7 +195,7 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
   df_lab$RST_INTPCODE <- dplyr::case_when(
     is.na(df$lab_result_symbol) ~ 1, # 1 – Equal
     df$lab_result_symbol == "<" ~ 2, # 2 – Less Than
-    df$lab_result_symbol == ">" ~ 3  # 3 – Greater Than
+    df$lab_result_symbol == ">" ~ 3 # 3 – Greater Than
   )
 
   # LAB_LOD (not required)
@@ -219,5 +218,4 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
   df_lab$NPI <- strrep(" ", 10)
 
   df_lab
-
 }

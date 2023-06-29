@@ -25,7 +25,6 @@ cbls_investigation_table <- function(df, key) {
   colnames(df) <- stringr::str_to_upper(colnames(df))
 
   df_inv <- df %>%
-    # dplyr::select(ADDR_ID = PBADDRID, DATE_REF:INDHAZ) %>%
     dplyr::mutate(
       FILEID = "INV",
       DATE_REF = gsub("-", "", DATE_REF),

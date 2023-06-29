@@ -17,6 +17,7 @@ Imports:
     dplyr,
     future,
     future.apply,
+    gdata,
     jsonlite,
     lubridate,
     magrittr,

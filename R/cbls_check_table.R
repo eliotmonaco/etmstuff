@@ -25,7 +25,9 @@ cbls_check_table <- function(df) {
       sep = "",
       remove = FALSE,
       na.rm = FALSE
-    )
+    ) %>%
+    dplyr::mutate(row = dplyr::row_number()) %>%
+    dplyr::relocate(row)
 
   if (all(df$FILEID == "ADD")) {
     # Check Address table
