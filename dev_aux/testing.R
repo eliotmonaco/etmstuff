@@ -4,6 +4,31 @@ library(etmstuff)
 
 
 
+
+
+# cbls_lab_table ####
+
+
+key <- cbls_table_key(data_cbls_2023q1, action = "add")
+
+
+df <- cbls_lab_table(
+  data_cbls_2023q1,
+  row_id = "dupe_id",
+  key = key,
+  ref_lab_type = df_lab_type,
+  ref_scrn_site = df_scrn_site
+)
+
+
+
+
+# cbls_lab_table ####
+
+
+
+
+
 # cbls_undupe ####
 
 debugonce(cbls_undupe)
@@ -44,13 +69,6 @@ data_cbls_old_undupe %>%
 data_cbls_new_undupe %>%
   group_by(cbls_duplicate) %>%
   count()
-
-
-
-
-
-
-# cbls_undupe ####
 
 
 
