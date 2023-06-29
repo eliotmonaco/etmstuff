@@ -8,11 +8,9 @@ library(etmstuff)
 
 # cbls_lab_table ####
 
-
 key <- cbls_table_key(data_cbls_2023q1, action = "add")
 
-
-df <- cbls_lab_table(
+df_tbl_lab <- cbls_lab_table(
   data_cbls_2023q1,
   row_id = "dupe_id",
   key = key,
@@ -20,7 +18,9 @@ df <- cbls_lab_table(
   ref_scrn_site = df_scrn_site
 )
 
+debugonce(cbls_check_table)
 
+df <- cbls_check_table(df_tbl_lab)
 
 
 # cbls_lab_table ####

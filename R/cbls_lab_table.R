@@ -21,9 +21,9 @@ cbls_lab_table <- function(df, key, row_id, ref_lab_type, ref_scrn_site) {
     "lab_result_symbol", "lab_result_number",
     "lab_name", "ordering_facility_name",
     "blood_lead_poisoning_form_col_bl_funding_source",
+    "test_reason",
     "address_registry_id",
-    "child_registry_id",
-    "test_reason"
+    "child_registry_id"
   ))
 
   if (!all(df$age < 6)) {
@@ -84,6 +84,7 @@ cbls_lab_table <- function(df, key, row_id, ref_lab_type, ref_scrn_site) {
   )
 
   # LAB_TYPE (required)
+
   df_lab_type <- tidyr::separate_wider_delim(
     df[, c(row_id, "lab_name")],
     cols = "lab_name",
@@ -109,6 +110,8 @@ cbls_lab_table <- function(df, key, row_id, ref_lab_type, ref_scrn_site) {
 
   df_lab_type$lab_type_unq <- apply(df_lab_type[, vars_new], 1, f)
 
+  df_lab_type$lab_type_unq[df_lab_type$lab_type_unq == ""] <- NA
+
   df_lab_type <- df_lab_type %>%
     dplyr::mutate(LAB_TYPE = dplyr::case_when(
       grepl(pattern = ",", x = lab_type_unq) ~ 9,
@@ -123,59 +126,44 @@ cbls_lab_table <- function(df, key, row_id, ref_lab_type, ref_scrn_site) {
       by = row_id
     )
 
-  browser()
-
   # SCRN_SITE (required)
-  df_lab$SCRN_SITE <- dplyr::case_when(
-    grepl(
-      paste0(
-        "Susan", "|", "Univ", "|", "Wesley", "|", "Stormo", "|", "Via Chr",
-        "|", "providen", "|", "addis", "|", "advent", "|", "affil",
-        "|", "atlas", "|", "chc ", "|", "children", "|", "gracemed",
-        "|", "ohp ", "|", "memorial", "|", "luke", "|", "cather",
-        "|", "\\bst ", "|", "st. ", "|", "swope", "|", "newton",
-        "|", "good sa", "|", "mercy", "|", "kvc", "|", "Clara Barton",
-        "|", "Regional Hospital", "|", "ATCHISON HOSP", "|", "newman",
-        "|", "Mcpherson Hosp", "|", "prairie heal", "|", "prairie star", "|", "Trinity Rock",
-        "|", "Central Ks Reg", "|", "Salina Regional", "|", "Salina Health", "|", "Prompt Care",
-        "|", "Eckan", "|", "AMS LABORATORIES", "|", "CHILD CARE", "|", "ARCKC",
-        "|", "Heartland Programs"
-      ),
-      df$ordering_facility_name, ignore.case = TRUE
-    ) ~ 4,
-    grepl(
-      paste0(
-        "County", "|", "health dep", "|", "Community", "|", "dist", "|", "primary",
-        "|", "smpc", "|", "rodgers", "|", "hunter", "|", " co h",
-        "|", "irwin", "|", "kickap", "|", "prairie band", "|", "municipal",
-        "|", "Wyco", "|", "tribal", "|", "Munson"
-      ),
-      df$ordering_facility_name, ignore.case = TRUE
-    ) ~ 9,
-    grepl(
-      paste0(
-        " MD", "|", " M.D.", "|", " M.D", "|", "family", "|", "System",
-        "|", "pediatri", "|", "geriatr", "|", "medical gr", "|", "plains",
-        "|", "clinic", "|", "doctor", "|", "cerner", "|", "comcare",
-        "|", "Ministries", "|", "Enterprises", "|", "Fam Health", "|", "HEALTHCARE",
-        "|", "SASTUN DIREC", "|", "Lucero", "|", "Kansas Pathology", "|", "PARK FAM CARE"
-      ),
-      df$ordering_facility_name, ignore.case = TRUE
-    ) ~ 4,
-    grepl(
-      paste0(
-        "heid", "|", "vinzant", "|", "lacey", "|", "charlene", "|", "Hartvickson", "|", "Truong"
-      ),
-      df$ordering_facility_name, ignore.case = TRUE
-    ) ~ 4,
-    grepl(
-      paste0(
-        "Labette Health", "|", "Hiawatha Com", "|", "City of", "|", "Nemaha Co Comm"
-      ),
-      df$ordering_facility_name, ignore.case = TRUE
-    ) ~ 9,
-    TRUE ~ 9
+
+  df_scrn_site <- tidyr::separate_wider_delim(
+    df[, c(row_id, "ordering_facility_name")],
+    cols = "ordering_facility_name",
+    delim = " | ",
+    names_sep = "_",
+    too_few = "align_start",
+    cols_remove = TRUE
   )
+
+  for (i in 2:ncol(df_scrn_site)) {
+    nm <- colnames(df_scrn_site)[i]
+    colnames(df_scrn_site)[i] <- "facility_name"
+    df_scrn_site <- df_scrn_site %>%
+      dplyr::left_join(ref_scrn_site, by = "facility_name")
+    colnames(df_scrn_site)[i] <- nm
+  }
+
+  vars_new <- colnames(df_scrn_site)[(i + 1):ncol(df_scrn_site)]
+
+  df_scrn_site$scrn_site_unq <- apply(df_scrn_site[, vars_new], 1, f)
+
+  df_scrn_site$scrn_site_unq[df_scrn_site$scrn_site_unq == ""] <- NA
+
+  df_scrn_site <- df_scrn_site %>%
+    dplyr::mutate(SCRN_SITE = dplyr::case_when(
+      grepl(pattern = ",", x = scrn_site_unq) ~ 9,
+      is.na(scrn_site_unq) ~ 9,
+      T ~ as.numeric(scrn_site_unq)
+    ))
+
+  df_lab <- df_lab %>%
+    dplyr::left_join(
+      df_scrn_site %>%
+        dplyr::select(tidyselect::all_of(row_id), SCRN_SITE),
+      by = row_id
+    )
 
   # METH_ANAZ (required)
   df_lab$METH_ANAZ <- 9 # Unknown

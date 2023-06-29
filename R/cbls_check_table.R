@@ -14,11 +14,16 @@
 cbls_check_table <- function(df) {
   var_check(df, var = c("FILEID", "ACTION", "QTR", "RPT_YR", "PGMID"))
 
+  # Keep CBLS table variables and add `all_chars` to check character count
   df <- df %>%
-    dplyr::select(FILEID:tidyselect::last_col())
-
-  # Concatenate values in each row
-  df <- cbind(df, tidyr::unite(df, col = "all_chars", sep = ""))
+    dplyr::select(FILEID:tidyselect::last_col()) %>%
+    tidyr::unite(
+      col = "all_chars",
+      tidyselect::everything(),
+      sep = "",
+      remove = FALSE,
+      na.rm = FALSE
+    )
 
   # Dataframe of T/F values to catch errors
   df2 <- data.frame(row = 1:nrow(df))
