@@ -14,7 +14,7 @@ merge_address_registry <- function(df, registry) {
   vars_addr <- c("street", "unit", "city", "state", "zip", "county")
 
   var_check(df, var = vars_addr)
-  var_check(registry, var = c("address_registry_id", vars_addr))
+  var_check(registry, var = c("address_registry_id", vars_addr, "cnty_fips"))
 
   # Create `lookup` value from address variables
   f1 <- function(df, var) {
@@ -64,9 +64,16 @@ merge_address_registry <- function(df, registry) {
   df_existing <- df %>%
     dplyr::filter(!is.na(address_registry_id))
 
+  # Add county FIPS codes to new addresses
   df_new <- df %>%
     dplyr::filter(is.na(address_registry_id)) %>%
-    dplyr::select(-address_registry_id)
+    dplyr::select(-address_registry_id) %>%
+    dplyr::left_join(
+      fips %>%
+        dplyr::mutate(county = paste(county, "County")) %>%
+        dplyr::select(county, cnty_fips),
+      by = "county"
+    )
 
   # Assign ID to new addresses
   df_new <- id_distinct_rows(
@@ -79,7 +86,10 @@ merge_address_registry <- function(df, registry) {
 
   # Reunite `df`
   df <- df_existing %>%
-    dplyr::bind_rows(df_new) %>%
+    dplyr::bind_rows(
+      df_new %>%
+        dplyr::select(-cnty_fips)
+    ) %>%
     dplyr::select(-lookup) %>%
     dplyr::arrange(address_registry_id)
 

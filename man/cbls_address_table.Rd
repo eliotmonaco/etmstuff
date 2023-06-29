@@ -4,14 +4,14 @@
 \alias{cbls_address_table}
 \title{Create a CBLS Address table}
 \usage{
-cbls_address_table(df, key, address_registry)
+cbls_address_table(df, key, registry)
 }
 \arguments{
 \item{df}{A dataframe of records prepared for CBLS submission.}
 
 \item{key}{A dataframe returned by \code{\link[=cbls_table_key]{cbls_table_key()}}.}
 
-\item{address_registry}{The CBLS Address Registry.}
+\item{registry}{The CBLS Address Registry.}
 }
 \value{
 A dataframe formatted as an Address table per CBLS guidelines.

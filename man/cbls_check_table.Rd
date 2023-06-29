@@ -2,7 +2,7 @@
 % Please edit documentation in R/cbls_check_table.R
 \name{cbls_check_table}
 \alias{cbls_check_table}
-\title{Check a CBLS table}
+\title{Check a CBLS table for errors}
 \usage{
 cbls_check_table(df)
 }
@@ -10,7 +10,7 @@ cbls_check_table(df)
 \item{df}{A dataframe returned by one of the CBLS table functions.}
 }
 \value{
-A dataframe or message, depending on the content of \code{df}.
+A dataframe containing errors in \code{df} or a message that no errors were found.
 }
 \description{
 This function checks the output of the CBLS table functions (\code{\link[=cbls_address_table]{cbls_address_table()}}, \code{\link[=cbls_child_table]{cbls_child_table()}}, \code{\link[=cbls_investigation_table]{cbls_investigation_table()}}, and \code{\link[=cbls_lab_table]{cbls_lab_table()}}). It checks the expected values in each column and the number of characters in each row. If a problem is found, a dataframe containing the affected row and column is returned. If no problems are found, the message \code{"No problems found"} is returned.

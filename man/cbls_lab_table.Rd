@@ -4,14 +4,14 @@
 \alias{cbls_lab_table}
 \title{Create a CBLS Lab Results table}
 \usage{
-cbls_lab_table(df, key, row_id, ref_lab_type, ref_scrn_site)
+cbls_lab_table(df, row_id, key, ref_lab_type, ref_scrn_site)
 }
 \arguments{
 \item{df}{A dataframe of records prepared for CBLS submission.}
 
-\item{key}{A dataframe returned by \code{\link[=cbls_table_key]{cbls_table_key()}}.}
-
 \item{row_id}{A unique row identifier variable in \code{df}.}
+
+\item{key}{A dataframe returned by \code{\link[=cbls_table_key]{cbls_table_key()}}.}
 
 \item{ref_lab_type}{A reference list of lab names and their classification numbers for the LAB_TYPE column in the Lab Results table.}
 

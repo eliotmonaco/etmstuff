@@ -4,14 +4,14 @@
 \alias{cbls_child_table}
 \title{Create a CBLS Child table}
 \usage{
-cbls_child_table(df, key, row_id)
+cbls_child_table(df, row_id, key)
 }
 \arguments{
 \item{df}{A dataframe of records prepared for CBLS submission.}
 
-\item{key}{A dataframe returned by \code{\link[=cbls_table_key]{cbls_table_key()}}.}
-
 \item{row_id}{A unique row identifier variable in \code{df}.}
+
+\item{key}{A dataframe returned by \code{\link[=cbls_table_key]{cbls_table_key()}}.}
 }
 \value{
 A dataframe formatted as a Child table per CBLS guidelines.

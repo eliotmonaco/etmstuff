@@ -2,7 +2,7 @@
 #'
 #' @param df A dataframe of records prepared for CBLS submission.
 #' @param key A dataframe returned by [cbls_table_key()].
-#' @param address_registry The CBLS Address Registry.
+#' @param registry The CBLS Address Registry.
 #'
 #' @return A dataframe formatted as an Address table per CBLS guidelines.
 #' @export
@@ -11,18 +11,8 @@
 #'
 # @examples
 #'
-cbls_address_table <- function(df, key, address_registry) {
-
-  var_check(df, var = c(
-    row_id, "patient_id", "age",
-    "lab_collection_date", "lab_test_date",
-    "lab_result_symbol", "lab_result_number",
-    "lab_name", "ordering_facility_name",
-    "blood_lead_poisoning_form_col_bl_funding_source",
-    "address_registry_id",
-    "child_registry_id",
-    "test_reason"
-  ))
+cbls_address_table <- function(df, key, registry) {
+  var_check(df, var = "address_registry_id")
 
   if (!all(df$age < 6)) {
     stop("`df$age` must be < 6 for all records", call. = FALSE)
@@ -33,21 +23,19 @@ cbls_address_table <- function(df, key, address_registry) {
   df <- df %>%
     dplyr::filter(address_registry_id != "00000000")
 
-  address_registry <- address_registry %>%
-    dplyr::distinct(address_registry_id, .keep_all = T) %>%
-    dplyr::mutate(census_tract = "")
+  registry <- registry %>%
+    dplyr::distinct(address_registry_id, .keep_all = T)
 
   df_add <- df %>%
     dplyr::select(address_registry_id) %>%
     dplyr::distinct() %>%
-    dplyr::left_join(address_registry, by = "address_registry_id") %>%
+    dplyr::left_join(registry, by = "address_registry_id") %>%
     dplyr::select(
       ADDR_ID = address_registry_id,
       CITY = city,
-      CNTY_FIPS = FIPS,
+      CNTY_FIPS = cnty_fips,
       ZIP = zip,
-      STATE = state,
-      CENSUS = census_tract
+      STATE = state
     ) %>%
     dplyr::mutate(
       FILEID = "ADD",
@@ -59,7 +47,6 @@ cbls_address_table <- function(df, key, address_registry) {
           pad = " "
         ), 1, 15
       ),
-      # CNTY_FIPS = substr(CNTY_FIPS, 3, 5),
       ZIP = stringr::str_pad(
         sub("-", "", ZIP),
         width = 9,
@@ -67,15 +54,21 @@ cbls_address_table <- function(df, key, address_registry) {
         pad = " "
       ),
       CENSUS = stringr::str_pad(
-        CENSUS,
+        "",
         width = 7,
         side = "right",
         pad = " "
       )
     )
 
-  # Add basic format variables
-  df_add <- cbind(key, df_add)
+  # Add `key` and rearrange columns
+  df_add <- df_add %>%
+    dplyr::bind_cols(key) %>%
+    dplyr::select(
+      FILEID,
+      tidyselect::all_of(colnames(key)),
+      tidyselect::everything()
+    )
 
   # RENOVATED (required)
   df_add$RENOVATED <- 9 # Unknown
@@ -86,7 +79,5 @@ cbls_address_table <- function(df, key, address_registry) {
   # COMP_REN (not required)
   df_add$COMP_REN <- strrep(" ", 8)
 
-  df_add %>%
-    dplyr::relocate(FILEID)
-
+  df_add
 }

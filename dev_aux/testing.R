@@ -4,6 +4,59 @@ library(etmstuff)
 
 
 
+# cbls_investigation_table ####
+
+key <- cbls_table_key(data_cbls_2023q1, action = "add")
+
+debugonce(cbls_investigation_table)
+
+df_tbl_inv <- cbls_investigation_table(
+  df_inv,
+  key = key
+)
+
+debugonce(cbls_check_table)
+
+df <- cbls_check_table(df_tbl_inv)
+
+
+# stop ####
+
+
+# cbls_child_table ####
+
+key <- cbls_table_key(data_cbls_2023q1, action = "add")
+
+debugonce(cbls_child_table)
+
+df_tbl_chi <- cbls_child_table(
+  data_cbls_2023q1,
+  key = key,
+  row_id = "dupe_id"
+)
+
+debugonce(cbls_check_table)
+
+df <- cbls_check_table(df_tbl_chi)
+
+
+
+# cbls_address_table ####
+
+key <- cbls_table_key(data_cbls_2023q1, action = "add")
+
+debugonce(cbls_address_table)
+
+df_tbl_add <- cbls_address_table(
+  data_cbls_2023q1,
+  key = key,
+  registry = df_address_registry_2023q1
+)
+
+debugonce(cbls_check_table)
+
+df <- cbls_check_table(df_tbl_add)
+
 
 
 # cbls_lab_table ####
@@ -21,11 +74,6 @@ df_tbl_lab <- cbls_lab_table(
 debugonce(cbls_check_table)
 
 df <- cbls_check_table(df_tbl_lab)
-
-
-# cbls_lab_table ####
-
-
 
 
 

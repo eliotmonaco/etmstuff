@@ -13,7 +13,7 @@
 #'
 # @examples
 #'
-cbls_lab_table <- function(df, key, row_id, ref_lab_type, ref_scrn_site) {
+cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
 
   var_check(df, var = c(
     row_id, "patient_id", "age",

@@ -11,12 +11,21 @@
 # @examples
 #'
 cbls_investigation_table <- function(df, key) {
+  vars_inv <- c(
+    "addr_id", "date_ref", "insp_comp", "abat_comp", "year",
+    "ownership", "dwell_type", "paint_haz", "xrf",
+    "dust_floor", "floor_msr", "dust_sill", "sill_msr",
+    "dust_well", "well_msr", "paint", "paint_msr", "soil",
+    "water", "indhaz"
+  )
+
+  var_check(df, var = vars_inv)
   var_check(key, var = c("ACTION", "QTR", "RPT_YR", "PGMID"))
 
   colnames(df) <- stringr::str_to_upper(colnames(df))
 
   df_inv <- df %>%
-    dplyr::select(ADDR_ID = PBADDRID, DATE_REF:INDHAZ) %>%
+    # dplyr::select(ADDR_ID = PBADDRID, DATE_REF:INDHAZ) %>%
     dplyr::mutate(
       FILEID = "INV",
       DATE_REF = gsub("-", "", DATE_REF),
@@ -129,11 +138,14 @@ cbls_investigation_table <- function(df, key) {
         true = "000000.0",
         false = WATER
       )
+    ) %>%
+    dplyr::bind_cols(key) %>%
+    dplyr::select(
+      FILEID,
+      tidyselect::all_of(colnames(key)),
+      tidyselect::all_of(toupper(vars_inv)),
+      DATE_DUE, INV_CLOS_RES, CLEAR_DATE, CLEAR_RSLT
     )
 
-  # Add basic format variables
-  df_inv <- cbind(key, df_inv)
-
-  df_inv %>%
-    dplyr::relocate(FILEID)
+  df_inv
 }

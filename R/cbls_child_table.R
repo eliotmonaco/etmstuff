@@ -11,7 +11,7 @@
 #'
 # @examples
 #'
-cbls_child_table <- function(df, key, row_id) {
+cbls_child_table <- function(df, row_id, key) {
 
   var_check(df, var = c(
     row_id, "patient_id", "age",
@@ -33,13 +33,14 @@ cbls_child_table <- function(df, key, row_id) {
   df <- df %>%
     dplyr::distinct(child_registry_id, .keep_all = T)
 
-  # Add link variables and FILEID
+  # Add link variables, FILEID, and `key`
   df_chi <- df %>%
     dplyr::select(tidyselect::all_of(row_id), patient_id) %>%
-    dplyr::mutate(FILEID = "CHI")
+    dplyr::mutate(FILEID = "CHI") %>%
+    dplyr::bind_cols(key)
 
-  # Add basic format variables
-  df_chi <- cbind(df_chi, key)
+  # # Add basic format variables
+  # df_chi <- cbind(df_chi, key)
 
   # CHILD_ID (required)
   df_chi$CHILD_ID <- df$child_registry_id
@@ -49,16 +50,16 @@ cbls_child_table <- function(df, key, row_id) {
 
   # SEX (required)
   df_chi$SEX <- dplyr::case_when(
-    patient_birth_sex == "Male" ~ 1,   # 1 – Male
-    patient_birth_sex == "Female" ~ 2, # 2 – Female
-    T ~ 9                              # 9 – Unknown
+    df$patient_birth_sex == "Male" ~ 1,   # 1 – Male
+    df$patient_birth_sex == "Female" ~ 2, # 2 – Female
+    T ~ 9                                 # 9 – Unknown
   )
 
   # ETHNIC (required)
   df_chi$ETHNIC <- dplyr::case_when(
-    patient_ethnicity == "Hispanic or Latino" ~ 1,     # 1 – Hispanic or Latino
-    patient_ethnicity == "Not Hispanic or Latino" ~ 2, # 2 – Not Hispanic or Latino
-    T ~ 9                                              # 9 – Unknown
+    df$patient_ethnicity == "Hispanic or Latino" ~ 1,     # 1 – Hispanic or Latino
+    df$patient_ethnicity == "Not Hispanic or Latino" ~ 2, # 2 – Not Hispanic or Latino
+    T ~ 9                                                 # 9 – Unknown
   )
 
   # BLANK
@@ -93,10 +94,10 @@ cbls_child_table <- function(df, key, row_id) {
 
   # BIRTH (not required)
   df_chi$BIRTH <- dplyr::case_when(
-    person_country_of_birth == "United States" ~ 1, # 1 – U.S.
-    person_country_of_birth == "Unknown" |
-      is.na(df$person_country_of_birth) ~ 3,        # 3 – Unknown
-    T ~ 2                                           # 2 – Other
+    df$person_country_of_birth == "United States" ~ 1, # 1 – U.S.
+    df$person_country_of_birth == "Unknown" |
+      is.na(df$person_country_of_birth) ~ 3,           # 3 – Unknown
+    T ~ 2                                              # 2 – Other
   )
 
   # RACE_AIAN (required)
