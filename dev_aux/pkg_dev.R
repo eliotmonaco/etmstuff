@@ -24,21 +24,21 @@ usethis::use_github()
 
 
 
-## Document ####
+## External packages/functions ####
 
-# Adds package name to DESCRIPTION file
+# Add package to DESCRIPTION (for any package that includes a function called within etmstuff)
 usethis::use_package("")
 
-# Adds package and function names to NAMESPACE file
+# Adds package and function to NAMESPACE (for any package & function explicitly imported using @importFrom)
 usethis::use_import_from("", "")
 
-devtools::document()
 
 
-
-## Load/check/build package ####
+## Test/build workflow ####
 
 devtools::load_all()
+
+devtools::document()
 
 devtools::check()
 

@@ -6,6 +6,8 @@
 #' @return A fixed-width file written by [gdata::write.fwf()] exported to the path specified.
 #' @export
 #'
+#' @importFrom magrittr %>%
+#'
 # @examples
 #'
 cbls_write_fwf <- function(df, path) {
