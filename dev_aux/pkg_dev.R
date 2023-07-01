@@ -46,33 +46,6 @@ devtools::check()
 
 
 
-## Sim data stuff ####
-
-# Street: PO Box, symbol, starts with nondigit, directions?, fractional house num, phone, concat, etc...
-
-directions <- str_trim(sort(unique(c(directions_cardinal$replacement, directions_ordinal$replacement))))
-
-common_streets <- read.csv("../etmstuff_aux/helpers/streets.csv")
-common_streets$new <- str_remove_all(common_streets$street,
-                                     regex(paste0("^(", paste0(directions, collapse = "|"), ")\\s"),
-                                           ignore_case = T))
-common_streets$new <- str_extract(common_streets$new, "^[^\\s]*")
-common_streets <- sort(unique(common_streets$new))
-
-common_street_suffixes <- sort(c("St", "Rd", "Ave", "Dr", "Pl", "Ln", "Blvd"))
-
-common_unit_prefixes <- sort(c("Apt", "Unit", "#", "Lot", "Trlr", "Ste"))
-
-saveRDS(directions, "../etmstuff_aux/helpers/directions.rds")
-saveRDS(common_streets, "../etmstuff_aux/helpers/common_streets.rds")
-saveRDS(common_street_suffixes, "../etmstuff_aux/helpers/common_street_suffixes.rds")
-saveRDS(common_unit_prefixes, "../etmstuff_aux/helpers/common_unit_prefixes.rds")
-
-
-
-
-
-
 ## globals.R ####
 
 epitrax_variables <- readRDS("dev_aux/helpers/epitrax_variables.rds")

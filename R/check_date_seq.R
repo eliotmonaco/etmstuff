@@ -12,7 +12,7 @@
 #' @examples
 #' rows <- 100
 #'
-#' dfA <- data.frame(
+#' df <- data.frame(
 #'   id = 1:rows,
 #'   d1 = sample(
 #'     seq.Date(
@@ -32,11 +32,13 @@
 #'   )
 #' )
 #'
+#' df_check <- check_date_seq(df, dates = c("d1", "d2"), row_id = "id")
+#'
 check_date_seq <- function(df, dates, row_id = NULL) {
-  var_check(df, var = c(row_id, dates))
+  var_check(df, var = c(dates, row_id))
 
   df <- df %>%
-    dplyr::select(tidyselect::all_of(c(row_id, dates)))
+    dplyr::select(tidyselect::all_of(c(dates, row_id)))
 
   f <- function(r) {
     v <- stats::na.omit(as.numeric(as.Date(r)))

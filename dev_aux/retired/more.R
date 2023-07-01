@@ -128,41 +128,6 @@ check_expected_values <- function(df) {
 
 
 
-## check_date_seq() ####
-
-# Evaluates whether or not the date values in date_vars are in sequence
-# (i.e., in the order listed in the argument).
-
-check_date_seq <- function(df, id, date_vars) {
-
-  suppressWarnings({
-    library(dplyr)
-  })
-
-  df <- df %>%
-    select({{ id }}, {{ date_vars }})
-
-  f <- function(r) {
-    v <- as.Date(r)
-    v <- as.numeric(v)
-    v <- na.omit(v)
-    all(v == cummax(v))
-  }
-
-  df$dates_in_seq <- apply(df %>% select({{ date_vars }}), 1, f)
-
-  df <- df[which(!Vectorize(isTRUE)(df$dates_in_seq)),]
-
-  if (nrow(df) == 0) {
-    message("The date values are in sequence in all records.")
-  } else {
-    df
-  }
-
-}
-
-
-
 ## check_suff_addr() ####
 
 # Determines if values are present in a combination of address variables

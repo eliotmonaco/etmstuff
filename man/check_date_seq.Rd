@@ -22,7 +22,7 @@ This function checks the sequence of any dates added to the \code{dates} argumen
 \examples{
 rows <- 100
 
-dfA <- data.frame(
+df <- data.frame(
   id = 1:rows,
   d1 = sample(
     seq.Date(
@@ -41,5 +41,7 @@ dfA <- data.frame(
     size = rows
   )
 )
+
+df_check <- check_date_seq(df, dates = c("d1", "d2"), row_id = "id")
 
 }
