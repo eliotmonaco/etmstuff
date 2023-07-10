@@ -4,14 +4,14 @@
 \alias{dupes2xl}
 \title{Export dupesets to an Excel file for easy viewing}
 \usage{
-dupes2xl(df, filename, path = NULL, visible = FALSE)
+dupes2xl(df, path_new, path_template, visible = FALSE)
 }
 \arguments{
 \item{df}{A dataframe of dupesets returned by \code{\link[=undupe]{undupe()}}.}
 
-\item{filename}{A name for the new Excel workbook.}
+\item{path_new}{The path and file name for the new Excel workbook. Must end in \code{".xlsm"}.}
 
-\item{path}{The folder path containing the Excel workbook to be used as a template.}
+\item{path_template}{The path and file name for the Excel workbook to be copied.}
 
 \item{visible}{A logical value: view the workbook while the macros run if \code{TRUE}.}
 }
@@ -23,16 +23,20 @@ This function saves a dataframe of dupesets to an existing macro-enabled Excel w
 }
 \examples{
 n_rows <- 20
+
 df <- data.frame(
   x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 )
+
 undupe <- undupe(df, visible_var = c("x", "y"))
-f <- ""
-p <- ""
+
+p1 <- "new.xlsm"
+p2 <- "dupes2xl_template.xlsm"
+
 \dontrun{
-dupes2xl(undupe[["df_dupesets"]], filename = f, path = p)
+dupes2xl(undupe[["df_dupesets"]], path_new = p1, path_template = p2)
 }
 
 }

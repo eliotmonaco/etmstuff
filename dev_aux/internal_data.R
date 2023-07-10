@@ -55,6 +55,18 @@ saveRDS(fips, "dev_aux/helpers/fips.rds")
 
 library(tidyverse)
 
+## Unit
+
+regex_various["unit", 1]
+
+# Old: "(?<=\\s)((apt|ap|unit|ste|suite|lot|trlr)(\\s|[:punct:])|#)[:graph:]+$"
+# New: "(?<=\\s)(#|ap|apt|lot|rm|room|ste|suite|trlr|unit)(\\s|[:punct:])*[:alnum:]+$"
+
+regex_various["unit", 1] <- "(?<=\\s)(#|ap|apt|lot|rm|room|ste|suite|trlr|unit)(\\s|[:punct:])*[:alnum:]+$"
+
+saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
+
+
 
 ## Concatenated number/direction & number/word
 
@@ -102,9 +114,6 @@ regex_various <- regex_various %>%
   bind_rows(new)
 
 saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
-
-
-# regex_various <- regex_various[-12,]
 
 
 

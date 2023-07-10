@@ -3,7 +3,13 @@ library(tidyverse)
 library(etmstuff)
 
 
-cbls_write_fwf(df_tbl_add, "tbl.txt")
+
+
+
+
+
+# stop ####
+
 
 
 
@@ -22,8 +28,6 @@ debugonce(cbls_check_table)
 
 df <- cbls_check_table(df_tbl_inv)
 
-
-# stop ####
 
 
 # cbls_child_table ####

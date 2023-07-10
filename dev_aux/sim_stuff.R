@@ -1,5 +1,5 @@
-
-
+library(tidyverse)
+library(etmstuff)
 
 
 data <- data_core_2023q1
@@ -52,14 +52,79 @@ sample(
 ## First names
 # https://www.ssa.gov/oact/babynames/decades/century.html
 
-
-
 ## Last names
 # https://www.census.gov/topics/population/genealogy/data/2010_surnames.html
 
+first_names <- openxlsx::read.xlsx("dev_aux/sim/names.xlsx", sheet = 1)
+last_names <- openxlsx::read.xlsx("dev_aux/sim/names.xlsx", sheet = 2)
+
+colnames(first_names) <- c("male", "female")
+colnames(last_names) <- "name"
+last_names$name <- str_to_title(last_names$name)
+
+saveRDS(first_names, "dev_aux/sim/first_names.rds")
+saveRDS(last_names, "dev_aux/sim/last_names.rds")
 
 
 
+hist(data_core_2023q1$lab_result_number)
+
+mean(data_core_2023q1$lab_result_number)
+
+pois <- rpois(n = 10600, lambda = 3.6)
+
+hist(pois)
+
+
+
+library(sn)
+
+samp <- sn::rsn(n = 10600, alpha = 4, tau = 3.6)
+
+hist(samp)
+
+
+
+lrn <- data_core_2023q1$lab_result_number
+
+min(lrn)
+max(lrn)
+
+
+x <- seq(0, 60, by = 0.1)
+y <- dsn(x, xi = 0, omega = 1, alpha = 0)
+hist(y)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+epitrax_sim <- as.data.frame(matrix(nrow = 0, ncol = length(etmstuff:::epitrax_variables_reordered)))
+
+colnames(epitrax_sim) <- etmstuff:::epitrax_variables_reordered
+
+skimr::skim(data_core_2023q1)
+
+
+
+
+
+
+epitrax_sim <- sim_epitrax(100)
 
 
 
