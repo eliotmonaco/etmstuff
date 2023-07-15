@@ -6,6 +6,20 @@ devtools::load_all()
 
 
 
+# simulate_data ####
+
+debugonce(sim_address)
+df <- sim_address(100)
+
+
+
+debugonce(sim_unit)
+v <- sim_unit(100)
+
+
+
+
+
 # fuzzy_compare ####
 
 ## flex_compare instead??
