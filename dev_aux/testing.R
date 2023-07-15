@@ -2,7 +2,25 @@
 library(tidyverse)
 library(etmstuff)
 
+devtools::load_all()
 
+
+
+# fuzzy_compare ####
+
+## flex_compare instead??
+
+dfA <- simulate_data(nrow = 10)
+dfB <- simulate_data(nrow = 5000)
+
+debugonce(fuzzy_compare)
+
+df_match <- fuzzy_compare(
+  dfA,
+  dfB,
+  fuzzy_var = c("street", "unit"),
+  exact_var = c("city", "state", "zip")
+)
 
 
 

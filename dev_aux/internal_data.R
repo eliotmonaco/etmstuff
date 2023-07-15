@@ -1,8 +1,5 @@
 # Generate internal data for package
 
-common_streets <- readRDS("dev_aux/helpers/common_streets.rds")
-common_street_suffixes <- readRDS("dev_aux/helpers/common_street_suffixes.rds")
-common_unit_prefixes <- readRDS("dev_aux/helpers/common_unit_prefixes.rds")
 directions <- readRDS("dev_aux/helpers/directions.rds")
 directions_cardinal <- readRDS("dev_aux/helpers/directions_cardinal.rds")
 directions_ordinal <- readRDS("dev_aux/helpers/directions_ordinal.rds")
@@ -12,14 +9,14 @@ fips <- readRDS("dev_aux/helpers/fips.rds")
 ks_cities <- readRDS("dev_aux/helpers/ks_cities.rds")
 ks_zipcodes <- readRDS("dev_aux/helpers/ks_zipcodes.rds")
 pm_direction_dictionary <- readRDS("dev_aux/helpers/pm_direction_dictionary.rds")
+pm_street_suffix <- readRDS("dev_aux/helpers/pm_street_suffix.rds")
 regex_pobox <- readRDS("dev_aux/helpers/regex_pobox.rds")
 regex_various <- readRDS("dev_aux/helpers/regex_various.rds")
-street_suffix <- readRDS("dev_aux/helpers/street_suffix.rds")
+street_names <- readRDS("dev_aux/helpers/street_names.rds")
+street_suffixes <- readRDS("dev_aux/helpers/street_suffixes.rds")
+unit_prefixes <- readRDS("dev_aux/helpers/unit_prefixes.rds")
 
 usethis::use_data(
-  common_streets,
-  common_street_suffixes,
-  common_unit_prefixes,
   directions,
   directions_cardinal,
   directions_ordinal,
@@ -29,9 +26,12 @@ usethis::use_data(
   ks_cities,
   ks_zipcodes,
   pm_direction_dictionary,
+  pm_street_suffix,
   regex_pobox,
   regex_various,
-  street_suffix,
+  street_names,
+  street_suffixes,
+  unit_prefixes,
   internal = T, overwrite = T
 )
 

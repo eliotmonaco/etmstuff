@@ -1,9 +1,9 @@
 #' Simulate addresses to test functions
 #'
-#' Create a dataframe of simulated addresses. Street names are from `common_streets`, which is based on a list of the most common street names in the US. Cities and zip codes are from `ks_cities` and `ks_zipcodes`, which are the reference lists used to check those components in [validate_address()]. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using `sample()`. By setting `dirty = TRUE`, the function will alter values in `street`, `city`, and `zip` for the purpose of testing [validate_address()] and [clean_street_address()].
+#' Create a dataframe of simulated addresses. Street names are from `street_names`, which is based on a list of the most common street names in the US. Cities and zip codes are from `ks_cities` and `ks_zipcodes`, which are the reference lists used to check those components in [validate_address()]. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using `sample()`. By setting `dirty = TRUE`, the function will alter values in `street`, `city`, and `zip` for the purpose of testing [validate_address()] and [clean_street_address()].
 #'
-#' @param rows An integer to set the number of rows in the output.
-#' @param dirty A logical value: creates dirty data in `street`, `city`, and `zip` when set to `TRUE`.
+#' @param nrow An integer to set the number of rows in the output.
+#' @param dirty Logical: creates dirty data in `street`, `city`, and `zip` when set to `TRUE`.
 #'
 #' @return A dataframe.
 #' @export
@@ -11,23 +11,23 @@
 #' @importFrom magrittr %>%
 #'
 #' @examples
-#' df <- simulate_data(rows = 1000, dirty = TRUE)
+#' df <- simulate_data(nrow = 1000, dirty = TRUE)
 #'
-simulate_data <- function(rows, dirty = FALSE) {
+simulate_data <- function(nrow, dirty = FALSE) {
   # Create `street` column
   df <- data.frame(
     street = stringr::str_squish(paste(
-      sample(c(1:9999), rows, replace = TRUE),
+      sample(c(1:9999), nrow, replace = TRUE),
       sample(
         c(directions, ""),
-        rows,
+        nrow,
         replace = TRUE,
         prob = c(rep(.35 / 8, length.out = 8), .65)
       ),
-      sample(common_streets, rows, replace = TRUE),
+      sample(street_names, nrow, replace = TRUE),
       sample(
         c(common_street_suffixes, ""),
-        rows,
+        nrow,
         replace = TRUE,
         prob = c(rep(.65 / 7, length.out = 7), .35)
       )
@@ -36,7 +36,7 @@ simulate_data <- function(rows, dirty = FALSE) {
 
   # Create `unit` column
   df$unit <- NA
-  n <- rows %/% 5
+  n <- nrow %/% 5
   units <- paste0(
     sample(
       c(1:50, ""),
@@ -61,16 +61,16 @@ simulate_data <- function(rows, dirty = FALSE) {
     ),
     units
   ))
-  n <- sample(1:rows, length(units))
+  n <- sample(1:nrow, length(units))
   df$unit[n] <- units
 
   # Create `city` and `zip` columns
-  # n <- sample(length(ks_cities), rows, replace = TRUE)
+  # n <- sample(length(ks_cities), nrow, replace = TRUE)
   df <- cbind(
     df,
     data.frame(
-      city = sample(stringr::str_to_title(ks_cities), rows, replace = TRUE),
-      zip = sample(ks_zipcodes, rows, replace = TRUE)
+      city = sample(stringr::str_to_title(ks_cities), nrow, replace = TRUE),
+      zip = sample(ks_zipcodes, nrow, replace = TRUE)
     )
   )
 
@@ -79,32 +79,32 @@ simulate_data <- function(rows, dirty = FALSE) {
 
   if (dirty) {
     # Add PO Box to `street`
-    n <- rows %/% 50
+    n <- nrow %/% 50
     n <- ifelse(n < 2, 2, n)
     pobox <- c("PO Box", "P.O. Box", "Box")
     pobox <- paste(
       sample(pobox, n, replace = TRUE),
       sample(10:9999, n, replace = TRUE)
     )
-    n <- sample(1:rows, length(pobox))
+    n <- sample(1:nrow, length(pobox))
     df$street[n] <- pobox
 
     # Misspell `city`: string_delete()
-    n <- rows %/% 100
+    n <- nrow %/% 100
     n <- ifelse(n < 2, 2, n)
-    n <- sample(1:rows, n)
+    n <- sample(1:nrow, n)
     df$city[n] <- sapply(df$city[n], string_delete, simplify = TRUE)
 
     # Misspell `city`: string_add()
-    n <- rows %/% 100
+    n <- nrow %/% 100
     n <- ifelse(n < 2, 2, n)
-    n <- sample(1:rows, n)
+    n <- sample(1:nrow, n)
     df$city[n] <- sapply(df$city[n], string_add, simplify = TRUE)
 
     # Replace `zip`
-    n <- rows %/% 100
+    n <- nrow %/% 100
     n <- ifelse(n < 2, 2, n)
-    n <- sample(1:rows, n)
+    n <- sample(1:nrow, n)
     df$zip[n] <- sample(10000:99999, length(n), replace = TRUE)
   }
 

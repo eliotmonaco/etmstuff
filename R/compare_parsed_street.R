@@ -24,8 +24,8 @@ compare_parsed_street <- function(df, pre = "street_cleaned", post = "street_par
   )
 
   p2 <- stats::setNames(
-    street_suffix$replacement,
-    paste0("(?<=\\s)", street_suffix$pattern, "$")
+    pm_street_suffix$replacement,
+    paste0("(?<=\\s)", pm_street_suffix$pattern, "$")
   )
 
   df$temp <- stringr::str_replace_all(

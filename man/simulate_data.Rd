@@ -4,20 +4,20 @@
 \alias{simulate_data}
 \title{Simulate addresses to test functions}
 \usage{
-simulate_data(rows, dirty = FALSE)
+simulate_data(nrow, dirty = FALSE)
 }
 \arguments{
-\item{rows}{An integer to set the number of rows in the output.}
+\item{nrow}{An integer to set the number of rows in the output.}
 
-\item{dirty}{A logical value: creates dirty data in \code{street}, \code{city}, and \code{zip} when set to \code{TRUE}.}
+\item{dirty}{Logical: creates dirty data in \code{street}, \code{city}, and \code{zip} when set to \code{TRUE}.}
 }
 \value{
 A dataframe.
 }
 \description{
-Create a dataframe of simulated addresses. Street names are from \code{common_streets}, which is based on a list of the most common street names in the US. Cities and zip codes are from \code{ks_cities} and \code{ks_zipcodes}, which are the reference lists used to check those components in \code{\link[=validate_address]{validate_address()}}. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using \code{sample()}. By setting \code{dirty = TRUE}, the function will alter values in \code{street}, \code{city}, and \code{zip} for the purpose of testing \code{\link[=validate_address]{validate_address()}} and \code{\link[=clean_street_address]{clean_street_address()}}.
+Create a dataframe of simulated addresses. Street names are from \code{street_names}, which is based on a list of the most common street names in the US. Cities and zip codes are from \code{ks_cities} and \code{ks_zipcodes}, which are the reference lists used to check those components in \code{\link[=validate_address]{validate_address()}}. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using \code{sample()}. By setting \code{dirty = TRUE}, the function will alter values in \code{street}, \code{city}, and \code{zip} for the purpose of testing \code{\link[=validate_address]{validate_address()}} and \code{\link[=clean_street_address]{clean_street_address()}}.
 }
 \examples{
-df <- simulate_data(rows = 1000, dirty = TRUE)
+df <- simulate_data(nrow = 1000, dirty = TRUE)
 
 }

@@ -20,6 +20,8 @@ utils::globalVariables(
     "row_id_src", "record_id_src",
     # count_conflicts()
     "n",
+    # fuzzy_compare()
+    "sim_score",
     # merge_address_registry ()
     "address_registry_id", "lookup",
     # merge_child_registry ()

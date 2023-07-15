@@ -27,6 +27,7 @@ Imports:
     RDCOMClient,
     rlang,
     stats,
+    stringdist,
     stringr,
     tidyr,
     tidyselect,
