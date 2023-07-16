@@ -16,7 +16,16 @@
 #'
 #' @importFrom magrittr %>%
 #'
-# @examples
+#' @examples
+#' df1 <- sim_address(nrow = 10)
+#' df2 <- sim_address(nrow = 5000)
+#'
+#' df_match <- fuzzy_compare(
+#'   df1,
+#'   df2,
+#'   fuzzy_var = c("street", "unit"),
+#'   exact_var = c("city", "state", "zip")
+#' )
 #'
 fuzzy_compare <- function(df1, df2, fuzzy_var, exact_var = NULL, ignore_case = TRUE) {
   var_check(df1, var = c(fuzzy_var, exact_var))

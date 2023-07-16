@@ -17,18 +17,17 @@ sim_address <- function(nrow, dirty = FALSE) {
   df <- data.frame(
     street = sim_street(nrow),
     unit = sim_unit(nrow),
-    city = sample(
-      stringr::str_to_title(ks_cities),
-      size = nrow,
-      replace = TRUE
-    ),
-    zip = sample(
-      ks_zipcodes,
-      size = nrow,
-      replace = TRUE
-    ),
     state = "KS"
   )
+
+  ks_locations <- ks_locations %>%
+    dplyr::filter(!stringr::str_detect(city, "Airport|University"))
+
+  df <- df %>%
+    dplyr::bind_cols(
+      ks_locations[sample(1:nrow(ks_locations), size = nrow, replace = TRUE),]
+    ) %>%
+    dplyr::select(street, unit, city, state, zip, county)
 
   # Add dirty data to `df`
   if (dirty) {
@@ -62,11 +61,13 @@ sim_address <- function(nrow, dirty = FALSE) {
     df$zip[n] <- sample(10000:99999, length(n), replace = TRUE)
   }
 
-  # Add `address_id`
-  df <- id_distinct_rows(df, var = colnames(df), id_name = "address_id")
+  # # Add `address_id`
+  # df <- id_distinct_rows(df, var = colnames(df), id_name = "address_id")
+  #
+  # df %>%
+  #   dplyr::relocate(address_id)
 
-  df %>%
-    dplyr::relocate(address_id)
+  df
 }
 
 string_delete <- function(s) {

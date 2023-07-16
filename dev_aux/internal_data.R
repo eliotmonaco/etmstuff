@@ -7,6 +7,7 @@ epitrax_variables <- readRDS("dev_aux/helpers/epitrax_variables.rds")
 epitrax_variables_reordered <- readRDS("dev_aux/helpers/epitrax_variables_reordered.rds")
 fips <- readRDS("dev_aux/helpers/fips.rds")
 ks_cities <- readRDS("dev_aux/helpers/ks_cities.rds")
+ks_locations <- readRDS("dev_aux/helpers/ks_locations.rds")
 ks_zipcodes <- readRDS("dev_aux/helpers/ks_zipcodes.rds")
 pm_direction_dictionary <- readRDS("dev_aux/helpers/pm_direction_dictionary.rds")
 pm_street_suffix <- readRDS("dev_aux/helpers/pm_street_suffix.rds")
@@ -24,6 +25,7 @@ usethis::use_data(
   epitrax_variables_reordered,
   fips,
   ks_cities,
+  ks_locations,
   ks_zipcodes,
   pm_direction_dictionary,
   pm_street_suffix,
@@ -34,6 +36,89 @@ usethis::use_data(
   unit_prefixes,
   internal = T, overwrite = T
 )
+
+
+
+# Create ks_locations ####
+
+## Import list copied from PDF to Excel
+
+zips <- openxlsx::read.xlsx("dev_aux/helpers/ZipCodes2018.xlsx")
+
+zips %>%
+  filter(nchar(line) == 1)
+
+zips %>%
+  filter(str_detect(line, "•"))
+
+zips <- zips %>%
+  filter(nchar(line) > 1) %>%
+  filter(!str_detect(line, "•")) %>%
+  filter(!str_detect(line, "^2018\\s"))
+
+zips$line2 <- zips$line
+
+zips <- zips[-c(112:115),]
+
+zips$line <- str_replace(zips$line, "(?<=[:alpha:]),", "+")
+zips$line <- str_replace(zips$line, "\\.{2,}", "|")
+
+zips$city <- str_extract(zips$line, ".*(?=\\+)")
+zips$county <- str_extract(zips$line, "(?<=\\+\\s).*(?=\\|)")
+zips$zip <- str_extract(zips$line, "(?<=\\|).*")
+
+zips <- zips %>%
+  mutate(zip = if_else(
+    !str_detect(line, "[:alpha:]"),
+    true = line,
+    false = zip
+  ))
+
+zips <- zips[, -2]
+
+openxlsx::write.xlsx(zips, "dev_aux/helpers/ZipCodes2018_2.xlsx")
+
+
+## Import list after manual cleaning
+
+zips <- openxlsx::read.xlsx("dev_aux/helpers/ZipCodes2018_2.xlsx")
+
+zips <- zips %>%
+  filter(!is.na(city) | !is.na(county) | !is.na(zip)) %>%
+  select(-line)
+
+
+## Convert zip code strings to columns
+
+extract_seq <- function(x) {
+  if (str_detect(x, "-")) {
+    as.numeric(substr(x, 1, 5)):as.numeric(substr(x, 7, 11))
+  } else {
+    as.numeric(x)
+  }
+}
+
+str_to_num <- function(s) {
+  v <- unlist(strsplit(s, split = ", "))
+  sort(unlist(lapply(v, extract_seq)))
+}
+
+zip_list <- list()
+
+for (i in 1:nrow(zips)) {
+  zip_list[[i]] <- data.frame(
+    city = zips$city[i],
+    county = zips$county[i],
+    zip = str_to_num(zips$zip[i])
+  )
+}
+
+ks_locations <- as.data.frame(do.call(rbind, zip_list))
+
+ks_locations <- ks_locations %>%
+  mutate(city = str_to_title(city))
+
+saveRDS(ks_locations, "dev_aux/helpers/ks_locations.rds")
 
 
 

@@ -25,3 +25,15 @@ This function compares rows in two dataframes, allowing some values to be matche
 
 The variables being compared must have the same names in both dataframes. If addresses in \code{df1} are being compared, e.g., \code{df1$street}, \code{df1$city}, and \code{df1$state}, then \code{df2} must have the same variable names, \code{df2$street}, \code{df2$city}, and \code{df2$state}.
 }
+\examples{
+df1 <- sim_address(nrow = 10)
+df2 <- sim_address(nrow = 5000)
+
+df_match <- fuzzy_compare(
+  df1,
+  df2,
+  fuzzy_var = c("street", "unit"),
+  exact_var = c("city", "state", "zip")
+)
+
+}

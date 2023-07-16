@@ -6,10 +6,15 @@ devtools::load_all()
 
 
 
-# simulate_data ####
+
+
+
+
+
+# sim_address ####
 
 debugonce(sim_address)
-df <- sim_address(100)
+df <- sim_address(5000)
 
 
 
@@ -24,14 +29,14 @@ v <- sim_unit(100)
 
 ## flex_compare instead??
 
-dfA <- simulate_data(nrow = 10)
-dfB <- simulate_data(nrow = 5000)
+df1 <- sim_address(nrow = 10)
+df2 <- sim_address(nrow = 5000)
 
 debugonce(fuzzy_compare)
 
 df_match <- fuzzy_compare(
-  dfA,
-  dfB,
+  df1,
+  df2,
   fuzzy_var = c("street", "unit"),
   exact_var = c("city", "state", "zip")
 )
