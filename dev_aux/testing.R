@@ -6,7 +6,30 @@ devtools::load_all()
 
 
 
+# usps_lookup ####
 
+df <- data.frame(
+  id = c("KDHE BEPHI", "Curtis State Office Bldg"),
+  street = c("1000 SW Jackson", "1000 SW Jackson"),
+  unit = c("Suite 110", NA),
+  city = c("Topeka", "Topeka"),
+  state = c("KS", "KS"),
+  zip = c("66612", "66612")
+)
+
+df$c1 <- NA
+df$c2 <- NA
+
+debugonce(usps_lookup)
+
+df_results <- usps_lookup(df, row_id = "id")
+
+df_results <- usps_lookup(df)
+
+
+
+
+# stop ####
 
 
 
@@ -16,12 +39,8 @@ devtools::load_all()
 debugonce(sim_address)
 df <- sim_address(5000)
 
-
-
 debugonce(sim_unit)
 v <- sim_unit(100)
-
-
 
 
 
@@ -40,13 +59,6 @@ df_match <- fuzzy_compare(
   fuzzy_var = c("street", "unit"),
   exact_var = c("city", "state", "zip")
 )
-
-
-
-
-
-# stop ####
-
 
 
 

@@ -27,7 +27,7 @@ usethis::use_github()
 ## External packages/functions ####
 
 # Add package to DESCRIPTION (for any package that includes a function called within etmstuff)
-usethis::use_package("stringdist")
+usethis::use_package("")
 
 # Adds package and function to NAMESPACE (for any package & function explicitly imported using @importFrom)
 usethis::use_import_from("", "")
