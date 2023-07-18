@@ -15,6 +15,7 @@ regex_pobox <- readRDS("dev_aux/helpers/regex_pobox.rds")
 regex_various <- readRDS("dev_aux/helpers/regex_various.rds")
 street_names <- readRDS("dev_aux/helpers/street_names.rds")
 street_suffixes <- readRDS("dev_aux/helpers/street_suffixes.rds")
+styles_css <- readRDS("dev_aux/helpers/styles_css.rds")
 unit_prefixes <- readRDS("dev_aux/helpers/unit_prefixes.rds")
 
 usethis::use_data(
@@ -33,9 +34,26 @@ usethis::use_data(
   regex_various,
   street_names,
   street_suffixes,
+  styles_css,
   unit_prefixes,
   internal = T, overwrite = T
 )
+
+
+
+# Write and update styles.css ####
+
+## Write styles.css
+writeLines(
+  styles_css,
+  con = "dev_aux/helpers/styles.css"
+)
+
+## Read updated styles.css
+styles_css <- readLines("dev_aux/helpers/styles.css")
+
+## Save as RDS
+saveRDS(styles_css, "dev_aux/helpers/styles_css.rds")
 
 
 

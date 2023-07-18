@@ -6,6 +6,37 @@ devtools::load_all()
 
 
 
+
+
+# pick_max_cfm_test ####
+
+data <- subset_date_range(data_core_2015_2022, "lab_collection_date", "2022")
+
+data %>%
+  summarize(max_age = max(age))
+
+data %>%
+  group_by(test_reason) %>%
+  count()
+
+data %>%
+  group_by(patient_id) %>%
+  summarize(sum(test_reason == "cap_scrn"))
+
+
+
+debugonce(pick_max_cfm_test)
+
+df <- pick_max_cfm_test(data)
+
+length(unique(data$patient_id))
+
+# stop ####
+
+
+
+
+
 # usps_lookup ####
 
 df <- data.frame(
@@ -25,12 +56,6 @@ debugonce(usps_lookup)
 df_results <- usps_lookup(df, row_id = "id")
 
 df_results <- usps_lookup(df)
-
-
-
-
-# stop ####
-
 
 
 

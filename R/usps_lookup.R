@@ -15,9 +15,9 @@
 #'
 #' @examples
 #' df <- data.frame(
-#'   id = c("KDHE BEPHI", "Curtis State Office Bldg"),
+#'   id = c("KDHE Division of Public Health", "Curtis State Office Bldg"),
 #'   street = c("1000 SW Jackson", "1000 SW Jackson"),
-#'   unit = c("Suite 110", NA),
+#'   unit = c("Suite 540", NA),
 #'   city = c("Topeka", "Topeka"),
 #'   state = c("KS", "KS"),
 #'   zip = c("66612", "66612")
