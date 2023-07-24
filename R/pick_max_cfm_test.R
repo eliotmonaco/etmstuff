@@ -1,15 +1,17 @@
 #' Pick the test (confirmatory preferred) with the highest result for a person
 #'
 #' @description
-#' This function selects one test per person from `df`, filtering records by `patient_id` and evaluating them based on the values in `test_reason` and `lab_result_number`. There are two modes:
+#' This function returns a maximum of one test per person from `df`. Test are filtered by `patient_id` and evaluated based on the values in `test_reason` (confirmatory tests are either preferred or considered exclusively) and `lab_result_number`.
+#'
+#' The function has two modes:
 #'
 #' 1. Consider all tests (`cfm_only = FALSE`): After filtering tests by `patient_id`, the confirmatory test with the highest result is kept. If there are no confirmatory tests for an individual, the non-confirmatory test with the highest result is kept.
-#' 2. Consider confirmatory tests only (`cfm_only = TRUE`): After filtering tests by `patient_id`, the confirmatory test with the highest result is kept. If there is no confirmatory test for an individual, they are not represented in the output. Non-confirmatory tests are not considered.
+#' 2. Consider confirmatory tests only (`cfm_only = TRUE`): After filtering tests by `patient_id`, the confirmatory test with the highest result is kept. Non-confirmatory tests are not considered. Therefore, if there is no confirmatory test associated with a `patient_id` value, that individual is not represented by a test in the output.
 #'
 #' @details
 #' The `test_reason` variable is created by the function [classify_test_reason()].
 #'
-#' Confirmatory `test_reason` values:
+#' Confirmatory `test_reason` values are
 #'
 #' * `cap_cfm`
 #' * `ven_cfm_i`
@@ -17,7 +19,7 @@
 #' * `ven_cfm_n`
 #' * `ven_flw`
 #'
-#' Non-confirmatory `test_reason` values:
+#' Non-confirmatory `test_reason` values are
 #'
 #' * `cap_scrn`
 #' * `unknown/other`
