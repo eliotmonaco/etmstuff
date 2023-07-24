@@ -5,6 +5,16 @@ library(etmstuff)
 devtools::load_all()
 
 
+df <- data.frame()
+
+debugonce(my_kable)
+
+my_kable(df)
+
+
+# stop ####
+
+
 
 
 
@@ -30,10 +40,6 @@ debugonce(pick_max_cfm_test)
 df <- pick_max_cfm_test(data)
 
 length(unique(data$patient_id))
-
-# stop ####
-
-
 
 
 

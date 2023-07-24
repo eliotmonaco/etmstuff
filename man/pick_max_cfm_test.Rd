@@ -17,16 +17,18 @@ pick_max_cfm_test(df, cfm_only = FALSE, silent = FALSE)
 A dataframe.
 }
 \description{
-This function selects one test per person from \code{df}, filtering records by \code{patient_id} and evaluating them based on the values in \code{test_reason} and \code{lab_result_number}. There are two modes:
+This function returns a maximum of one test per person from \code{df}. Test are filtered by \code{patient_id} and evaluated based on the values in \code{test_reason} (confirmatory tests are either preferred or considered exclusively) and \code{lab_result_number}.
+
+The function has two modes:
 \enumerate{
 \item Consider all tests (\code{cfm_only = FALSE}): After filtering tests by \code{patient_id}, the confirmatory test with the highest result is kept. If there are no confirmatory tests for an individual, the non-confirmatory test with the highest result is kept.
-\item Consider confirmatory tests only (\code{cfm_only = TRUE}): After filtering tests by \code{patient_id}, the confirmatory test with the highest result is kept. If there is no confirmatory test for an individual, they are not represented in the output. Non-confirmatory tests are not considered.
+\item Consider confirmatory tests only (\code{cfm_only = TRUE}): After filtering tests by \code{patient_id}, the confirmatory test with the highest result is kept. Non-confirmatory tests are not considered. Therefore, if there is no confirmatory test associated with a \code{patient_id} value, that individual is not represented by a test in the output.
 }
 }
 \details{
 The \code{test_reason} variable is created by the function \code{\link[=classify_test_reason]{classify_test_reason()}}.
 
-Confirmatory \code{test_reason} values:
+Confirmatory \code{test_reason} values are
 \itemize{
 \item \code{cap_cfm}
 \item \code{ven_cfm_i}
@@ -35,7 +37,7 @@ Confirmatory \code{test_reason} values:
 \item \code{ven_flw}
 }
 
-Non-confirmatory \code{test_reason} values:
+Non-confirmatory \code{test_reason} values are
 \itemize{
 \item \code{cap_scrn}
 \item \code{unknown/other}

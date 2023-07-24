@@ -41,6 +41,8 @@
 #' }
 #'
 my_kable <- function(df, row_names = FALSE, alt_row_bg = FALSE, caption = NULL, bootstrap_opts = NULL) {
+  if (nrow(df) == 0) return(message("The dataframe has 0 rows"))
+
   # Table class name for CSS
   html_attr <- "class='my-kable'"
 
