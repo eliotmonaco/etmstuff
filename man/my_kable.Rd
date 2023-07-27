@@ -2,7 +2,7 @@
 % Please edit documentation in R/my_kable.R
 \name{my_kable}
 \alias{my_kable}
-\title{Apply custom \code{kable()} formatting}
+\title{Create custom table using \code{kable()}}
 \usage{
 my_kable(
   df,

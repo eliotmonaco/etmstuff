@@ -5,11 +5,54 @@ library(etmstuff)
 devtools::load_all()
 
 
+
+
+create_bl_dp_project <- function(parent_dir, data_range) {
+  project_dir <- paste0(parent_dir, "bl_", data_range, "/")
+
+  usethis::create_project(path = project_dir)
+
+  dir.create(paste0(project_dir, "data"))
+  dir.create(paste0(project_dir, "data/addresses"))
+  dir.create(paste0(project_dir, "data/cbls"))
+  dir.create(paste0(project_dir, "data/epitrax"))
+  dir.create(paste0(project_dir, "data/final"))
+  dir.create(paste0(project_dir, "data/helpers"))
+  dir.create(paste0(project_dir, "data/intermediate"))
+  dir.create(paste0(project_dir, "data/registries"))
+  dir.create(paste0(project_dir, "output"))
+  dir.create(paste0(project_dir, "output/cbls"))
+  dir.create(paste0(project_dir, "output/epitrax"))
+  dir.create(paste0(project_dir, "scripts"))
+
+}
+
+# r_projects_path <- "C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Documents/r_projects/"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 df <- data.frame()
 
-debugonce(my_kable)
+xl_sheets <- list(
+  dfA = data.frame(),
+  dfB = data.frame(),
+  dfC = mtcars
+)
 
-my_kable(df)
+debugonce(my_xlsx)
+
+my_xlsx(xl_sheets, "file.xlsx")
 
 
 # stop ####

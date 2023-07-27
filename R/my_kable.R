@@ -1,4 +1,4 @@
-#' Apply custom `kable()` formatting
+#' Create custom table using `kable()`
 #'
 #' @description
 #' This function returns a table formatted using functions in the [kableExtra] package. Additional formatting can be added to the returned table, as in the example. The following colors are used:
