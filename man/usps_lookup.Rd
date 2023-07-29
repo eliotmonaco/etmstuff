@@ -34,6 +34,8 @@ df <- data.frame(
   zip = c("66612", "66612")
 )
 
+\dontrun{
 df_results <- usps_lookup(df, row_id = "id")
+}
 
 }

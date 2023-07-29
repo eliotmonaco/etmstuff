@@ -7,7 +7,7 @@
 my_xlsx(x, file)
 }
 \arguments{
-\item{x}{A dataframe or a list of dataframes.}
+\item{x}{A dataframe or list of dataframes.}
 
 \item{file}{A file path.}
 }
@@ -15,5 +15,11 @@ my_xlsx(x, file)
 An XLSX file.
 }
 \description{
-Save a dataframe as an XLSX file with table formatting using \code{\link[openxlsx:write.xlsx]{openxlsx::write.xlsx()}}.
+Save an object (a dataframe or list) as an XLSX file with custom table formatting using \code{\link[openxlsx:write.xlsx]{openxlsx::write.xlsx()}}. If \code{x} is a list of dataframes, each dataframe will be saved as a separate sheet.
+}
+\examples{
+\dontrun{
+my_xlsx(mtcars, "mtcars.xlsx")
+}
+
 }

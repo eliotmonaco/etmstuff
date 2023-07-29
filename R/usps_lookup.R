@@ -23,7 +23,9 @@
 #'   zip = c("66612", "66612")
 #' )
 #'
+#' \dontrun{
 #' df_results <- usps_lookup(df, row_id = "id")
+#' }
 #'
 usps_lookup <- function(df, row_id = NULL) {
   vars_addr <- c("street", "unit", "city", "state", "zip")

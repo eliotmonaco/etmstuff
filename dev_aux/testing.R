@@ -5,37 +5,19 @@ library(etmstuff)
 devtools::load_all()
 
 
-
-
-create_bl_dp_project <- function(parent_dir, data_range) {
-  project_dir <- paste0(parent_dir, "bl_", data_range, "/")
-
-  usethis::create_project(path = project_dir)
-
-  dir.create(paste0(project_dir, "data"))
-  dir.create(paste0(project_dir, "data/addresses"))
-  dir.create(paste0(project_dir, "data/cbls"))
-  dir.create(paste0(project_dir, "data/epitrax"))
-  dir.create(paste0(project_dir, "data/final"))
-  dir.create(paste0(project_dir, "data/helpers"))
-  dir.create(paste0(project_dir, "data/intermediate"))
-  dir.create(paste0(project_dir, "data/registries"))
-  dir.create(paste0(project_dir, "output"))
-  dir.create(paste0(project_dir, "output/cbls"))
-  dir.create(paste0(project_dir, "output/epitrax"))
-  dir.create(paste0(project_dir, "scripts"))
-
-}
-
-# r_projects_path <- "C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Documents/r_projects/"
+# my_xlsx: works with or wo ".xlsx" in name? how to name separate sheets? (use ...?)
 
 
 
 
 
 
+debugonce(create_bl_data_project)
 
-
+create_bl_data_project(
+  parent_dir = "C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Documents/r_projects",
+  data_range = "2023q2"
+)
 
 
 

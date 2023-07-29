@@ -1,14 +1,17 @@
 #' Save XLSX file with custom settings using `write.xlsx()`
 #'
-#' Save a dataframe as an XLSX file with table formatting using [openxlsx::write.xlsx()].
+#' Save an object (a dataframe or list) as an XLSX file with custom table formatting using [openxlsx::write.xlsx()]. If `x` is a list of dataframes, each dataframe will be saved as a separate sheet.
 #'
-#' @param x A dataframe or a list of dataframes.
+#' @param x A dataframe or list of dataframes.
 #' @param file A file path.
 #'
 #' @return An XLSX file.
 #' @export
 #'
-# @examples
+#' @examples
+#' \dontrun{
+#' my_xlsx(mtcars, "mtcars.xlsx")
+#' }
 #'
 my_xlsx <- function(x, file) {
   if (is.data.frame(x)) {
