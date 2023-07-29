@@ -10,15 +10,7 @@ devtools::load_all()
 
 
 
-
-
-debugonce(create_bl_data_project)
-
-create_bl_data_project(
-  parent_dir = "C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Documents/r_projects",
-  data_range = "2023q2"
-)
-
+openxlsx::write.xlsx(mtcars, "cars")
 
 
 
@@ -34,7 +26,7 @@ xl_sheets <- list(
 
 debugonce(my_xlsx)
 
-my_xlsx(xl_sheets, "file.xlsx")
+my_xlsx(mtcars, "cars", sheetName = "bigfastcars")
 
 
 # stop ####

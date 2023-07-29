@@ -4,18 +4,20 @@
 \alias{my_xlsx}
 \title{Save XLSX file with custom settings using \code{write.xlsx()}}
 \usage{
-my_xlsx(x, file)
+my_xlsx(x, file, ...)
 }
 \arguments{
 \item{x}{A dataframe or list of dataframes.}
 
 \item{file}{A file path.}
+
+\item{...}{Additional arguments passed to \code{\link[openxlsx:write.xlsx]{openxlsx::write.xlsx()}}}
 }
 \value{
 An XLSX file.
 }
 \description{
-Save an object (a dataframe or list) as an XLSX file with custom table formatting using \code{\link[openxlsx:write.xlsx]{openxlsx::write.xlsx()}}. If \code{x} is a list of dataframes, each dataframe will be saved as a separate sheet.
+Save an object (a dataframe or list) as an XLSX file with custom table formatting using \code{\link[openxlsx:write.xlsx]{openxlsx::write.xlsx()}}. If \code{x} is a list of dataframes, each dataframe will be saved as a separate sheet. The file extension ".xlsx" is added if it is not found at the end of \code{file}.
 }
 \examples{
 \dontrun{

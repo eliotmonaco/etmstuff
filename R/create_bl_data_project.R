@@ -40,6 +40,9 @@ create_bl_data_project <- function(parent_dir, data_range) {
 
   usethis::create_project(path = project_dir)
 
+  # Remove the automatically created "R" folder from the project
+  unlink(paste0(project_dir, "R"), recursive = TRUE)
+
   dir <- c(
     "data",
     "data/addresses",
@@ -57,6 +60,7 @@ create_bl_data_project <- function(parent_dir, data_range) {
 
   inv <- list()
 
+  # Create subdirectories
   for (i in 1:length(dir)) {
     inv[[i]] <- (dir.create(paste0(project_dir, dir[i])))
   }
