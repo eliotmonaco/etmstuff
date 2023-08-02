@@ -76,8 +76,9 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
   # TEST_RSN (required)
   df_lab$TEST_RSN <- dplyr::case_when(
     df$test_reason == "cap_scrn" |
-      df$test_reason == "ven_cfm_i" ~ 1, # 1 – Screening (asymptomatic child without previous elevated level)
-    df$test_reason == "ven_cfm_e" ~ 3, # 3 – Confirmatory test following elevated value by fingerstick
+      df$test_reason == "ven_cfm_init" ~ 1, # 1 – Screening (asymptomatic child without previous elevated level)
+    df$test_reason == "ven_cfm_elev" |
+      df$test_reason == "cap_cfm_elev" ~ 3, # 3 – Confirmatory test following elevated value by fingerstick
     df$test_reason == "ven_flw" ~ 4, # 4 – Follow-up, child with confirmed elevated level
     T ~ 9 # 9 – Unknown/other
   )

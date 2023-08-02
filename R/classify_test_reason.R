@@ -1,17 +1,18 @@
-#' Impute reasons for series of blood lead tests
+#' Impute reasons for sequences of blood lead tests
 #'
 #' @description
 #' This function assigns a reason to each test in `df` based on the Kansas Department of Health and Environment's Elevated Blood Lead Investigation Guideline document. A possible sequence of tests for one person could begin with a capillary screening test, followed by a confirmatory venous test, which, if the result is elevated, could be followed by any number of venous follow-up tests until a non-elevated result is obtained. Each test in a sequence should be within a maximum of 90 days of the previous test, therefore it is recommended that `max_interval = 90` be provided in the function call. The reason assigned to each test depends on values in one or more previous tests, therefore it is recommended that prior data which has already been classified by this function be provided in `df2` for the most accurate results. It is also recommended that only values of `Blood - capillary` or `Blood - venous` be present in `lab_specimen_source`, as any other value will lead to a reason of `unknown/other` in subsequent tests.
 #'
-#' Possible `test_reason` values are
+#' Possible `test_reason` values:
 #'
-#' * `cap_scrn`: a capillary screening test (must be the first test in a sequence).
-#' * `ven_cfm_i`: an initial confirmatory venous test (must be the first test in a sequence).
-#' * `cap_cfm`: a confirmatory capillary test (follows a `cap_scrn`).
-#' * `ven_cfm_e`: a confirmatory venous test following an elevated `cap_scrn`.
-#' * `ven_cfm_n`: a confirmatory venous test following a non-elevated `cap_scrn`.
-#' * `ven_flw`: a venous follow-up test (follows any venous test or an elevated `cap_cfm`).
-#' * `unknown/other`: a test that cannot be assigned another value.
+#' * `cap_scrn`: A capillary screening test. This must be the first test in a sequence.
+#' * `ven_cfm_init`: An initial venous confirmatory test. This must be the first test in a sequence.
+#' * `cap_cfm_elev`: A capillary confirmatory test following an elevated `cap_scrn`.
+#' * `cap_cfm_nonelev`: A capillary confirmatory test following a non-elevated `cap_scrn`.
+#' * `ven_cfm_elev`: A venous confirmatory test following an elevated `cap_scrn`.
+#' * `ven_cfm_nonelev`: A venous confirmatory test following a non-elevated `cap_scrn`.
+#' * `ven_flw`: A venous follow-up test. This is any venous test following either an elevated venous test or an elevated capillary confirmatory test, i.e., `cap_cfm_elev` or `cap_cfm_nonelev`.
+#' * `unknown`: A test that cannot be assigned another value.
 #'
 #' @param df The dataframe targeted for classification.
 #' @param df2 A previously classified dataframe (optional).
@@ -19,24 +20,27 @@
 #' @param max_interval The maximum number of days between tests belonging to the same test sequence (an integer). The recommended value is `90`.
 #' @param silent Logical: silence progress indicator if `TRUE`.
 #'
-#' @return The dataframe is returned with a new column, `test_reason`.
+#' @return The dataframe is returned with the new columns, `test_reason`, `bl_rev_val`, and `lab_result_elev`.
 #' @export
 #'
 # @examples
 #'
 classify_test_reason <- function(df, df2 = NULL, bl_ref_val, max_interval, silent = FALSE) {
-  vars <- c(
-    "row_id_src", "patient_id", "lab_collection_date",
-    "lab_result_symbol", "lab_result_number",
-    "lab_specimen_source", "test_reason")
+  vars1 <- c(
+    "dupe_id", "patient_id", "lab_collection_date",
+    "lab_result_symbol", "lab_result_number", "lab_specimen_source"
+  )
 
-  var_check(df, var = vars[1:6])
+  vars2 <- c("lab_result_elev", "bl_ref_val", "test_reason")
 
-  df <- df %>%
-    # Sort tests by date, person, and same-day capillary tests before venous
+  var_check(df, var = vars1)
+
+  df1 <- df %>%
+    dplyr::select(tidyselect::all_of(vars1)) %>%
+    # Sorting by source ensures that same-day capillary tests precede venous tests
     dplyr::arrange(lab_collection_date, patient_id, lab_specimen_source) %>%
     dplyr::mutate(
-      # Add `lab_result_elev`: lab result is elevated if TRUE, non-elevated if FALSE
+      # Add `lab_result_elev`: result is elevated if TRUE, non-elevated if FALSE
       lab_result_elev = dplyr::case_when(
         is.na(lab_result_symbol) & lab_result_number < bl_ref_val ~ FALSE,
         is.na(lab_result_symbol) & lab_result_number >= bl_ref_val ~ TRUE,
@@ -45,35 +49,39 @@ classify_test_reason <- function(df, df2 = NULL, bl_ref_val, max_interval, silen
         lab_result_symbol == ">" & lab_result_number < bl_ref_val ~ NA,
         lab_result_symbol == ">" & lab_result_number >= bl_ref_val ~ TRUE
       ),
-      # Add column for the blood lead reference value provided
+      # Add column for the current blood lead reference value
       bl_ref_val = bl_ref_val,
-      # Add column for the test reason
+      # Add column for the test reason, added below in loop
       test_reason = NA
     )
 
   if (!is.null(df2)) {
-    var_check(df2, var = colnames(df))
+    var_check(df2, var = c(vars1, vars2))
     df2 <- df2 %>%
-      # Match column order of `df`
-      dplyr::select(tidyselect::all_of(colnames(df))) %>%
+      dplyr::select(
+        tidyselect::all_of(vars1),
+        tidyselect::all_of(vars2)
+      ) %>%
       dplyr::arrange(lab_collection_date, patient_id, lab_specimen_source)
   }
 
-  # Create `df` row with NA values for loop
-  df_na <- df[1,]
-  df_na[1,] <- NA
+  # Create `df1` row with all NA values to use in loop
+  df_na <- df1[1, ]
+  df_na[1, ] <- NA
 
-  if (!silent) pb <- utils::txtProgressBar(1, nrow(df), width = 50, style = 3)
+  if (!silent) pb <- utils::txtProgressBar(1, nrow(df1), width = 50, style = 3)
 
-  for (i in 1:nrow(df)) {
+  for (i in 1:nrow(df1)) {
+    current_test <- df1[i, ]
+
     # Get all tests in the previous `max_interval` for a person (including same-day tests)
-    prev_int <- df %>%
+    prev_int <- df1 %>%
       dplyr::bind_rows(df2) %>%
       dplyr::filter(
-        patient_id == df$patient_id[i],
-        lab_collection_date <= df$lab_collection_date[i],
-        lab_collection_date >= df$lab_collection_date[i] - max_interval,
-        row_id_src != df$row_id_src[i]
+        patient_id == df1$patient_id[i],
+        lab_collection_date <= df1$lab_collection_date[i],
+        lab_collection_date >= df1$lab_collection_date[i] - max_interval,
+        dupe_id != df1$dupe_id[i]
       )
 
     # Separate most recent test
@@ -83,20 +91,19 @@ classify_test_reason <- function(df, df2 = NULL, bl_ref_val, max_interval, silen
     if (nrow(prev_test1) == 0) {
       prevtest <- df_na
     } else if (nrow(prev_test1) == 1) {
-      if (prev_test1$lab_collection_date != df$lab_collection_date[i]) {
+      if (prev_test1$lab_collection_date != df1$lab_collection_date[i]) {
         # If previous test is NOT same-day...
         prevtest <- prev_test1
       } else {
         # If previous test IS same-day...
         if (prev_test1$lab_specimen_source == "Blood - capillary" &
-            df$lab_specimen_source[i] == "Blood - venous") {
+          df1$lab_specimen_source[i] == "Blood - venous") {
           prevtest <- prev_test1
         } else if (prev_test1$lab_specimen_source == "Blood - venous" &
-                   df$lab_specimen_source[i] == "Blood - capillary") {
+          df1$lab_specimen_source[i] == "Blood - capillary") {
           # Get second most recent test
-          # browser()
           prev_test2 <- prev_int %>%
-            dplyr::anti_join(prev_test1, by = "row_id_src") %>%
+            dplyr::anti_join(prev_test1, by = "dupe_id") %>%
             dplyr::slice_max(lab_collection_date, n = 1, with_ties = TRUE)
           if (nrow(prev_test2) == 0) {
             prevtest <- df_na
@@ -113,8 +120,7 @@ classify_test_reason <- function(df, df2 = NULL, bl_ref_val, max_interval, silen
             }
           }
         } else {
-          # browser()
-          df$test_reason[i] <- "unknown/other"
+          df1$test_reason[i] <- "unknown"
           next
         }
       }
@@ -123,31 +129,49 @@ classify_test_reason <- function(df, df2 = NULL, bl_ref_val, max_interval, silen
         prevtest <- prev_test1 %>%
           dplyr::filter(lab_specimen_source == "Blood - venous")
       } else {
-        # browser()
-        df$test_reason[i] <- "unknown/other"
+        df1$test_reason[i] <- "unknown"
         next
       }
     }
 
     # Assign test reason
-    df$test_reason[i] <- rsn <- dplyr::case_when(
-      df$lab_specimen_source[i] == "Blood - capillary" &    # Current src = cap; prev rsn = NA
-        is.na(prevtest$test_reason) ~ "cap_scrn",
-      df$lab_specimen_source[i] == "Blood - capillary" &    # Current src = cap; prev rsn = cap_scrn
-        prevtest$test_reason == "cap_scrn" ~ "cap_cfm",
-      df$lab_specimen_source[i] == "Blood - venous" &       # Current src = ven; prev rsn = NA
-        is.na(prevtest$test_reason) ~ "ven_cfm_i",
-      df$lab_specimen_source[i] == "Blood - venous" &       # Current src = ven; prev rsn = cap_scrn;
-        prevtest$test_reason == "cap_scrn" &                # result = elevated
-        prevtest$lab_result_elev ~ "ven_cfm_e",
-      df$lab_specimen_source[i] == "Blood - venous" &       # Current src = ven; prev rsn = cap_scrn;
-        prevtest$test_reason == "cap_scrn" &                # result = non-elevated
-        !prevtest$lab_result_elev ~ "ven_cfm_n",
-      df$lab_specimen_source[i] == "Blood - venous" &       # Current src = ven; prev src = ven OR
-        (prevtest$lab_specimen_source == "Blood - venous" | # (previous rsn = cap_cfm & result = elevated)
-           (prevtest$test_reason == "cap_cfm" &
-              prevtest$lab_result_elev)) ~ "ven_flw",
-      TRUE ~ "unknown/other"                                # All others
+    df1$test_reason[i] <- rsn <- dplyr::case_when(
+      # cap_scrn: src = cap, prev rsn = NA
+      df1$lab_specimen_source[i] == "Blood - capillary" &
+        is.na(prevtest$test_reason) ~
+        "cap_scrn",
+      # ven_cfm_init: src = ven, prev rsn = NA
+      df1$lab_specimen_source[i] == "Blood - venous" &
+        is.na(prevtest$test_reason) ~
+        "ven_cfm_init",
+      # cap_cfm_elev: src = cap, prev rsn = cap_scrn, prev BLL = elevated
+      df1$lab_specimen_source[i] == "Blood - capillary" &
+        prevtest$test_reason == "cap_scrn" &
+        prevtest$lab_result_elev ~
+        "cap_cfm_elev",
+      # cap_cfm_nonelev: src = cap, prev rsn = cap_scrn, prev BLL = non-elevated
+      df1$lab_specimen_source[i] == "Blood - capillary" &
+        prevtest$test_reason == "cap_scrn" &
+        !prevtest$lab_result_elev ~
+        "cap_cfm_nonelev",
+      # ven_cfm_elev: src = ven, prev rsn = cap_scrn, prev BLL = elevated
+      df1$lab_specimen_source[i] == "Blood - venous" &
+        prevtest$test_reason == "cap_scrn" &
+        prevtest$lab_result_elev ~
+        "ven_cfm_elev",
+      # ven_cfm_nonelev: src = ven, prev rsn = cap_scrn, prev BLL = non-elevated
+      df1$lab_specimen_source[i] == "Blood - venous" &
+        prevtest$test_reason == "cap_scrn" &
+        !prevtest$lab_result_elev ~
+        "ven_cfm_nonelev",
+      # ven_flw: src = ven, prev src = ven OR previous rsn = cap_cfm_elev|cap_cfm_nonelev, prev BLL = elevated
+      df1$lab_specimen_source[i] == "Blood - venous" &
+        (prevtest$lab_specimen_source == "Blood - venous" |
+          (prevtest$test_reason == "cap_cfm_elev" | prevtest$test_reason == "cap_cfm_nonelev")) &
+        prevtest$lab_result_elev ~
+        "ven_flw",
+      # All others
+      TRUE ~ "unknown"
     )
 
     if (!silent) utils::setTxtProgressBar(pb, i)
@@ -155,10 +179,10 @@ classify_test_reason <- function(df, df2 = NULL, bl_ref_val, max_interval, silen
 
   if (!silent) close(pb)
 
-  df
+  df %>%
+    dplyr::left_join(
+      df1 %>%
+        dplyr::select(dupe_id, tidyselect::all_of(vars2)),
+      by = "dupe_id"
+    )
 }
-
-
-
-
-

@@ -9,20 +9,21 @@
 #' 2. Consider confirmatory tests only (`cfm_only = TRUE`): After filtering tests by `patient_id`, the confirmatory test with the highest result is kept. Non-confirmatory tests are not considered. Therefore, if there is no confirmatory test associated with a `patient_id` value, that individual is not represented by a test in the output.
 #'
 #' @details
-#' The `test_reason` variable is created by the function [classify_test_reason()].
+#' The `test_reason` variable is created by the function [classify_test_reason()]. See this function's documentation for definitions of `test_reason` values.
 #'
 #' Confirmatory `test_reason` values are
 #'
-#' * `cap_cfm`
-#' * `ven_cfm_i`
-#' * `ven_cfm_e`
-#' * `ven_cfm_n`
+#' * `ven_cfm_init`
+#' * `cap_cfm_elev`
+#' * `cap_cfm_nonelev`
+#' * `ven_cfm_elev`
+#' * `ven_cfm_nonelev`
 #' * `ven_flw`
 #'
 #' Non-confirmatory `test_reason` values are
 #'
 #' * `cap_scrn`
-#' * `unknown/other`
+#' * `unknown`
 #'
 #' @param df A dataframe.
 #' @param cfm_only Logical: consider confirmatory tests only if `TRUE`; consider all tests (confirmatory, screening, and unknown/other) if `FALSE` (the default).
@@ -72,7 +73,10 @@ pick_max_cfm_test <- function(df, cfm_only = FALSE, silent = FALSE) {
 
 max_any_test <- function(df, id) {
   # Confirmatory values for `test_reason`
-  rsn_cfm <- c("cap_cfm", "ven_cfm_i", "ven_cfm_e", "ven_cfm_n", "ven_flw")
+  rsn_cfm <- c(
+    "ven_cfm_init", "cap_cfm_elev", "cap_cfm_nonelev",
+    "ven_cfm_elev", "ven_cfm_nonelev", "ven_flw"
+  )
 
   # Keep all tests from `df` where `patient_id` is `id`
   df <- df %>%
@@ -100,7 +104,10 @@ max_any_test <- function(df, id) {
 
 max_cfm_test <- function(df, id) {
   # Confirmatory values for `test_reason`
-  rsn_cfm <- c("cap_cfm", "ven_cfm_i", "ven_cfm_e", "ven_cfm_n", "ven_flw")
+  rsn_cfm <- c(
+    "ven_cfm_init", "cap_cfm_elev", "cap_cfm_nonelev",
+    "ven_cfm_elev", "ven_cfm_nonelev", "ven_flw"
+  )
 
   # Keep confirmatory tests from `df` where `patient_id` is `id`
   df %>%

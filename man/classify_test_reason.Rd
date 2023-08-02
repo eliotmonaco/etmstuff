@@ -2,7 +2,7 @@
 % Please edit documentation in R/classify_test_reason.R
 \name{classify_test_reason}
 \alias{classify_test_reason}
-\title{Impute reasons for series of blood lead tests}
+\title{Impute reasons for sequences of blood lead tests}
 \usage{
 classify_test_reason(df, df2 = NULL, bl_ref_val, max_interval, silent = FALSE)
 }
@@ -18,19 +18,20 @@ classify_test_reason(df, df2 = NULL, bl_ref_val, max_interval, silent = FALSE)
 \item{silent}{Logical: silence progress indicator if \code{TRUE}.}
 }
 \value{
-The dataframe is returned with a new column, \code{test_reason}.
+The dataframe is returned with the new columns, \code{test_reason}, \code{bl_rev_val}, and \code{lab_result_elev}.
 }
 \description{
 This function assigns a reason to each test in \code{df} based on the Kansas Department of Health and Environment's Elevated Blood Lead Investigation Guideline document. A possible sequence of tests for one person could begin with a capillary screening test, followed by a confirmatory venous test, which, if the result is elevated, could be followed by any number of venous follow-up tests until a non-elevated result is obtained. Each test in a sequence should be within a maximum of 90 days of the previous test, therefore it is recommended that \code{max_interval = 90} be provided in the function call. The reason assigned to each test depends on values in one or more previous tests, therefore it is recommended that prior data which has already been classified by this function be provided in \code{df2} for the most accurate results. It is also recommended that only values of \code{Blood - capillary} or \code{Blood - venous} be present in \code{lab_specimen_source}, as any other value will lead to a reason of \code{unknown/other} in subsequent tests.
 
-Possible \code{test_reason} values are
+Possible \code{test_reason} values:
 \itemize{
-\item \code{cap_scrn}: a capillary screening test (must be the first test in a sequence).
-\item \code{ven_cfm_i}: an initial confirmatory venous test (must be the first test in a sequence).
-\item \code{cap_cfm}: a confirmatory capillary test (follows a \code{cap_scrn}).
-\item \code{ven_cfm_e}: a confirmatory venous test following an elevated \code{cap_scrn}.
-\item \code{ven_cfm_n}: a confirmatory venous test following a non-elevated \code{cap_scrn}.
-\item \code{ven_flw}: a venous follow-up test (follows any venous test or an elevated \code{cap_cfm}).
-\item \code{unknown/other}: a test that cannot be assigned another value.
+\item \code{cap_scrn}: A capillary screening test. This must be the first test in a sequence.
+\item \code{ven_cfm_init}: An initial venous confirmatory test. This must be the first test in a sequence.
+\item \code{cap_cfm_elev}: A capillary confirmatory test following an elevated \code{cap_scrn}.
+\item \code{cap_cfm_nonelev}: A capillary confirmatory test following a non-elevated \code{cap_scrn}.
+\item \code{ven_cfm_elev}: A venous confirmatory test following an elevated \code{cap_scrn}.
+\item \code{ven_cfm_nonelev}: A venous confirmatory test following a non-elevated \code{cap_scrn}.
+\item \code{ven_flw}: A venous follow-up test. This is any venous test following either an elevated venous test or an elevated capillary confirmatory test, i.e., \code{cap_cfm_elev} or \code{cap_cfm_nonelev}.
+\item \code{unknown}: A test that cannot be assigned another value.
 }
 }

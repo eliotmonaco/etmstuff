@@ -32,6 +32,29 @@ my_xlsx(mtcars, "cars", sheetName = "bigfastcars")
 # stop ####
 
 
+library(tidyverse)
+
+
+
+debugonce(classify_test_reason)
+
+data2 <- classify_test_reason(
+  data,
+  bl_ref_val = 3.5,
+  max_interval = 90,
+  silent = F
+)
+
+data2 %>%
+  group_by(test_reason) %>%
+  count()
+
+
+
+
+# stop ####
+
+
 
 
 

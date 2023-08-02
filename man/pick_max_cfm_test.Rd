@@ -26,20 +26,21 @@ The function has two modes:
 }
 }
 \details{
-The \code{test_reason} variable is created by the function \code{\link[=classify_test_reason]{classify_test_reason()}}.
+The \code{test_reason} variable is created by the function \code{\link[=classify_test_reason]{classify_test_reason()}}. See this function's documentation for definitions of \code{test_reason} values.
 
 Confirmatory \code{test_reason} values are
 \itemize{
-\item \code{cap_cfm}
-\item \code{ven_cfm_i}
-\item \code{ven_cfm_e}
-\item \code{ven_cfm_n}
+\item \code{ven_cfm_init}
+\item \code{cap_cfm_elev}
+\item \code{cap_cfm_nonelev}
+\item \code{ven_cfm_elev}
+\item \code{ven_cfm_nonelev}
 \item \code{ven_flw}
 }
 
 Non-confirmatory \code{test_reason} values are
 \itemize{
 \item \code{cap_scrn}
-\item \code{unknown/other}
+\item \code{unknown}
 }
 }
