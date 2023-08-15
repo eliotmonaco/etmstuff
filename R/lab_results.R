@@ -41,8 +41,8 @@ clean_lab_results <- function(df, var) {
   # Replace or remove text in results
   f <- function(var) {
     dplyr::case_when(
-      # Replace "not/none detected" with "0"
-      stringr::str_detect(var, stringr::regex("(not|none) detected", ignore_case = TRUE)) ~ "0",
+      # Replace "not/none detected" with "< 1.0"
+      stringr::str_detect(var, stringr::regex("(not|none) detected", ignore_case = TRUE)) ~ "< 1.0",
       # Remove units ("mcg/dL" and "ug/dL")
       stringr::str_detect(var, stringr::regex("(mc|u)g/dl", ignore_case = TRUE)) ~
         stringr::str_remove_all(var, stringr::regex("(mc|u)g/dl", ignore_case = TRUE)),
@@ -53,6 +53,7 @@ clean_lab_results <- function(df, var) {
     )
   }
 
+  # Characters to remove: "=" (first character), spaces, punctuation or "`" (last character)
   p <- paste("^=", "\\s", "([:punct:]|`)$", sep = "|")
 
   df %>%
