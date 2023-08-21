@@ -165,7 +165,11 @@ regex_various["unit", 1]
 # Old: "(?<=\\s)((apt|ap|unit|ste|suite|lot|trlr)(\\s|[:punct:])|#)[:graph:]+$"
 # New: "(?<=\\s)(#|ap|apt|lot|rm|room|ste|suite|trlr|unit)(\\s|[:punct:])*[:alnum:]+$"
 
-regex_various["unit", 1] <- "(?<=\\s)(#|ap|apt|lot|rm|room|ste|suite|trlr|unit)(\\s|[:punct:])*[:alnum:]+$"
+regex_various["unit", 1] <- paste0(
+  "(?<=\\s)",
+  "(#|ap|apt|apartment|lot|no|num|number|rm|room|ste|suite|trlr|trailer|unit)",
+  "(\\s|[:punct:])*[:alnum:]+$"
+)
 
 saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
 
