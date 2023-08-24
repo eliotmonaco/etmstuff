@@ -226,7 +226,9 @@ saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
 
 # Modify `ks_cities` ####
 
-new_cities <- toupper(c("Bavaria", "Blaine", "Carlton", "Petrolia", "Quincy", "Radium", "Gas"))
+ks_cities <- readRDS("dev_aux/helpers/ks_cities.rds")
+
+new_cities <- toupper(c("Preston", "Langdon", "Climax", "Rago", "Yoder", "Leona"))
 
 ks_cities <- sort(unique(c(ks_cities, new_cities)))
 
