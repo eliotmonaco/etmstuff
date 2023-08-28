@@ -3,8 +3,9 @@
 directions <- readRDS("dev_aux/helpers/directions.rds")
 directions_cardinal <- readRDS("dev_aux/helpers/directions_cardinal.rds")
 directions_ordinal <- readRDS("dev_aux/helpers/directions_ordinal.rds")
-epitrax_variables <- readRDS("dev_aux/helpers/epitrax_variables.rds")
-epitrax_variables_reordered <- readRDS("dev_aux/helpers/epitrax_variables_reordered.rds")
+epitrax_date_vars <- readRDS("dev_aux/helpers/epitrax_date_vars.rds")
+epitrax_vars <- readRDS("dev_aux/helpers/epitrax_vars.rds")
+epitrax_vars_reordered <- readRDS("dev_aux/helpers/epitrax_vars_reordered.rds")
 fips <- readRDS("dev_aux/helpers/fips.rds")
 ks_cities <- readRDS("dev_aux/helpers/ks_cities.rds")
 ks_locations <- readRDS("dev_aux/helpers/ks_locations.rds")
@@ -22,8 +23,9 @@ usethis::use_data(
   directions,
   directions_cardinal,
   directions_ordinal,
-  epitrax_variables,
-  epitrax_variables_reordered,
+  epitrax_date_vars,
+  epitrax_vars,
+  epitrax_vars_reordered,
   fips,
   ks_cities,
   ks_locations,
@@ -38,6 +40,29 @@ usethis::use_data(
   unit_prefixes,
   internal = T, overwrite = T
 )
+
+
+
+# epitrax_date_vars ####
+
+epitrax_date_vars <- c(
+  "patient_birth_date",
+  "treatment_date",
+  "lab_collection_date",
+  "lab_test_date",
+  "lab_created_at",
+  "patient_investigation_completed_lhd_date",
+  "lhd_investigation_start_date",
+  "lhd_date_closed",
+  "first_investigation_started_date",
+  "last_investigation_completed_lhd_date",
+  "first_accepted_by_lhd_date",
+  "last_approved_by_lhd_date",
+  "last_routed_to_lhd_date",
+  "patient_results_reported_to_LHD"
+)
+
+saveRDS(epitrax_date_vars, "dev_aux/helpers/epitrax_date_vars.rds")
 
 
 

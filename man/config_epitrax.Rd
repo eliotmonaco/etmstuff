@@ -4,10 +4,18 @@
 \alias{config_epitrax}
 \title{Configure the EpiTrax source file}
 \usage{
-config_epitrax(df)
+config_epitrax(
+  df,
+  var_dates = epitrax_date_vars,
+  var_order = epitrax_vars_reordered
+)
 }
 \arguments{
 \item{df}{A dataframe.}
+
+\item{var_dates}{The EpiTrax date variables to format.}
+
+\item{var_order}{The order for EpiTrax variables in the returned dataframe.}
 }
 \value{
 A list containing two dataframes:
@@ -24,6 +32,6 @@ This function configures the EpiTrax source file in preparation for data process
 \item Adds a unique identifier (\code{record_id_src}) based on the values in the unmodified source file.
 \item Adds a unique row identifier (\code{row_id_src}).
 \item Formats all date variables as "YYYY-MM-DD".
-\item Reorders the columns according to \code{epitrax_variables_reordered}.
+\item Reorders the columns according to \code{epitrax_vars_reordered}.
 }
 }

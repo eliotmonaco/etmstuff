@@ -5,9 +5,11 @@
 #' * Adds a unique identifier (`record_id_src`) based on the values in the unmodified source file.
 #' * Adds a unique row identifier (`row_id_src`).
 #' * Formats all date variables as "YYYY-MM-DD".
-#' * Reorders the columns according to `epitrax_variables_reordered`.
+#' * Reorders the columns according to `epitrax_vars_reordered`.
 #'
 #' @param df A dataframe.
+#' @param var_dates The EpiTrax date variables to format.
+#' @param var_order The order for EpiTrax variables in the returned dataframe.
 #'
 #' @return
 #' A list containing two dataframes:
@@ -21,27 +23,10 @@
 #'
 # @examples
 #'
-config_epitrax <- function(df) {
+config_epitrax <- function(df, var_dates = epitrax_date_vars, var_order = epitrax_vars_reordered) {
   if (!assertive::is_data.frame(df)) stop("`df` must be a dataframe", call. = FALSE)
 
-  date_var <- c(
-    "patient_birth_date",
-    "treatment_date",
-    "lab_collection_date",
-    "lab_test_date",
-    "lab_created_at",
-    "patient_investigation_completed_lhd_date",
-    "lhd_investigation_start_date",
-    "lhd_date_closed",
-    "first_investigation_started_date",
-    "last_investigation_completed_lhd_date",
-    "first_accepted_by_lhd_date",
-    "last_approved_by_lhd_date",
-    "last_routed_to_lhd_date",
-    "patient_results_reported_to_LHD"
-  )
-
-  var_check(df, var = date_var)
+  var_check(df, var = var_dates)
 
   # Add `record_id_src`, a unique record identifier based on a hash function
   df$record_id_src <- apply(
@@ -61,8 +46,8 @@ config_epitrax <- function(df) {
     ))
 
   # Format dates
-  df[, date_var] <- lapply(
-    X = df[, date_var],
+  df[, var_dates] <- lapply(
+    X = df[, var_dates],
     FUN = as.Date,
     format = "%Y-%m-%d %H:%M:%S",
     origin = "1970-01-01"
@@ -81,7 +66,7 @@ config_epitrax <- function(df) {
     data = df %>%
       dplyr::select(
         row_id_src,
-        tidyselect::all_of(epitrax_variables_reordered),
+        tidyselect::all_of(var_order),
         record_id_src),
     # `keys` contains ID variables only
     keys = df %>%
