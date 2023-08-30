@@ -58,7 +58,6 @@ Other address processing functions:
 \code{\link{md_request}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},
-\code{\link{send_md_request}()},
 \code{\link{validate_address}()}
 }
 \concept{address processing functions}

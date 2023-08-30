@@ -29,7 +29,6 @@ Other address processing functions:
 \code{\link{md_request}()},
 \code{\link{parse_street_addresses}()},
 \code{\link{pull_addresses}()},
-\code{\link{replace_values}()},
-\code{\link{send_md_request}()}
+\code{\link{replace_values}()}
 }
 \concept{address processing functions}
