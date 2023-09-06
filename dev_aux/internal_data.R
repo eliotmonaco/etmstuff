@@ -6,7 +6,7 @@ directions_ordinal <- readRDS("dev_aux/helpers/directions_ordinal.rds")
 epitrax_date_vars <- readRDS("dev_aux/helpers/epitrax_date_vars.rds")
 epitrax_vars <- readRDS("dev_aux/helpers/epitrax_vars.rds")
 epitrax_vars_reordered <- readRDS("dev_aux/helpers/epitrax_vars_reordered.rds")
-fips <- readRDS("dev_aux/helpers/fips.rds")
+ks_fips <- readRDS("dev_aux/helpers/ks_fips.rds")
 ks_cities <- readRDS("dev_aux/helpers/ks_cities.rds")
 ks_locations <- readRDS("dev_aux/helpers/ks_locations.rds")
 ks_zipcodes <- readRDS("dev_aux/helpers/ks_zipcodes.rds")
@@ -26,8 +26,8 @@ usethis::use_data(
   epitrax_date_vars,
   epitrax_vars,
   epitrax_vars_reordered,
-  fips,
   ks_cities,
+  ks_fips,
   ks_locations,
   ks_zipcodes,
   pm_direction_dictionary,
@@ -43,23 +43,87 @@ usethis::use_data(
 
 
 
+# epitrax_vars_reordered ####
+
+epitrax_vars_reordered <- c(
+  # Record IDs
+  "lab_id", "lab_test_id",
+  # Person IDs & info
+  "patient_id", "patient_record_number", "patient_birth_date",
+  "person_last_name", "person_first_name", "person_middle_name",
+  # Lab test info
+  "lab_collection_date", "lab_result_value", "lab_units",
+  "lab_specimen_source", "lab_loinc_code", "lab_test_type",
+  "lab_name", "ordering_facility_name", "ordering_clinician",
+  # Demographic info
+  "patient_birth_sex", "patient_ethnicity", "patient_race",
+  "person_country_of_birth", "patient_pregnant",
+  # Address at lab collection
+  "lab_collection_street", "lab_collection_unit_number", "lab_collection_city",
+  "lab_collection_state", "lab_collection_postal_code","lab_collection_county",
+  # Jurisdiction
+  "patient_jurisdiction_of_investigation",
+  # Treatment
+  "treatment_name", "treatment_given", "treatment_date",
+  # Insurance
+  "bl_medicaid_eligible", "medicaid_id",
+  "blood_lead_poisoning_form_col_bl_funding_source",
+  # Status
+  "patient_state_case_status",
+  "patient_workflow_state",
+  "patient_event_disposition",
+  # Investigation dates
+  "first_investigation_started_date",
+  "lhd_investigation_start_date",
+  "first_accepted_by_lhd_date",
+  "patient_investigation_completed_lhd_date",
+  "last_investigation_completed_lhd_date",
+  "last_approved_by_lhd_date",
+  "last_routed_to_lhd_date",
+  "patient_results_reported_to_lhd",
+  "lhd_date_closed",
+  # Other addresses
+  "address_at_diagnosis_street", "address_at_diagnosis_unit_number", "address_at_diagnosis_city",
+  "address_at_diagnosis_state", "address_at_diagnosis_zip", "address_at_diagnosis_county",
+  "current_address_street", "current_address_unit_number", "current_address_city",
+  "current_address_state", "current_address_zip", "current_address_county",
+  # Other dates
+  "lab_test_date", "lab_created_at",
+  # Person facility
+  "person_facility_name", "person_facility_type", "person_facility_visit_type"
+)
+
+saveRDS(epitrax_vars_reordered, "dev_aux/helpers/epitrax_vars_reordered.rds")
+
+
+
+# epitrax_vars ####
+
+epitrax_vars <- c(
+  "address_at_diagnosis_city", "address_at_diagnosis_county", "address_at_diagnosis_state", "address_at_diagnosis_street", "address_at_diagnosis_unit_number", "address_at_diagnosis_zip", "bl_medicaid_eligible", "blood_lead_poisoning_form_col_bl_funding_source", "current_address_city", "current_address_county", "current_address_state", "current_address_street", "current_address_unit_number", "current_address_zip", "first_accepted_by_lhd_date", "first_investigation_started_date", "lab_collection_city", "lab_collection_county", "lab_collection_date", "lab_collection_postal_code", "lab_collection_state", "lab_collection_street", "lab_collection_unit_number", "lab_created_at", "lab_id", "lab_loinc_code", "lab_name", "lab_result_value", "lab_specimen_source", "lab_test_date", "lab_test_id", "lab_test_type", "lab_units", "last_approved_by_lhd_date", "last_investigation_completed_lhd_date", "last_routed_to_lhd_date", "lhd_date_closed", "lhd_investigation_start_date", "medicaid_id", "ordering_clinician", "ordering_facility_name", "patient_birth_date", "patient_birth_sex", "patient_ethnicity", "patient_event_disposition", "patient_id", "patient_investigation_completed_lhd_date", "patient_jurisdiction_of_investigation", "patient_pregnant", "patient_race", "patient_record_number", "patient_results_reported_to_lhd", "patient_state_case_status", "patient_workflow_state", "person_country_of_birth", "person_facility_name", "person_facility_type", "person_facility_visit_type", "person_first_name", "person_last_name", "person_middle_name", "treatment_date", "treatment_given", "treatment_name"
+)
+
+saveRDS(epitrax_vars, "dev_aux/helpers/epitrax_vars.rds")
+
+
+
 # epitrax_date_vars ####
 
 epitrax_date_vars <- c(
   "patient_birth_date",
-  "treatment_date",
   "lab_collection_date",
+  "treatment_date",
   "lab_test_date",
   "lab_created_at",
-  "patient_investigation_completed_lhd_date",
-  "lhd_investigation_start_date",
-  "lhd_date_closed",
   "first_investigation_started_date",
-  "last_investigation_completed_lhd_date",
+  "lhd_investigation_start_date",
   "first_accepted_by_lhd_date",
+  "patient_investigation_completed_lhd_date",
+  "last_investigation_completed_lhd_date",
   "last_approved_by_lhd_date",
   "last_routed_to_lhd_date",
-  "patient_results_reported_to_LHD"
+  "patient_results_reported_to_lhd",
+  "lhd_date_closed"
 )
 
 saveRDS(epitrax_date_vars, "dev_aux/helpers/epitrax_date_vars.rds")
@@ -165,17 +229,17 @@ saveRDS(ks_locations, "dev_aux/helpers/ks_locations.rds")
 
 
 
-# Modify fips ####
+# Modify ks_fips ####
 
-fips <- read.csv("dev_aux/helpers/fips.csv")
-colnames(fips) <- tolower(colnames(fips))
-colnames(fips)
-colnames(fips) <- c("fips", "st_fips", "cnty_fips", "cnty_code", "state", "county")
-fips$cnty_fips <- as.character(substr(fips$fips, 3, 5))
-fips$fips <- as.character(fips$fips)
-fips$st_fips <- as.character(fips$st_fips)
+ks_fips <- read.csv("dev_aux/helpers/fips.csv")
+colnames(ks_fips) <- tolower(colnames(ks_fips))
+colnames(ks_fips)
+colnames(ks_fips) <- c("fips", "st_fips", "cnty_fips", "cnty_code", "state", "county")
+ks_fips$cnty_fips <- as.character(substr(ks_fips$fips, 3, 5))
+ks_fips$fips <- as.character(ks_fips$fips)
+ks_fips$st_fips <- as.character(ks_fips$st_fips)
 
-saveRDS(fips, "dev_aux/helpers/fips.rds")
+saveRDS(ks_fips, "dev_aux/helpers/ks_fips.rds")
 
 
 

@@ -26,7 +26,11 @@
 config_epitrax <- function(df, var_dates = epitrax_date_vars, var_order = epitrax_vars_reordered) {
   if (!assertive::is_data.frame(df)) stop("`df` must be a dataframe", call. = FALSE)
 
-  var_check(df, var = var_dates)
+  var_check(df, var = epitrax_vars)
+
+  # Reorder variables
+  df <- df %>%
+    dplyr::select(tidyselect::all_of(var_order))
 
   # Add `record_id_src`, a unique record identifier based on a hash function
   df$record_id_src <- apply(
@@ -53,21 +57,21 @@ config_epitrax <- function(df, var_dates = epitrax_date_vars, var_order = epitra
     origin = "1970-01-01"
   )
 
+  # Sort by `lab_collection_date` & `lab_id`, and relocate `row_id_src`
+  df <- df %>%
+    dplyr::arrange(lab_collection_date, lab_id) %>%
+    dplyr::relocate(row_id_src)
+
   message(
     "Configuration complete\n",
-    " - `record_id_src` added\n",
-    " - `row_id_src` added\n",
-    " - Date variables formatted\n",
-    " - Columns reordered"
+    " * `row_id_src` and `record_id_src` added\n",
+    " * Date variables formatted\n",
+    " * Columns reordered"
   )
 
   list(
     # `data` contains all variables, reordered
-    data = df %>%
-      dplyr::select(
-        row_id_src,
-        tidyselect::all_of(var_order),
-        record_id_src),
+    data = df,
     # `keys` contains ID variables only
     keys = df %>%
       dplyr::select(

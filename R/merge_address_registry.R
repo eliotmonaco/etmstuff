@@ -69,7 +69,7 @@ merge_address_registry <- function(df, registry) {
     dplyr::filter(is.na(address_registry_id)) %>%
     dplyr::select(-address_registry_id) %>%
     dplyr::left_join(
-      fips %>%
+      ks_fips %>%
         dplyr::mutate(county = paste(county, "County")) %>%
         dplyr::select(county, cnty_fips),
       by = "county"
