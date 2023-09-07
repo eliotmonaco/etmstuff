@@ -5,6 +5,18 @@ library(etmstuff)
 devtools::load_all()
 
 
+
+
+
+
+my_xl_table(mtcars, "cars_wkbk", c("mpg", "cyl"))
+
+my_xl_table(mtcars, "cars_wkbk", as_table = F)
+
+
+
+
+
 # my_xlsx: works with or wo ".xlsx" in name? how to name separate sheets? (use ...?)
 
 
