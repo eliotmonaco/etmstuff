@@ -32,8 +32,6 @@ These functions send the URL requests created by \code{\link[=build_md_url]{buil
 \item \code{\link[=clean_street_address]{clean_street_address()}}
 \item \code{\link[=replace_values]{replace_values()}}
 }
-\item \code{\link[=parse_street_addresses]{parse_street_addresses()}}
-\item \code{\link[=compare_parsed_street]{compare_parsed_street()}}
 \item \code{\link[=build_md_url]{build_md_url()}}
 \item \code{\link[=md_batch_request]{md_batch_request()}}
 }
@@ -54,8 +52,6 @@ More information is at \url{https://wiki.melissadata.com/index.php?title=Persona
 Other address processing functions: 
 \code{\link{build_md_url}()},
 \code{\link{clean_street_address}()},
-\code{\link{compare_parsed_street}()},
-\code{\link{parse_street_addresses}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},
 \code{\link{validate_address}()}
@@ -63,8 +59,6 @@ Other address processing functions:
 Other address processing functions: 
 \code{\link{build_md_url}()},
 \code{\link{clean_street_address}()},
-\code{\link{compare_parsed_street}()},
-\code{\link{parse_street_addresses}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},
 \code{\link{validate_address}()}

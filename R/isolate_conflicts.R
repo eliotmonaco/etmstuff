@@ -1,7 +1,7 @@
 #' Focus on dupesets with conflicting values in selected variables
 #'
 #' @description
-#' `isolate_conflicts()` produces a dataframe that keeps only those dupesets that have conflicting values in the variables named in `var`. This makes it easier to visually inspect the data and look for patterns among dupesets, particularly when [dupes2xl()] is used on the returned dataframe to produce a formatted .XLSM file.
+#' `isolate_conflicts()` produces a dataframe that keeps only those dupesets that have conflicting values in the variables named in `var`. This makes it easier to visually inspect the data and look for patterns among dupesets.
 #'
 #' @inheritSection count_conflicts Deduplication
 #'

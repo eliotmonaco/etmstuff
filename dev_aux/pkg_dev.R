@@ -62,6 +62,9 @@ usethis::use_build_ignore(c("dev_aux"))
 
 ## Extra ####
 
+# Remove package from Imports in DESCRIPTION file
+desc::desc_del_dep("")
+
 remove.packages("etmstuff")
 
 devtools::install()

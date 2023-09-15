@@ -53,8 +53,8 @@ undupe <- function(df, visible_var = NULL, invisible_var = NULL, prefix = "dupe"
   id_var <- paste(prefix, "id", sep = "_")
   order_var <- paste(prefix, "order", sep = "_")
 
-  if (id_var %in% colnames(df)) {
-    stop("Provide an `id_var` that is not already a variable in `df`", call. = FALSE)
+  if (any(c(id_var, order_var) %in% colnames(df))) {
+    stop("Provide a different `prefix`", call. = FALSE)
   }
 
   var_check(df, var = c(visible_var, invisible_var))

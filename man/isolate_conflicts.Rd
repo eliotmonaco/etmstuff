@@ -19,7 +19,7 @@ isolate_conflicts(df, var, ignore_empty = TRUE, silent = FALSE)
 A dataframe.
 }
 \description{
-\code{isolate_conflicts()} produces a dataframe that keeps only those dupesets that have conflicting values in the variables named in \code{var}. This makes it easier to visually inspect the data and look for patterns among dupesets, particularly when \code{\link[=dupes2xl]{dupes2xl()}} is used on the returned dataframe to produce a formatted .XLSM file.
+\code{isolate_conflicts()} produces a dataframe that keeps only those dupesets that have conflicting values in the variables named in \code{var}. This makes it easier to visually inspect the data and look for patterns among dupesets.
 }
 \section{Deduplication}{
 
@@ -44,7 +44,6 @@ df_isolated <- isolate_conflicts(undupe[["df_dupesets"]], var = "z")
 \seealso{
 Other undupe functions: 
 \code{\link{count_conflicts}()},
-\code{\link{dupes2xl}()},
 \code{\link{flatten_conflicts}()},
 \code{\link{undupe}()}
 }

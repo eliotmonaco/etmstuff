@@ -54,7 +54,6 @@ undupe_list <- undupe(df, visible_var = c("x", "y"))
 \seealso{
 Other undupe functions: 
 \code{\link{count_conflicts}()},
-\code{\link{dupes2xl}()},
 \code{\link{flatten_conflicts}()},
 \code{\link{isolate_conflicts}()}
 }

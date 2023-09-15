@@ -48,7 +48,6 @@ df_flat <- flatten_conflicts(undp[["df_dupesets"]], var = "z", dupe_id = "dupe_i
 \seealso{
 Other undupe functions: 
 \code{\link{count_conflicts}()},
-\code{\link{dupes2xl}()},
 \code{\link{isolate_conflicts}()},
 \code{\link{undupe}()}
 }

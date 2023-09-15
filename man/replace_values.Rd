@@ -25,9 +25,7 @@ Replace the dirty address values in \code{df$var} with the cleaned values in \co
 Other address processing functions: 
 \code{\link{build_md_url}()},
 \code{\link{clean_street_address}()},
-\code{\link{compare_parsed_street}()},
 \code{\link{md_request}()},
-\code{\link{parse_street_addresses}()},
 \code{\link{pull_addresses}()},
 \code{\link{validate_address}()}
 }

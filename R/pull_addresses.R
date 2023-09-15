@@ -10,10 +10,8 @@
 #'     - [validate_address()]
 #'     - [clean_street_address()]
 #'     - [replace_values()]
-#' 3. [parse_street_addresses()]
-#' 4. [compare_parsed_street()]
-#' 5. [build_md_url()]
-#' 6. [md_batch_request()]
+#' 3. [build_md_url()]
+#' 4. [md_batch_request()]
 #'
 #' @section Melissa Data:
 #' The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for requests are either of these value combinations:
