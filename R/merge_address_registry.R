@@ -69,11 +69,16 @@ merge_address_registry <- function(df, registry) {
     dplyr::filter(is.na(address_registry_id)) %>%
     dplyr::select(-address_registry_id) %>%
     dplyr::left_join(
-      ks_fips %>%
-        dplyr::mutate(county = paste(county, "County")) %>%
-        dplyr::select(county, cnty_fips),
+      etmstuff::ks_counties %>%
+        dplyr::select(COUNTYNAME, COUNTYFP),
       by = "county"
     )
+  # dplyr::left_join(
+    #   etmstuff::ks_fips %>%
+    #     dplyr::mutate(county = paste(county, "County")) %>%
+    #     dplyr::select(county, cnty_fips),
+    #   by = "county"
+    # )
 
   # Assign ID to new addresses
   df_new <- id_distinct_rows(

@@ -6,6 +6,26 @@ devtools::load_all()
 
 
 
+df_addr <- readRDS("../bl_2023q2/data/addresses/df_addr_full.rds")
+
+df_addr <- df_addr %>%
+  distinct(address_id, .keep_all = T)
+
+df <- clean_street_address(df_addr, type = "pobox")
+
+debugonce(replace_values)
+
+df_addr2 <- replace_values(df_addr, var = "street", df_src = df)
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -6,12 +6,12 @@ directions_ordinal <- readRDS("dev_aux/helpers/directions_ordinal.rds")
 epitrax_date_vars <- readRDS("dev_aux/helpers/epitrax_date_vars.rds")
 epitrax_vars <- readRDS("dev_aux/helpers/epitrax_vars.rds")
 epitrax_vars_reordered <- readRDS("dev_aux/helpers/epitrax_vars_reordered.rds")
-ks_fips <- readRDS("dev_aux/helpers/ks_fips.rds")
-ks_cities <- readRDS("dev_aux/helpers/ks_cities.rds")
+# ks_cities <- readRDS("dev_aux/helpers/ks_cities.rds")
+# ks_fips <- readRDS("dev_aux/helpers/ks_fips.rds")
 ks_locations <- readRDS("dev_aux/helpers/ks_locations.rds")
-ks_zipcodes <- readRDS("dev_aux/helpers/ks_zipcodes.rds")
-pm_direction_dictionary <- readRDS("dev_aux/helpers/pm_direction_dictionary.rds")
-pm_street_suffix <- readRDS("dev_aux/helpers/pm_street_suffix.rds")
+# ks_zipcodes <- readRDS("dev_aux/helpers/ks_zipcodes.rds")
+# pm_direction_dictionary <- readRDS("dev_aux/helpers/pm_direction_dictionary.rds")
+# pm_street_suffix <- readRDS("dev_aux/helpers/pm_street_suffix.rds")
 regex_pobox <- readRDS("dev_aux/helpers/regex_pobox.rds")
 regex_various <- readRDS("dev_aux/helpers/regex_various.rds")
 street_names <- readRDS("dev_aux/helpers/street_names.rds")
@@ -26,12 +26,12 @@ usethis::use_data(
   epitrax_date_vars,
   epitrax_vars,
   epitrax_vars_reordered,
-  ks_cities,
-  ks_fips,
+  # ks_cities,
+  # ks_fips,
   ks_locations,
-  ks_zipcodes,
-  pm_direction_dictionary,
-  pm_street_suffix,
+  # ks_zipcodes,
+  # pm_direction_dictionary,
+  # pm_street_suffix,
   regex_pobox,
   regex_various,
   street_names,
@@ -310,18 +310,6 @@ regex_various <- regex_various %>%
   bind_rows(new)
 
 saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
-
-
-
-# Modify `ks_cities` ####
-
-ks_cities <- readRDS("dev_aux/helpers/ks_cities.rds")
-
-new_cities <- toupper(c("Ames", "Rice", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-
-ks_cities <- sort(unique(c(ks_cities, new_cities)))
-
-saveRDS(ks_cities, "dev_aux/helpers/ks_cities.rds")
 
 
 

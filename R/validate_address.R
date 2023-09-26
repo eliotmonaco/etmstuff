@@ -20,9 +20,9 @@ validate_address <- function(df, var, type = var, max_dist = 0.1) {
 
   # Load `ref` based on `type`
   if (type == "city") {
-    ref <- ks_cities
+    ref <- etmstuff::ks_cities
   } else if (type == "zip") {
-    ref <- ks_zipcodes
+    ref <- etmstuff::ks_zipcodes
   } else {
     m <- '`type` must be one of c("city", "zip")'
     stop(m, call. = FALSE)

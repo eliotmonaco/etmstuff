@@ -58,6 +58,8 @@ message(paste(paste0('"', epitrax_variables, '"'), collapse = ", "))
 
 usethis::use_build_ignore(c("dev_aux"))
 
+usethis::use_data_raw()
+
 
 
 ## Extra ####
