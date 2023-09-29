@@ -7,7 +7,7 @@ utils::globalVariables(
     # Variables added to data_core
     "row_id_src", "record_id_src", "age", "lab_result_clean", "lab_result_symbol", "lab_result_number", "dupe_id", "dupe_order", "county_of_residence", "lab_result_elev", "bl_ref_val", "test_reason",
     # cbls_address_table()
-    "cnty_fips",
+    "City", "CountyFIPS", "PostalCode", "State", "CensusTract",
     # cbls_check_table()
     "all_chars", "FILEID", "ADDR_ID", "CITY", "CNTY_FIPS", "ZIP", "STATE", "CENSUS", "RENOVATED", "START_REN", "COMP_REN", "CHILD_ID", "DOB", "SEX", "ETHNIC", "BLANK", "CHELATED", "CHEL_TYPE", "CHEL_FUND", "NPLSZ", "NPLSM", "NPLSO", "NPLSH", "NPLSP", "NPLSC", "BIRTH", "RACE_AIAN", "RACE_ASIAN", "RACE_BLACK", "RACE_NHOPI", "RACE_WHITE", "RACE_OTHER", "RACE_RTA", "RACE_UNK", "DATE_REF", "INSP_COMP", "ABAT_COMP", "YEAR", "OWNERSHIP", "DWELL_TYPE", "PAINT_HAZ", "XRF", "DUST_FLOOR", "FLOOR_MSR", "DUST_SILL", "SILL_MSR", "DUST_WELL", "WELL_MSR", "PAINT", "PAINT_MSR", "SOIL", "WATER", "INDHAZ", "DATE_DUE", "INV_CLOS_RES", "CLEAR_DATE", "CLEAR_RSLT", "SAMP_DATE", "PREGNANT", "LAB_FUND", "SAMP_TYPE", "TEST_RSN", "LAB_TYPE", "SCRN_SITE", "METH_ANAZ", "METH_LOD", "SAMP_ANAZ_DT", "RSLT_RPT_DT", "RESULT", "RST_INTPCODE", "LAB_LOD", "LAB_NAME", "LAB_ID", "NPI",
     # cbls_undupe()
@@ -20,7 +20,7 @@ utils::globalVariables(
     "n",
     # fuzzy_compare()
     "sim_score",
-    # merge_address_registry ()
+    # merge_address_registry()
     "address_registry_id", "lookup",
     # merge_child_registry ()
     "child_registry_id",
