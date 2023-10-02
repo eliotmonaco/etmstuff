@@ -1,3 +1,7 @@
+# Replaced on 9/29/23 after the decision to geocode addresses for the CBLS submission, which required rewriting the function.
+
+
+
 #' Merge new cleaned addresses with the CBLS address registry
 #'
 #' @param df A dataframe of cleaned addresses prepared for the CBLS submission.

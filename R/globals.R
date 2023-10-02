@@ -20,12 +20,8 @@ utils::globalVariables(
     "n",
     # fuzzy_compare()
     "sim_score",
-    # merge_address_registry()
-    "address_registry_id", "lookup",
-    # merge_child_registry ()
-    "child_registry_id",
-    # parse_street_addresses()
-    "pm.uid",
+    # cbls_registry_merge()
+    "address_registry_id", "child_registry_id",
     # pick_max_result()
     "pid_unq",
     # pull_addresses()

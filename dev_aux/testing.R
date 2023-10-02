@@ -6,6 +6,84 @@ devtools::load_all()
 
 
 
+# merge_address_registry ####
+
+rows <- sample(1:nrow(df_address_registry_2023q2), size = 1000, replace = F)
+
+df_test_addr <- df_address_registry_2023q2[rows,]
+
+df_test_addr <- df_test_addr %>%
+  bind_rows(
+    df_address_registry_2023q2 %>%
+      slice(1:1000) %>%
+      mutate(AddressLine1 = "1000 SW Jackson")
+  ) %>%
+  select(-address_registry_id) %>%
+  arrange(AddressKey)
+
+df_test_addr$dupe_id <- as.character(1:nrow(df_test_addr))
+
+df_test_addr <- df_test_addr %>%
+  relocate(dupe_id)
+
+## original
+
+# debugonce(merge_address_registry)
+
+address_list1 <- merge_address_registry(df = df_test_addr, registry = df_address_registry_2023q2)
+
+df_data_addr1 <- address_list1[["df_addr"]]
+df_reg_addr1 <- address_list1[["df_registry"]]
+
+## new - address
+
+debugonce(cbls_registry_merge)
+
+address_list2 <- cbls_registry_merge(
+  df_data = df_test_addr,
+  df_reg = df_address_registry_2023q2,
+  type = "address"
+)
+
+df_data_addr2 <- address_list2[["df_data"]]
+df_reg_addr2 <- address_list2[["df_registry"]]
+
+all.equal(df_data_addr1, df_data_addr2 %>% relocate(address_registry_id, .after = dupe_id))
+all.equal(df_reg_addr1, df_reg_addr2)
+
+## new - child
+
+df_test_child <- data_cbls_2023q2 %>%
+  select(-child_registry_id)
+
+debugonce(cbls_registry_merge)
+
+child_list <- cbls_registry_merge(
+  df_data = df_test_child,
+  df_reg = df_child_registry_2023q1,
+  type = "child"
+)
+
+df_data_child <- child_list[["df_data"]]
+df_reg_child <- child_list[["df_registry"]]
+
+all.equal(df_data_child, data_cbls_2023q2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 df_addr <- readRDS("../bl_2023q2/data/addresses/df_addr_full.rds")
 
 df_addr <- df_addr %>%

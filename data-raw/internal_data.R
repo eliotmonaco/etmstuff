@@ -10,6 +10,7 @@ epitrax_vars_reordered <- readRDS("dev_aux/helpers/epitrax_vars_reordered.rds")
 # ks_fips <- readRDS("dev_aux/helpers/ks_fips.rds")
 ks_locations <- readRDS("dev_aux/helpers/ks_locations.rds")
 # ks_zipcodes <- readRDS("dev_aux/helpers/ks_zipcodes.rds")
+md_response_vars <- readRDS("dev_aux/helpers/md_response_vars.rds")
 # pm_direction_dictionary <- readRDS("dev_aux/helpers/pm_direction_dictionary.rds")
 # pm_street_suffix <- readRDS("dev_aux/helpers/pm_street_suffix.rds")
 regex_pobox <- readRDS("dev_aux/helpers/regex_pobox.rds")
@@ -30,6 +31,7 @@ usethis::use_data(
   # ks_fips,
   ks_locations,
   # ks_zipcodes,
+  md_response_vars,
   # pm_direction_dictionary,
   # pm_street_suffix,
   regex_pobox,
@@ -40,6 +42,16 @@ usethis::use_data(
   unit_prefixes,
   internal = T, overwrite = T
 )
+
+
+
+# md_response_vars ####
+
+md_response_vars <- c(
+  "AddressDeliveryInstallation", "AddressExtras", "AddressHouseNumber", "AddressKey", "AddressLine1", "AddressLine2", "AddressLockBox", "AddressPostDirection", "AddressPreDirection", "AddressPrivateMailboxName", "AddressPrivateMailboxRange", "AddressRouteService", "AddressStreetName", "AddressStreetSuffix", "AddressSuiteName", "AddressSuiteNumber", "AddressTypeCode", "CBSACode", "CBSADivisionCode", "CBSADivisionLevel", "CBSADivisionTitle", "CBSALevel", "CBSATitle", "CarrierRoute", "CensusBlock", "CensusKey", "CensusTract", "City", "CityAbbreviation", "CompanyName", "CongressionalDistrict", "CountryCode", "CountryName", "CountyFIPS", "CountyName", "CountySubdivisionCode", "CountySubdivisionName", "DeliveryIndicator", "DeliveryPointCheckDigit", "DeliveryPointCode", "ElementarySchoolDistrictCode", "ElementarySchoolDistrictName", "EmailAddress", "Latitude", "Longitude", "MelissaAddressKey", "MelissaAddressKeyBase", "NameFull", "PhoneNumber", "PlaceCode", "PlaceName", "PostalCode", "RecordExtras", "RecordID", "Reserved", "Results", "SecondarySchoolDistrictCode", "SecondarySchoolDistrictName", "State", "StateDistrictLower", "StateDistrictUpper", "StateName", "Suite", "UTC", "UnifiedSchoolDistrictCode", "UnifiedSchoolDistrictName", "UrbanizationName", "TotalRecords", "TransmissionReference", "TransmissionResults", "Version"
+)
+
+saveRDS(md_response_vars, "dev_aux/helpers/md_response_vars.rds")
 
 
 

@@ -25,6 +25,11 @@
 id_distinct_rows <- function(df, var, id_name, seq_start = 1, digits = NULL) {
   var_check(df, var = var)
 
+  if (id_name %in% colnames(df)) {
+    m <- paste0('`df` already contains a variable named "', id_name, '"')
+    stop(m, call. = FALSE)
+  }
+
   min_width <- nchar(nrow(df) + seq_start)
 
   if (is.null(digits)) {
