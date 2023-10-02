@@ -20,7 +20,7 @@ replace_values <- function(df, var, df_src, var_src = "replacement_text", row_id
   var_check(df, var = c(var, row_id))
   var_check(df_src, var = c(var_src, row_id))
 
-  if (anyDuplicated(df$row_id) > 0 | anyDuplicated(df_src$row_id) > 0) {
+  if (anyDuplicated(df[[row_id]]) > 0 | anyDuplicated(df_src[[row_id]]) > 0) {
     stop("`row_id` values are not all unique in `df` and/or `df_src`")
   }
 
@@ -43,8 +43,6 @@ replace_values <- function(df, var, df_src, var_src = "replacement_text", row_id
     ) %>%
     dplyr::rename({{ var }} := {{ var_src }}) %>%
     dplyr::select(tidyselect::all_of(colnames(df)))
-
-  # df2[[var]] <- df_src[[var_src]]
 
   # Join modified rows from `df2` back to `df`
   df %>%
