@@ -2,14 +2,22 @@
 % Please edit documentation in R/pick_max_test_result.R
 \name{pick_max_test_result}
 \alias{pick_max_test_result}
-\title{Pick the test with the highest result for each person}
+\title{Select the test with the highest result for each person}
 \usage{
-pick_max_test_result(df, cfmd_only = FALSE, silent = FALSE)
+pick_max_test_result(
+  df,
+  eval = c("all_tests", "cfmd_preferred", "cfmd_only"),
+  silent = FALSE
+)
 }
 \arguments{
 \item{df}{A dataframe.}
 
-\item{cfmd_only}{Logical: if \code{TRUE}, consider confirmed results only; if \code{FALSE} (the default), consider all results.}
+\item{eval}{\itemize{
+\item \code{all_tests}: pick the highest result among all tests for each person.
+\item \code{cfmd_preferred}: if both confirmed and unconfirmed tests are present for a person, pick the highest confirmed test result; otherwise pick the highest unconfirmed test result.
+\item \code{cfmd_only}: if both confirmed and unconfirmed tests are present for a person, pick the highest confirmed test result and ignore any unconfirmed test results.
+}}
 
 \item{silent}{Logical: silence progress indicator if \code{TRUE}.}
 }
@@ -17,16 +25,10 @@ pick_max_test_result(df, cfmd_only = FALSE, silent = FALSE)
 A dataframe.
 }
 \description{
-This function returns a maximum of one test per person from \code{df}. Test are filtered by \code{patient_id} and evaluated based on the values in \code{test_reason} (confirmed results are either preferred or considered exclusively) and \code{lab_result_number}.
-
-The function has two modes:
-\enumerate{
-\item Consider all test results (\code{cfmd_only = FALSE}): After filtering tests by \code{patient_id}, the highest confirmed result is kept. If there are no confirmed results for an individual, the highest unconfirmed result is kept.
-\item Consider confirmed test results only (\code{cfmd_only = TRUE}): After filtering tests by \code{patient_id}, the highest confirmed result is kept. Unconfirmed results are not considered. Therefore, if there is no confirmed result associated with a \code{patient_id} value, that individual is not represented by a test in the output.
-}
+This function returns a maximum of one test per person from \code{df}. Confirmed and unconfirmed tests are handled differently based on the mode selected in the \code{eval} argument. Tests are filtered first by the \code{patient_id} variable. Test results are evaluated by the value in \code{lab_result_number} only; \code{lab_result_symbol} is not considered.
 }
 \details{
-The \code{test_reason} variable is created by the function \code{\link[=classify_test_reason]{classify_test_reason()}}. See this function's documentation for definitions of \code{test_reason} values.
+The \code{test_reason} variable is created by the function \code{\link[=classify_test_reason]{classify_test_reason()}}. See that function's documentation for definitions of \code{test_reason} values.
 
 Confirmed results are from tests with these \code{test_reason} values:
 \itemize{

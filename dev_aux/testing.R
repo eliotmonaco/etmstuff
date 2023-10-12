@@ -6,6 +6,18 @@ devtools::load_all()
 
 
 
+
+# pick_max_test_result ####
+
+df <- pick_max_test_result(bl_data_2019, "all_tests")
+
+all.equal(
+  sort(unique(bl_data_2019$patient_id)),
+  sort(unique(df$patient_id))
+)
+
+
+
 # merge_address_registry ####
 
 rows <- sample(1:nrow(df_address_registry_2023q2), size = 1000, replace = F)
