@@ -28,7 +28,7 @@ A dataframe.
 This function returns a maximum of one test per person from \code{df}. Confirmed and unconfirmed tests are handled differently based on the mode selected in the \code{eval} argument. Tests are filtered first by the \code{patient_id} variable. Test results are evaluated by the value in \code{lab_result_number} only; \code{lab_result_symbol} is not considered.
 }
 \details{
-The \code{test_reason} variable is created by the function \code{\link[=classify_test_reason]{classify_test_reason()}}. See that function's documentation for definitions of \code{test_reason} values.
+The \code{test_reason} variable is created by the function \code{\link[=assign_test_reason]{assign_test_reason()}}. See that function's documentation for definitions of \code{test_reason} values.
 
 Confirmed results are from tests with these \code{test_reason} values:
 \itemize{

@@ -4,7 +4,7 @@
 #' This function returns a maximum of one test per person from `df`. Confirmed and unconfirmed tests are handled differently based on the mode selected in the `eval` argument. Tests are filtered first by the `patient_id` variable. Test results are evaluated by the value in `lab_result_number` only; `lab_result_symbol` is not considered.
 #'
 #' @details
-#' The `test_reason` variable is created by the function [classify_test_reason()]. See that function's documentation for definitions of `test_reason` values.
+#' The `test_reason` variable is created by the function [assign_test_reason()]. See that function's documentation for definitions of `test_reason` values.
 #'
 #' Confirmed results are from tests with these `test_reason` values:
 #'
