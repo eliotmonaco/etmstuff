@@ -31,7 +31,7 @@ assign_test_reason <- function(df, blrv, max_interval = 90, df_past = NULL, sile
     "lab_result_symbol", "lab_result_number", "lab_specimen_source"
   )
   vars_bll <- c("lab_result_elev", "bl_ref_val")
-  vars_tr <- c("test_reason", "test_seq_alert", "test_followup_alert")
+  vars_tr <- c("test_reason", "test_seq_alert", "test_followup_alert", "days_to_next_test")
 
   var_check(df, var = vars)
 
@@ -49,9 +49,10 @@ assign_test_reason <- function(df, blrv, max_interval = 90, df_past = NULL, sile
         lab_result_symbol == ">" & lab_result_number >= blrv ~ TRUE
       ),
       bl_ref_val = blrv, # Current blood lead reference value
-      test_reason = NA, # Placeholder for test reason
-      test_seq_alert = NA, # Placeholder for test sequence alert
-      test_followup_alert = NA # Placeholder for test follow-up alert
+      test_reason = NA,
+      test_seq_alert = NA,
+      test_followup_alert = NA,
+      days_to_next_test = NA
     )
 
   # Prep `df_past`
@@ -84,13 +85,24 @@ assign_test_reason <- function(df, blrv, max_interval = 90, df_past = NULL, sile
       )
 
     # Get all tests from next interval for one person (same-day tests not included)
-    future_tests <- df_target %>%
+    # future_tests <- df_target %>%
+    #   dplyr::filter(
+    #     patient_id == current_test$patient_id,
+    #     lab_collection_date > current_test$lab_collection_date,
+    #     lab_collection_date <= current_test$lab_collection_date + max_interval,
+    #     dupe_id != current_test$dupe_id
+    #   )
+
+    # Get the next test for one person (same-day tests not included)
+    next_test <- df_target %>%
       dplyr::filter(
         patient_id == current_test$patient_id,
-        lab_collection_date > current_test$lab_collection_date,
-        lab_collection_date <= current_test$lab_collection_date + max_interval,
-        dupe_id != current_test$dupe_id
-      )
+        lab_collection_date > current_test$lab_collection_date
+      ) %>%
+      dplyr::slice_min(lab_collection_date, n = 1, with_ties = FALSE)
+
+    days_to_next <- as.numeric(next_test$lab_collection_date - current_test$lab_collection_date)
+    if (purrr::is_empty(days_to_next)) days_to_next <- NA
 
     # Filter most recent test by date
     prior_test <- past_tests %>%
@@ -138,7 +150,7 @@ assign_test_reason <- function(df, blrv, max_interval = 90, df_past = NULL, sile
     # `_bll1` <- prior_test$lab_result_number; `_date1` <- prior_test$lab_collection_date; `_src1` <- prior_test$lab_specimen_source; `_testrsn1` <- prior_test$test_reason
 
     # Assign test reason
-    current_test <- current_test %>%
+    df_target[i, vars_tr] <- current_test %>%
       dplyr::mutate(
         test_reason = dplyr::case_when(
           lab_specimen_source == "Blood - venous" &
@@ -169,14 +181,13 @@ assign_test_reason <- function(df, blrv, max_interval = 90, df_past = NULL, sile
           TRUE ~ NA
         ),
         test_followup_alert = dplyr::case_when(
-          lab_result_elev & nrow(future_tests) == 0 ~
-            "no_followup",
+          lab_result_elev & (is.na(days_to_next) | days_to_next > max_interval) ~
+            "no_90-day_followup",
           TRUE ~ NA
-        )
+        ),
+        days_to_next_test = days_to_next
       ) %>%
       dplyr::select(tidyselect::all_of(vars_tr))
-
-    df_target[i, vars_tr] <- current_test
 
     # `_testrsn2` <- current_test$test_reason
 
