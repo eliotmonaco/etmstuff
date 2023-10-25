@@ -1,4 +1,4 @@
-#' Assign reasons for blood lead tests
+#' Assign test reason to lead test records
 #'
 #' @description
 #' This function assigns a reason to each test in `df` based on the Kansas Department of Health and Environment's Elevated Blood Lead Investigation Guideline document. Each test in a sequence should be within a maximum of 90 days of the prior test, therefore `max_interval = 90` is the default. The reason assigned to each test depends on values in one or more prior tests, therefore it is recommended that a dataframe of records containing a `test_reason` variable from the 90-day period immediately prior to the data in `df` be provided in `df_past`. It is also recommended that only values of `Blood - capillary` or `Blood - venous` be allowed in `lab_specimen_source`, as any other value will lead to a reason of `unknown` in subsequent tests.
@@ -14,7 +14,7 @@
 #' * `ven_flw`: A venous follow-up test. This is any venous test following either an elevated venous test or an elevated capillary confirmatory test, i.e., `cap_cfm_elev` or `cap_cfm_nonelev`.
 #' * `unknown`: A test that cannot be assigned another value.
 #'
-#' @param df The target dataframe.
+#' @param df A dataframe of lead test records.
 #' @param blrv The blood lead reference value in mcg/dL (numeric). A blood lead test result >= `blrv` is elevated.
 #' @param max_interval The maximum number of days between tests belonging to the same test sequence (an integer). The default value is `90`.
 #' @param df_past A dataframe of records immediately preceding the records in `df` (optional).
@@ -23,15 +23,17 @@
 #' @return The dataframe is returned with the new columns, `test_reason`, `bl_ref_val`, and `lab_result_elev`.
 #' @export
 #'
+#' @importFrom magrittr %>%
+#'
 # @examples
 #'
-assign_test_reason <- function(df, blrv, max_interval = 90, df_past = NULL, silent = FALSE) {
+assign_test_reason <- function(df, blrv, max_interval = 92, df_past = NULL, silent = FALSE) {
   vars <- c(
     "dupe_id", "patient_id", "lab_collection_date",
     "lab_result_symbol", "lab_result_number", "lab_specimen_source"
   )
   vars_bll <- c("lab_result_elev", "bl_ref_val")
-  vars_tr <- c("test_reason", "test_seq_alert", "test_followup_alert", "days_to_next_test")
+  vars_tr <- c("test_reason", "test_seq_alert", "days_to_followup")
 
   var_check(df, var = vars)
 
@@ -51,8 +53,7 @@ assign_test_reason <- function(df, blrv, max_interval = 90, df_past = NULL, sile
       bl_ref_val = blrv, # Current blood lead reference value
       test_reason = NA,
       test_seq_alert = NA,
-      test_followup_alert = NA,
-      days_to_next_test = NA
+      days_to_followup = NA
     )
 
   # Prep `df_past`
@@ -69,7 +70,7 @@ assign_test_reason <- function(df, blrv, max_interval = 90, df_past = NULL, sile
 
   if (!silent) pb <- utils::txtProgressBar(1, nrow(df_target), width = 50, style = 3)
 
-  for (i in 1:nrow(df_target)) {
+  for (i in 1:(nrow(df_target))) {
     current_test <- df_target[i,]
 
     # `_bll2` <- current_test$lab_result_number; `_date2` <- current_test$lab_collection_date; `_src2` <- current_test$lab_specimen_source
@@ -84,25 +85,21 @@ assign_test_reason <- function(df, blrv, max_interval = 90, df_past = NULL, sile
         dupe_id != current_test$dupe_id
       )
 
-    # Get all tests from next interval for one person (same-day tests not included)
-    # future_tests <- df_target %>%
-    #   dplyr::filter(
-    #     patient_id == current_test$patient_id,
-    #     lab_collection_date > current_test$lab_collection_date,
-    #     lab_collection_date <= current_test$lab_collection_date + max_interval,
-    #     dupe_id != current_test$dupe_id
-    #   )
+    # Get days to follow-up test
+    if (current_test$lab_result_elev & current_test$lab_specimen_source == "Blood - capillary") {
+      followup_test <- get_followup_same_day(df_target, current_test)
+      if (nrow(followup_test) == 0) {
+        followup_test <- get_followup(df_target, current_test)
+      }
+      days <- as.numeric(followup_test$lab_collection_date - current_test$lab_collection_date)
+    } else if (current_test$lab_result_elev & current_test$lab_specimen_source == "Blood - venous") {
+      followup_test <- get_followup(df_target, current_test)
+      days <- as.numeric(followup_test$lab_collection_date - current_test$lab_collection_date)
+    } else {
+      days <- c()
+    }
 
-    # Get the next test for one person (same-day tests not included)
-    next_test <- df_target %>%
-      dplyr::filter(
-        patient_id == current_test$patient_id,
-        lab_collection_date > current_test$lab_collection_date
-      ) %>%
-      dplyr::slice_min(lab_collection_date, n = 1, with_ties = FALSE)
-
-    days_to_next <- as.numeric(next_test$lab_collection_date - current_test$lab_collection_date)
-    if (purrr::is_empty(days_to_next)) days_to_next <- NA
+    if (purrr::is_empty(days)) days <- NA
 
     # Filter most recent test by date
     prior_test <- past_tests %>%
@@ -180,12 +177,7 @@ assign_test_reason <- function(df, blrv, max_interval = 90, df_past = NULL, sile
             "follows_elevated_non-cap-scrn",
           TRUE ~ NA
         ),
-        test_followup_alert = dplyr::case_when(
-          lab_result_elev & (is.na(days_to_next) | days_to_next > max_interval) ~
-            "no_90-day_followup",
-          TRUE ~ NA
-        ),
-        days_to_next_test = days_to_next
+        days_to_followup = days
       ) %>%
       dplyr::select(tidyselect::all_of(vars_tr))
 
@@ -202,4 +194,37 @@ assign_test_reason <- function(df, blrv, max_interval = 90, df_past = NULL, sile
         dplyr::select(dupe_id, tidyselect::all_of(c(vars_bll, vars_tr))),
       by = "dupe_id"
     )
+}
+
+get_followup_same_day <- function(df, current) {
+  # A same-day test can be considered a follow-up only when 1) the current test is capillary, and 2) the same-day test is venous
+  df %>%
+    dplyr::filter(
+      patient_id == current$patient_id,
+      lab_collection_date == current$lab_collection_date,
+      lab_specimen_source == "Blood - venous",
+      dupe_id != current$dupe_id
+    ) %>%
+    dplyr::slice(1)
+}
+
+get_followup <- function(df, current) {
+  # A follow-up test must be venous unless 1) the current test is capillary, and 2) the BLL is between 3.5 and 5
+  if (current$lab_specimen_source == "Blood - capillary" &
+      current$lab_result_number >= 3.5 & current$lab_result_number < 5) {
+    df %>%
+      dplyr::filter(
+        patient_id == current$patient_id,
+        lab_collection_date > current$lab_collection_date
+        ) %>%
+      dplyr::slice_min(lab_collection_date, n = 1, with_ties = FALSE)
+  } else {
+    df %>%
+      dplyr::filter(
+        patient_id == current$patient_id,
+        lab_collection_date > current$lab_collection_date,
+        lab_specimen_source == "Blood - venous"
+        ) %>%
+      dplyr::slice_min(lab_collection_date, n = 1, with_ties = FALSE)
+  }
 }

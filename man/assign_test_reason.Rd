@@ -2,12 +2,12 @@
 % Please edit documentation in R/assign_test_reason.R
 \name{assign_test_reason}
 \alias{assign_test_reason}
-\title{Assign reasons for blood lead tests}
+\title{Assign test reason to lead test records}
 \usage{
-assign_test_reason(df, blrv, max_interval = 90, df_past = NULL, silent = FALSE)
+assign_test_reason(df, blrv, max_interval = 92, df_past = NULL, silent = FALSE)
 }
 \arguments{
-\item{df}{The target dataframe.}
+\item{df}{A dataframe of lead test records.}
 
 \item{blrv}{The blood lead reference value in mcg/dL (numeric). A blood lead test result >= \code{blrv} is elevated.}
 
