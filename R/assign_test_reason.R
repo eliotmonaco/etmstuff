@@ -1,7 +1,7 @@
 #' Assign test reason to lead test records
 #'
 #' @description
-#' This function assigns a reason to each test in `df` based on the Kansas Department of Health and Environment's Elevated Blood Lead Investigation Guideline document. Each test in a sequence should be within a maximum of 90 days of the prior test, therefore `max_interval = 90` is the default. The reason assigned to each test depends on values in one or more prior tests, therefore it is recommended that a dataframe of records containing a `test_reason` variable from the 90-day period immediately prior to the data in `df` be provided in `df_past`. It is also recommended that only values of `Blood - capillary` or `Blood - venous` be allowed in `lab_specimen_source`, as any other value will lead to a reason of `unknown` in subsequent tests.
+#' This function assigns a reason to each test in `df` based on the KDHE Elevated Blood Lead Investigation Guideline document. Each test in a sequence should be within a maximum of 90 days of the prior test, therefore `max_interval = 90` is the default. The reason assigned to each test depends on values in one or more prior tests, therefore it is recommended that a dataframe of records containing a `test_reason` variable from the 90-day period immediately prior to the data in `df` be provided in `df_past`. It is also recommended that only values of `Blood - capillary` or `Blood - venous` be allowed in `lab_specimen_source`, as any other value will lead to a reason of `unknown` in subsequent tests.
 #'
 #' `test_reason` values:
 #'

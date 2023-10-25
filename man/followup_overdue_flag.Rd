@@ -2,7 +2,7 @@
 % Please edit documentation in R/followup_overdue_flag.R
 \name{followup_overdue_flag}
 \alias{followup_overdue_flag}
-\title{Flag tests for overdue follow-up}
+\title{Flag lead tests for overdue follow-up}
 \usage{
 followup_overdue_flag(df)
 }
@@ -10,8 +10,8 @@ followup_overdue_flag(df)
 \item{df}{A dataframe of lead test records.}
 }
 \value{
-A dataframe with the new variables \code{bll_class} and \code{followup_overdue}.
+A dataframe with the new variable \code{followup_overdue}.
 }
 \description{
-This function assigns each lead test to a BLL class and determines whether the follow-up for the test is overdue according to KDHE guidelines. The function is used in the lead dashboard.
+This function determines whether the follow-up for each test is overdue according to the KDHE Elevated Blood Lead Investigation Guideline document. The function is used in the lead dashboard.
 }

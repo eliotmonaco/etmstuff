@@ -1,10 +1,10 @@
-#' Flag tests for overdue follow-up
+#' Flag lead tests for overdue follow-up
 #'
-#' This function assigns each lead test to a BLL class and determines whether the follow-up for the test is overdue according to KDHE guidelines. The function is used in the lead dashboard.
+#' This function determines whether the follow-up for each test is overdue according to the KDHE Elevated Blood Lead Investigation Guideline document. The function is used in the lead dashboard.
 #'
 #' @param df A dataframe of lead test records.
 #'
-#' @return A dataframe with the new variables `bll_class` and `followup_overdue`.
+#' @return A dataframe with the new variable `followup_overdue`.
 #' @export
 #'
 #' @importFrom magrittr %>%
@@ -12,53 +12,38 @@
 # @examples
 #'
 followup_overdue_flag <- function(df) {
-  var_check(df, var = "days_to_followup")
+  var_check(df, var = c("lab_collection_date", "lab_specimen_source", "bll_class", "days_to_followup"))
 
-  # Create BLL classes
+  last_date <- max(df$lab_collection_date)
+
+  # Assign the follow-up interval for each BLL class + specimen source combination
   df <- df %>%
-    dplyr::mutate(bll_class = dplyr::case_when(
-      lab_result_number                             <  3.5 ~ 1,
-      lab_result_number >=  3.5 & lab_result_number <  5   ~ 2,
-      lab_result_number >=  5   & lab_result_number < 10   ~ 3,
-      lab_result_number >= 10   & lab_result_number < 15   ~ 4,
-      lab_result_number >= 15   & lab_result_number < 25   ~ 5,
-      lab_result_number >= 25   & lab_result_number < 45   ~ 6,
-      lab_result_number >= 45                              ~ 7
+    dplyr::mutate(followup_interval = dplyr::case_when(
+      bll_class == "0 to < 3.5" & lab_specimen_source == "Blood - capillary" ~ NA,
+      bll_class == "0 to < 3.5" & lab_specimen_source == "Blood - venous"    ~ NA,
+      bll_class == "3.5 to < 5" & lab_specimen_source == "Blood - capillary" ~ 92,
+      bll_class == "3.5 to < 5" & lab_specimen_source == "Blood - venous"    ~ 92,
+      bll_class == "5 to < 10"  & lab_specimen_source == "Blood - capillary" ~ 92,
+      bll_class == "5 to < 10"  & lab_specimen_source == "Blood - venous"    ~ 92,
+      bll_class == "10 to < 15" & lab_specimen_source == "Blood - capillary" ~ 31,
+      bll_class == "10 to < 15" & lab_specimen_source == "Blood - venous"    ~ 92,
+      bll_class == "15 to < 25" & lab_specimen_source == "Blood - capillary" ~ 31,
+      bll_class == "15 to < 25" & lab_specimen_source == "Blood - venous"    ~ 92,
+      bll_class == "25 to < 45" & lab_specimen_source == "Blood - capillary" ~ 31,
+      bll_class == "25 to < 45" & lab_specimen_source == "Blood - venous"    ~ 28,
+      bll_class == "> 45"       & lab_specimen_source == "Blood - capillary" ~  3,
+      bll_class == "> 45"       & lab_specimen_source == "Blood - venous"    ~ NA
     ))
 
-  # Label and order BLL factors
-  df$bll_class <- factor(
-    df$bll_class,
-    levels = 1:7,
-    labels = c(
-      "0 to < 3.5",
-      "3.5 to < 5",
-      "5 to < 10",
-      "10 to < 15",
-      "15 to < 25",
-      "25 to < 45",
-      "> 45"
-    ),
-    ordered = TRUE
-  )
+  # Determine if the range of the data allows for a sufficient interval in which a follow-up could have occurred
+  df <- df %>%
+    dplyr::mutate(sufficient_interval = as.numeric(last_date - lab_collection_date) >= followup_interval)
 
-  # Flag as overdue according to KDHE guidelines
+  # Flag test as overdue if 1) there was a sufficient interval, and 2a) the days to follow-up exceeded the follow-up interval or 2b) the days to follow-up is NA
   df %>%
     dplyr::mutate(followup_overdue = dplyr::case_when(
-      (bll_class == "3.5 to < 5" | bll_class == "5 to < 10") &
-        days_to_followup > 92 ~ TRUE,
-      (bll_class == "10 to < 15" | bll_class == "15 to < 25" | bll_class == "25 to < 45") &
-        lab_specimen_source == "Blood - capillary" &
-        days_to_followup > 31 ~ TRUE,
-      (bll_class == "10 to < 15" | bll_class == "15 to < 25") &
-        lab_specimen_source == "Blood - venous" &
-        days_to_followup > 92 ~ TRUE,
-      bll_class == "> 45" &
-        lab_specimen_source == "Blood - capillary" &
-        days_to_followup > 2 ~ TRUE,
-      # bll_class == "> 45" &
-      #   lab_specimen_source == "Blood - venous" &
-      #   days_to_followup > 7 ~ TRUE,
+      sufficient_interval & days_to_followup > followup_interval ~ TRUE,
+      sufficient_interval & is.na(days_to_followup) ~ TRUE,
       TRUE ~ FALSE
     ))
 }
