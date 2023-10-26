@@ -32,7 +32,7 @@ followup_overdue_flag <- function(df) {
       bll_class == "25 to < 45" & lab_specimen_source == "Blood - capillary" ~ 31,
       bll_class == "25 to < 45" & lab_specimen_source == "Blood - venous"    ~ 28,
       bll_class == "> 45"       & lab_specimen_source == "Blood - capillary" ~  3,
-      bll_class == "> 45"       & lab_specimen_source == "Blood - venous"    ~ NA
+      bll_class == "> 45"       & lab_specimen_source == "Blood - venous"    ~ 28
     ))
 
   # Determine if the range of the data allows for a sufficient interval in which a follow-up could have occurred
