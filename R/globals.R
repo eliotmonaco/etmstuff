@@ -18,6 +18,8 @@ utils::globalVariables(
     "temp",
     # count_conflicts()
     "n",
+    # flag_overdue_followup()
+    "followup_interval",
     # fuzzy_compare()
     "sim_score",
     # cbls_registry_merge()

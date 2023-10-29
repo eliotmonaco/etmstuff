@@ -4,24 +4,22 @@
 \alias{assign_test_reason}
 \title{Assign test reason to lead test records}
 \usage{
-assign_test_reason(df, blrv, max_interval = 92, df_past = NULL, silent = FALSE)
+assign_test_reason(df, max_interval = 92, df_past = NULL, silent = FALSE)
 }
 \arguments{
 \item{df}{A dataframe of lead test records.}
 
-\item{blrv}{The blood lead reference value in mcg/dL (numeric). A blood lead test result >= \code{blrv} is elevated.}
-
-\item{max_interval}{The maximum number of days between tests belonging to the same test sequence (an integer). The default value is \code{90}.}
+\item{max_interval}{The maximum number of days between tests belonging to the same test sequence (an integer). The default value is \code{92}.}
 
 \item{df_past}{A dataframe of records immediately preceding the records in \code{df} (optional).}
 
 \item{silent}{Logical: silence progress indicator if \code{TRUE}.}
 }
 \value{
-The dataframe is returned with the new columns, \code{test_reason}, \code{bl_ref_val}, and \code{lab_result_elev}.
+A dataframe with the new variables \code{test_reason} and \code{test_seq_alert}.
 }
 \description{
-This function assigns a reason to each test in \code{df} based on the KDHE Elevated Blood Lead Investigation Guideline document. Each test in a sequence should be within a maximum of 90 days of the prior test, therefore \code{max_interval = 90} is the default. The reason assigned to each test depends on values in one or more prior tests, therefore it is recommended that a dataframe of records containing a \code{test_reason} variable from the 90-day period immediately prior to the data in \code{df} be provided in \code{df_past}. It is also recommended that only values of \code{Blood - capillary} or \code{Blood - venous} be allowed in \code{lab_specimen_source}, as any other value will lead to a reason of \code{unknown} in subsequent tests.
+This function assigns a reason to each test in \code{df} based on the KDHE Elevated Blood Lead Investigation Guideline document. Each test in a sequence should be within a maximum of 92 days of the prior test, therefore \code{max_interval = 92} is the default. The reason assigned to each test depends on values in one or more prior tests, therefore it is recommended that a dataframe of records containing a \code{test_reason} variable from the 92-day period immediately prior to the data in \code{df} be provided in \code{df_past}. It is also recommended that only values of \code{Blood - capillary} or \code{Blood - venous} be allowed in \code{lab_specimen_source}, as any other value will lead to a reason of \code{unknown} in subsequent tests.
 
 \code{test_reason} values:
 \itemize{
