@@ -1,6 +1,6 @@
 #' Assign BLL classes to lead tests
 #'
-#' This function assigns each lead test to a BLL class based on the KDHE Elevated Blood Lead Investigation Guideline document.
+#' This function assigns each lead test to a BLL class based on the KDHE Elevated Blood Lead Disease Investigation Guidelines.
 #'
 #' @param df A dataframe of lead test records.
 #'

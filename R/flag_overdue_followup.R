@@ -1,17 +1,17 @@
 #' Flag lead tests for overdue follow-up
 #'
-#' This function determines whether the follow-up for each test is overdue according to the KDHE Elevated Blood Lead Investigation Guideline document. The function is used in the lead dashboard.
+#' This function determines whether the follow-up for each test is overdue according to the KDHE Elevated Blood Lead Disease Investigation Guidelines. The function is used in the lead dashboard.
 #'
 #' @param df A dataframe of lead test records.
 #'
-#' @return A dataframe with the new variable `followup_overdue`.
+#' @return A dataframe with the new variables `followup_interval`, `sufficient_interval`, and `followup_overdue`.
 #' @export
 #'
 #' @importFrom magrittr %>%
 #'
 # @examples
 #'
-followup_overdue_flag <- function(df) {
+flag_overdue_followup <- function(df) {
   var_check(df, var = c("lab_collection_date", "lab_specimen_source", "bll_class", "days_to_followup"))
 
   last_date <- max(df$lab_collection_date)
@@ -39,7 +39,10 @@ followup_overdue_flag <- function(df) {
   df <- df %>%
     dplyr::mutate(sufficient_interval = as.numeric(last_date - lab_collection_date) >= followup_interval)
 
-  # Flag test as overdue if 1) there was a sufficient interval, and 2a) the days to follow-up exceeded the follow-up interval or 2b) the days to follow-up is NA
+  # Flag test as overdue if
+  #   1) there was a sufficient interval, and
+  #   2 a) the days to follow-up exceeded the follow-up interval, or
+  #   2 b) the days to follow-up is NA
   df %>%
     dplyr::mutate(followup_overdue = dplyr::case_when(
       sufficient_interval & days_to_followup > followup_interval ~ TRUE,

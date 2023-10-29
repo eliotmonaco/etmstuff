@@ -110,9 +110,9 @@ df <- sim_person_name(
 
 
 
-# sim_numeric ####
+# sim_number ####
 
-sim_numeric <- function(df, var, min = NULL, max = NULL, match = NULL) {
+sim_number <- function(df, var, min = NULL, max = NULL, match = NULL) {
   etmstuff::var_check(df, var = var)
 
   # Determine min. & max. values for the sample sequence
@@ -151,7 +151,7 @@ sim_numeric <- function(df, var, min = NULL, max = NULL, match = NULL) {
     df_temp <- df %>%
       dplyr::distinct(sim_temp_id)
   }
-
+browser()
   # Sample from `min:max` to create substitute numeric values
   df_temp <- df_temp %>%
     dplyr::mutate(new_temp_var = sample(
@@ -179,9 +179,9 @@ sim_numeric <- function(df, var, min = NULL, max = NULL, match = NULL) {
   }
 }
 
-debugonce(sim_numeric)
+debugonce(sim_number)
 
-df <- sim_numeric(epitrax_data, var = "lab_result_number", max = 105)
+df <- sim_number(epitrax_data, var = "lab_result_number", max = 105)
 
 ## Add: preserve frequency distribution of original data?
 

@@ -13,5 +13,5 @@ assign_bll_class(df)
 A dataframe with the new variable \code{bll_class}.
 }
 \description{
-This function assigns each lead test to a BLL class based on the KDHE Elevated Blood Lead Investigation Guideline document.
+This function assigns each lead test to a BLL class based on the KDHE Elevated Blood Lead Disease Investigation Guidelines.
 }

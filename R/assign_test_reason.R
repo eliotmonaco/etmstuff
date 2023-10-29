@@ -1,7 +1,7 @@
 #' Assign test reason to lead test records
 #'
 #' @description
-#' This function assigns a reason to each test in `df` based on the KDHE Elevated Blood Lead Investigation Guideline document. Each test in a sequence should be within a maximum of 90 days of the prior test, therefore `max_interval = 90` is the default. The reason assigned to each test depends on values in one or more prior tests, therefore it is recommended that a dataframe of records containing a `test_reason` variable from the 90-day period immediately prior to the data in `df` be provided in `df_past`. It is also recommended that only values of `Blood - capillary` or `Blood - venous` be allowed in `lab_specimen_source`, as any other value will lead to a reason of `unknown` in subsequent tests.
+#' This function assigns a reason to each test in `df` based on the KDHE Elevated Blood Lead Investigation Guideline document. Each test in a sequence should be within a maximum of 92 days of the prior test, therefore `max_interval = 92` is the default. The reason assigned to each test depends on values in one or more prior tests, therefore it is recommended that a dataframe of records containing a `test_reason` variable from the 92-day period immediately prior to the data in `df` be provided in `df_past`. It is also recommended that only values of `Blood - capillary` or `Blood - venous` be allowed in `lab_specimen_source`, as any other value will lead to a reason of `unknown` in subsequent tests.
 #'
 #' `test_reason` values:
 #'
@@ -15,68 +15,56 @@
 #' * `unknown`: A test that cannot be assigned another value.
 #'
 #' @param df A dataframe of lead test records.
-#' @param blrv The blood lead reference value in mcg/dL (numeric). A blood lead test result >= `blrv` is elevated.
-#' @param max_interval The maximum number of days between tests belonging to the same test sequence (an integer). The default value is `90`.
+#' @param max_interval The maximum number of days between tests belonging to the same test sequence (an integer). The default value is `92`.
 #' @param df_past A dataframe of records immediately preceding the records in `df` (optional).
 #' @param silent Logical: silence progress indicator if `TRUE`.
 #'
-#' @return The dataframe is returned with the new columns, `test_reason`, `bl_ref_val`, and `lab_result_elev`.
+#' @return A dataframe with the new variables `test_reason` and `test_seq_alert`.
 #' @export
 #'
 #' @importFrom magrittr %>%
 #'
 # @examples
 #'
-assign_test_reason <- function(df, blrv, max_interval = 92, df_past = NULL, silent = FALSE) {
+assign_test_reason <- function(df, max_interval = 92, df_past = NULL, silent = FALSE) {
   vars <- c(
     "dupe_id", "patient_id", "lab_collection_date",
-    "lab_result_symbol", "lab_result_number", "lab_specimen_source"
+    "lab_result_number", "lab_result_elev", "lab_specimen_source"
   )
-  vars_bll <- c("lab_result_elev", "bl_ref_val")
-  vars_tr <- c("test_reason", "test_seq_alert", "days_to_followup")
+  vars_new <- c("test_reason", "test_seq_alert")
 
   var_check(df, var = vars)
 
   # Prep `df`
-  df_target <- df %>%
+  df2 <- df %>%
     dplyr::select(tidyselect::all_of(vars)) %>%
-    dplyr::arrange(lab_collection_date, patient_id, lab_specimen_source) %>%
+    dplyr::arrange(patient_id, lab_collection_date, lab_specimen_source) %>%
     dplyr::mutate(
-      lab_result_elev = dplyr::case_when( # TRUE = elevated BLL; FALSE = non-elevated BLL
-        is.na(lab_result_symbol) & lab_result_number < blrv ~ FALSE,
-        is.na(lab_result_symbol) & lab_result_number >= blrv ~ TRUE,
-        lab_result_symbol == "<" & lab_result_number <= blrv ~ FALSE,
-        lab_result_symbol == "<" & lab_result_number > blrv ~ NA,
-        lab_result_symbol == ">" & lab_result_number < blrv ~ NA,
-        lab_result_symbol == ">" & lab_result_number >= blrv ~ TRUE
-      ),
-      bl_ref_val = blrv, # Current blood lead reference value
       test_reason = NA,
-      test_seq_alert = NA,
-      days_to_followup = NA
+      test_seq_alert = NA
     )
 
   # Prep `df_past`
   if (!is.null(df_past)) {
-    var_check(df_past, var = c(vars, vars_bll, vars_tr))
+    var_check(df_past, var = c(vars, vars_new))
     df_past <- df_past %>%
-      dplyr::select(tidyselect::all_of(c(vars, vars_bll, vars_tr))) %>%
-      dplyr::arrange(lab_collection_date, patient_id, lab_specimen_source)
+      dplyr::select(tidyselect::all_of(c(vars, vars_new))) %>%
+      dplyr::arrange(patient_id, lab_collection_date, lab_specimen_source)
   }
 
-  # `df_target` row with NA values to use in loop
-  na_test <- df_target[1,]
+  # `df2` row with NA values to use in loop
+  na_test <- df2[1,]
   na_test[1,] <- NA
 
-  if (!silent) pb <- utils::txtProgressBar(1, nrow(df_target), width = 50, style = 3)
+  if (!silent) pb <- utils::txtProgressBar(1, nrow(df2), width = 50, style = 3)
 
-  for (i in 1:(nrow(df_target))) {
-    current_test <- df_target[i,]
+  for (i in 1:nrow(df2)) {
+    current_test <- df2[i,]
 
     # `_bll2` <- current_test$lab_result_number; `_date2` <- current_test$lab_collection_date; `_src2` <- current_test$lab_specimen_source
 
     # Get all tests from prior interval for one person (same-day tests included)
-    past_tests <- df_target %>%
+    past_tests <- df2 %>%
       dplyr::bind_rows(df_past) %>%
       dplyr::filter(
         patient_id == current_test$patient_id,
@@ -84,22 +72,6 @@ assign_test_reason <- function(df, blrv, max_interval = 92, df_past = NULL, sile
         lab_collection_date >= current_test$lab_collection_date - max_interval,
         dupe_id != current_test$dupe_id
       )
-
-    # Get days to follow-up test
-    if (current_test$lab_result_elev & current_test$lab_specimen_source == "Blood - capillary") {
-      followup_test <- get_followup_same_day(df_target, current_test)
-      if (nrow(followup_test) == 0) {
-        followup_test <- get_followup(df_target, current_test)
-      }
-      days <- as.numeric(followup_test$lab_collection_date - current_test$lab_collection_date)
-    } else if (current_test$lab_result_elev & current_test$lab_specimen_source == "Blood - venous") {
-      followup_test <- get_followup(df_target, current_test)
-      days <- as.numeric(followup_test$lab_collection_date - current_test$lab_collection_date)
-    } else {
-      days <- c()
-    }
-
-    if (purrr::is_empty(days)) days <- NA
 
     # Filter most recent test by date
     prior_test <- past_tests %>%
@@ -146,40 +118,68 @@ assign_test_reason <- function(df, blrv, max_interval = 92, df_past = NULL, sile
 
     # `_bll1` <- prior_test$lab_result_number; `_date1` <- prior_test$lab_collection_date; `_src1` <- prior_test$lab_specimen_source; `_testrsn1` <- prior_test$test_reason
 
-    # Assign test reason
-    df_target[i, vars_tr] <- current_test %>%
-      dplyr::mutate(
-        test_reason = dplyr::case_when(
-          lab_specimen_source == "Blood - venous" &
-            (is.na(prior_test$test_reason) | (prior_test$lab_specimen_source == "Blood - venous" & !prior_test$lab_result_elev)) ~
-            "ven_cfm_init", # src = ven; prior rsn = NA OR (prior src = ven AND prior BLL = non-elevated)
-          lab_specimen_source == "Blood - capillary" &
-            (is.na(prior_test$test_reason) | (prior_test$lab_specimen_source == "Blood - venous" & !prior_test$lab_result_elev)) ~
-            "cap_scrn", # src = cap; prior rsn = NA OR (prior src = ven AND prior BLL = non-elevated)
-          lab_specimen_source == "Blood - venous" & prior_test$lab_result_elev &
-            (prior_test$lab_specimen_source == "Blood - venous" |
-              (prior_test$test_reason == "cap_cfm_elev" | prior_test$test_reason == "cap_cfm_nonelev")) ~
-            "ven_flw", # src = ven; prior BLL = elevated; prior src = ven OR prior rsn = cap_cfm_elev|cap_cfm_nonelev
-          lab_specimen_source == "Blood - venous" & prior_test$test_reason == "cap_scrn" & prior_test$lab_result_elev ~
-            "ven_cfm_elev", # src = ven; prior rsn = cap_scrn; prior BLL = elevated
-          lab_specimen_source == "Blood - capillary" & prior_test$test_reason == "cap_scrn" & prior_test$lab_result_elev ~
-            "cap_cfm_elev", # src = cap; prior rsn = cap_scrn; prior BLL = elevated
-          lab_specimen_source == "Blood - venous" & prior_test$test_reason == "cap_scrn" & !prior_test$lab_result_elev ~
-            "ven_cfm_nonelev", # src = ven; prior rsn = cap_scrn; prior BLL = non-elevated
-          lab_specimen_source == "Blood - capillary" & prior_test$test_reason == "cap_scrn" & !prior_test$lab_result_elev ~
-            "cap_cfm_nonelev", # src = cap; prior rsn = cap_scrn; prior BLL = non-elevated
-          TRUE ~ "unknown" # All else
-        ),
-        test_seq_alert = dplyr::case_when(
-          prior_test$lab_specimen_source == "Blood - venous" & !prior_test$lab_result_elev ~
-            "follows_nonelevated_venous",
-          lab_specimen_source == "Blood - capillary" & prior_test$test_reason != "cap_scrn" & prior_test$lab_result_elev ~
-            "follows_elevated_non-cap-scrn",
-          TRUE ~ NA
-        ),
-        days_to_followup = days
+    df2[i, vars_new] <- current_test %>%
+      dplyr::bind_cols(
+        prior_test %>%
+          dplyr::rename_with(~ paste0(.x, "2"), tidyselect::everything())
       ) %>%
-      dplyr::select(tidyselect::all_of(vars_tr))
+      dplyr::mutate(
+        test_reason = fn_reason(
+          cur_src = lab_specimen_source, prior_src = lab_specimen_source2,
+          prior_rsn = test_reason2, prior_elev = lab_result_elev2
+        ),
+        test_seq_alert = fn_seq_alert(
+          cur_src = lab_specimen_source, prior_src = lab_specimen_source2,
+          prior_rsn = test_reason2, prior_elev = lab_result_elev2
+        )
+      ) %>%
+      dplyr::select(tidyselect::all_of(vars_new))
+
+    # # Assign test reason
+    # df2[i, vars_new] <- current_test %>%
+    #   dplyr::mutate(
+    #     test_reason = fn_reason(
+    #       cur_src = lab_specimen_source,
+    #       prior_src = prior_test$lab_specimen_source,
+    #       prior_rsn = prior_test$test_reason,
+    #       prior_elev = prior_test$lab_result_elev
+    #     ),
+    #     # test_reason = dplyr::case_when(
+    #     #   lab_specimen_source == "Blood - venous" &
+    #     #     (is.na(prior_test$test_reason) | (prior_test$lab_specimen_source == "Blood - venous" & !prior_test$lab_result_elev)) ~
+    #     #     "ven_cfm_init", # src = ven; prior rsn = NA OR (prior src = ven AND prior BLL = non-elevated)
+    #     #   lab_specimen_source == "Blood - capillary" &
+    #     #     (is.na(prior_test$test_reason) | (prior_test$lab_specimen_source == "Blood - venous" & !prior_test$lab_result_elev)) ~
+    #     #     "cap_scrn", # src = cap; prior rsn = NA OR (prior src = ven AND prior BLL = non-elevated)
+    #     #   lab_specimen_source == "Blood - venous" & prior_test$lab_result_elev &
+    #     #     (prior_test$lab_specimen_source == "Blood - venous" |
+    #     #       (prior_test$test_reason == "cap_cfm_elev" | prior_test$test_reason == "cap_cfm_nonelev")) ~
+    #     #     "ven_flw", # src = ven; prior BLL = elevated; prior src = ven OR prior rsn = cap_cfm_elev|cap_cfm_nonelev
+    #     #   lab_specimen_source == "Blood - venous" & prior_test$test_reason == "cap_scrn" & prior_test$lab_result_elev ~
+    #     #     "ven_cfm_elev", # src = ven; prior rsn = cap_scrn; prior BLL = elevated
+    #     #   lab_specimen_source == "Blood - capillary" & prior_test$test_reason == "cap_scrn" & prior_test$lab_result_elev ~
+    #     #     "cap_cfm_elev", # src = cap; prior rsn = cap_scrn; prior BLL = elevated
+    #     #   lab_specimen_source == "Blood - venous" & prior_test$test_reason == "cap_scrn" & !prior_test$lab_result_elev ~
+    #     #     "ven_cfm_nonelev", # src = ven; prior rsn = cap_scrn; prior BLL = non-elevated
+    #     #   lab_specimen_source == "Blood - capillary" & prior_test$test_reason == "cap_scrn" & !prior_test$lab_result_elev ~
+    #     #     "cap_cfm_nonelev", # src = cap; prior rsn = cap_scrn; prior BLL = non-elevated
+    #     #   TRUE ~ "unknown" # All else
+    #     # ),
+    #     test_seq_alert = fn_seq_alert(
+    #       cur_src = lab_specimen_source,
+    #       prior_src = prior_test$lab_specimen_source,
+    #       prior_rsn = prior_test$test_reason,
+    #       prior_elev = prior_test$lab_result_elev
+    #     )
+    #     # test_seq_alert = dplyr::case_when(
+    #     #   prior_test$lab_specimen_source == "Blood - venous" & !prior_test$lab_result_elev ~
+    #     #     "follows_nonelevated_venous",
+    #     #   lab_specimen_source == "Blood - capillary" & prior_test$test_reason != "cap_scrn" & prior_test$lab_result_elev ~
+    #     #     "follows_elevated_non-cap-scrn",
+    #     #   TRUE ~ NA
+    #     # )
+    #   ) %>%
+    #   dplyr::select(tidyselect::all_of(vars_new))
 
     # `_testrsn2` <- current_test$test_reason
 
@@ -190,41 +190,39 @@ assign_test_reason <- function(df, blrv, max_interval = 92, df_past = NULL, sile
 
   df %>%
     dplyr::left_join(
-      df_target %>%
-        dplyr::select(dupe_id, tidyselect::all_of(c(vars_bll, vars_tr))),
+      df2 %>%
+        dplyr::select(dupe_id, tidyselect::all_of(vars_new)),
       by = "dupe_id"
     )
 }
 
-get_followup_same_day <- function(df, current) {
-  # A same-day test can be considered a follow-up only when 1) the current test is capillary, and 2) the same-day test is venous
-  df %>%
-    dplyr::filter(
-      patient_id == current$patient_id,
-      lab_collection_date == current$lab_collection_date,
-      lab_specimen_source == "Blood - venous",
-      dupe_id != current$dupe_id
-    ) %>%
-    dplyr::slice(1)
+fn_reason <- function(cur_src, prior_src, prior_rsn, prior_elev) {
+  dplyr::case_when(
+    cur_src == "Blood - venous" & (is.na(prior_rsn) | (prior_src == "Blood - venous" & !prior_elev)) ~
+      "ven_cfm_init", # src = ven; prior rsn = NA OR (prior src = ven AND prior BLL = non-elevated)
+    cur_src == "Blood - capillary" & (is.na(prior_rsn) | (prior_src == "Blood - venous" & !prior_elev)) ~
+      "cap_scrn", # src = cap; prior rsn = NA OR (prior src = ven AND prior BLL = non-elevated)
+    cur_src == "Blood - venous" & prior_elev &
+      (prior_src == "Blood - venous" | (prior_rsn == "cap_cfm_elev" | prior_rsn == "cap_cfm_nonelev")) ~
+      "ven_flw", # src = ven; prior BLL = elevated; prior src = ven OR prior rsn = cap_cfm_elev|cap_cfm_nonelev
+    cur_src == "Blood - venous" & prior_rsn == "cap_scrn" & prior_elev ~
+      "ven_cfm_elev", # src = ven; prior rsn = cap_scrn; prior BLL = elevated
+    cur_src == "Blood - capillary" & prior_rsn == "cap_scrn" & prior_elev ~
+      "cap_cfm_elev", # src = cap; prior rsn = cap_scrn; prior BLL = elevated
+    cur_src == "Blood - venous" & prior_rsn == "cap_scrn" & !prior_elev ~
+      "ven_cfm_nonelev", # src = ven; prior rsn = cap_scrn; prior BLL = non-elevated
+    cur_src == "Blood - capillary" & prior_rsn == "cap_scrn" & !prior_elev ~
+      "cap_cfm_nonelev", # src = cap; prior rsn = cap_scrn; prior BLL = non-elevated
+    TRUE ~ "unknown" # All else
+  )
 }
 
-get_followup <- function(df, current) {
-  # A follow-up test must be venous unless 1) the current test is capillary, and 2) the BLL is between 3.5 and 5
-  if (current$lab_specimen_source == "Blood - capillary" &
-      current$lab_result_number >= 3.5 & current$lab_result_number < 5) {
-    df %>%
-      dplyr::filter(
-        patient_id == current$patient_id,
-        lab_collection_date > current$lab_collection_date
-        ) %>%
-      dplyr::slice_min(lab_collection_date, n = 1, with_ties = FALSE)
-  } else {
-    df %>%
-      dplyr::filter(
-        patient_id == current$patient_id,
-        lab_collection_date > current$lab_collection_date,
-        lab_specimen_source == "Blood - venous"
-        ) %>%
-      dplyr::slice_min(lab_collection_date, n = 1, with_ties = FALSE)
-  }
+fn_seq_alert <- function(cur_src, prior_src, prior_rsn, prior_elev) {
+  dplyr::case_when(
+    prior_src == "Blood - venous" & !prior_elev ~
+      "follows_nonelevated_venous",
+    cur_src == "Blood - capillary" & prior_rsn != "cap_scrn" & prior_elev ~
+      "follows_elevated_non-cap-scrn",
+    TRUE ~ NA
+  )
 }
