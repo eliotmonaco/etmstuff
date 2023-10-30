@@ -1,7 +1,7 @@
 #' Assign test reason to lead test records
 #'
 #' @description
-#' This function assigns a reason to each test in `df` based on the KDHE Elevated Blood Lead Investigation Guideline document. Each test in a sequence should be within a maximum of 92 days of the prior test, therefore `max_interval = 92` is the default. The reason assigned to each test depends on values in one or more prior tests, therefore it is recommended that a dataframe of records containing a `test_reason` variable from the 92-day period immediately prior to the data in `df` be provided in `df_past`. It is also recommended that only values of `Blood - capillary` or `Blood - venous` be allowed in `lab_specimen_source`, as any other value will lead to a reason of `unknown` in subsequent tests.
+#' This function assigns a reason to each test in `df` based on the KDHE Elevated Blood Lead Disease Investigation Guidelines. Each test in a sequence should be within a maximum of 92 days of the prior test, therefore `max_interval = 92` is the default. The reason assigned to each test depends on values in one or more prior tests, therefore it is recommended that a dataframe of records containing a `test_reason` variable from the 92-day period immediately prior to the data in `df` be provided in `df_past`. It is also recommended that only values of `Blood - capillary` or `Blood - venous` be allowed in `lab_specimen_source`, as any other value will lead to a reason of `unknown` in subsequent tests.
 #'
 #' `test_reason` values:
 #'
@@ -35,7 +35,7 @@ assign_test_reason <- function(df, max_interval = 92, df_past = NULL, silent = F
 
   var_check(df, var = vars)
 
-  # Prep `df`
+  # Prep `df_target`
   df_target <- df %>%
     dplyr::select(tidyselect::all_of(vars)) %>%
     dplyr::arrange(patient_id, lab_collection_date, lab_specimen_source) %>%
@@ -52,8 +52,8 @@ assign_test_reason <- function(df, max_interval = 92, df_past = NULL, silent = F
       dplyr::arrange(patient_id, lab_collection_date, lab_specimen_source)
   }
 
-  # `df_target` row with NA values to use in loop
-  test_empty <- tibble::as_tibble(
+  # Empty row for when no prior test is found (used in `get_prior_test()`)
+  empty_test <- tibble::as_tibble(
     as.data.frame.list(
       matrix(nrow = 1, ncol = 8),
       col.names = colnames(df_target)
@@ -65,15 +65,17 @@ assign_test_reason <- function(df, max_interval = 92, df_past = NULL, silent = F
   if (!silent) pb <- utils::txtProgressBar(1, nrow(df_target), width = 50, style = 3)
 
   for (i in 1:nrow(df_target)) {
+    # Get prior test
     # prior_test_list[[i]] <- get_prior_test(
     prior_test <- get_prior_test(
       df1 = df_target,
       df2 = df_past,
       row = i,
       days = max_interval,
-      blank = test_empty
+      blank = empty_test
     )
 
+    # Populate `test_reason` and `test_seq_alert`
     df_target[i, vars_new] <- df_target[i,] %>%
       dplyr::mutate(
         test_reason = fn_reason(
@@ -115,6 +117,7 @@ assign_test_reason <- function(df, max_interval = 92, df_past = NULL, silent = F
   #     dplyr::select(tidyselect::all_of(vars_new))
   # }
 
+  # Join `test_reason` and `test_seq_alert` back to `df`
   df %>%
     dplyr::left_join(
       df_target %>%
@@ -140,35 +143,40 @@ get_prior_test <- function(df1, df2 = NULL, row, days, blank) {
       dupe_id != df1$dupe_id[row]
     )
 
-  # Filter most recent test by date
+  # Get all tests from most recent test date
   prior_test <- past_tests %>%
     dplyr::slice_max(lab_collection_date, n = 1, with_ties = TRUE)
 
-  # If > 1 test on prior test date, keep venous, then keep highest result
   if (nrow(prior_test) > 1) {
+    # If multiple tests are found on the prior test date...
     if ("Blood - venous" %in% prior_test$lab_specimen_source) {
+      # If any venous are present, keep only venous, then keep the highest result
       prior_test <- prior_test %>%
         dplyr::filter(lab_specimen_source == "Blood - venous") %>%
         dplyr::slice_max(lab_result_number, n = 1, with_ties = FALSE)
     } else {
+      # If only capillary are present, keep the highest result
       prior_test <- prior_test %>%
         dplyr::slice_max(lab_result_number, n = 1, with_ties = FALSE)
     }
   }
 
-  # Check for prior and current tests occurring on same date
   if (nrow(prior_test) == 0) {
+    # If no prior test is found, fill the prior test with NAs
     prior_test <- blank
   } else {
+    # If `prior_test` contains only one test...
     if (prior_test$lab_collection_date == df1$lab_collection_date[row] &
         (prior_test$lab_specimen_source != "Blood - capillary" | df1$lab_specimen_source[row] != "Blood - venous")) {
-      # If same-day prior test AND (prior source != capillary OR current source != venous), get most recent test from a different day
+      # If the test is same-day, the prior test must be capillary and the current test must be venous, otherwise look on an earlier day
       prior_test <- past_tests %>%
         dplyr::filter(lab_collection_date < df1$lab_collection_date[row]) %>%
         dplyr::slice_max(lab_collection_date, n = 1, with_ties = TRUE)
       if (nrow(prior_test) == 0) {
+        # If no other prior test is found, fill the prior test with NAs
         prior_test <- blank
       } else if (nrow(prior_test) > 1) {
+        # Same reduction logic as above
         if ("Blood - venous" %in% prior_test$lab_specimen_source) {
           prior_test <- prior_test %>%
             dplyr::filter(lab_specimen_source == "Blood - venous") %>%
