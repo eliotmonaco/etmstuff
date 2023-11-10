@@ -28,6 +28,17 @@ config_epitrax <- function(df, var_dates = epitrax_date_vars, var_order = epitra
 
   var_check(df, var = epitrax_vars)
 
+  vars_other <- !colnames(df) %in% epitrax_vars
+
+  if (length(vars_other) > 0) {
+    m <- paste(
+      "Unexpected variable(s):",
+      paste(vars_other, collapse = ", "),
+      "\nAdd to `var_order` argument."
+    )
+    stop(m, call. = FALSE)
+  }
+
   # Reorder variables
   df <- df %>%
     dplyr::select(tidyselect::all_of(var_order))

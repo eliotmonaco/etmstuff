@@ -10,6 +10,8 @@ utils::globalVariables(
     "City", "CountyFIPS", "PostalCode", "State", "CensusTract",
     # cbls_check_table()
     "all_chars", "FILEID", "ADDR_ID", "CITY", "CNTY_FIPS", "ZIP", "STATE", "CENSUS", "RENOVATED", "START_REN", "COMP_REN", "CHILD_ID", "DOB", "SEX", "ETHNIC", "BLANK", "CHELATED", "CHEL_TYPE", "CHEL_FUND", "NPLSZ", "NPLSM", "NPLSO", "NPLSH", "NPLSP", "NPLSC", "BIRTH", "RACE_AIAN", "RACE_ASIAN", "RACE_BLACK", "RACE_NHOPI", "RACE_WHITE", "RACE_OTHER", "RACE_RTA", "RACE_UNK", "DATE_REF", "INSP_COMP", "ABAT_COMP", "YEAR", "OWNERSHIP", "DWELL_TYPE", "PAINT_HAZ", "XRF", "DUST_FLOOR", "FLOOR_MSR", "DUST_SILL", "SILL_MSR", "DUST_WELL", "WELL_MSR", "PAINT", "PAINT_MSR", "SOIL", "WATER", "INDHAZ", "DATE_DUE", "INV_CLOS_RES", "CLEAR_DATE", "CLEAR_RSLT", "SAMP_DATE", "PREGNANT", "LAB_FUND", "SAMP_TYPE", "TEST_RSN", "LAB_TYPE", "SCRN_SITE", "METH_ANAZ", "METH_LOD", "SAMP_ANAZ_DT", "RSLT_RPT_DT", "RESULT", "RST_INTPCODE", "LAB_LOD", "LAB_NAME", "LAB_ID", "NPI",
+    # cbls_registry_merge()
+    "address_registry_id", "child_registry_id",
     # cbls_undupe()
     "cbls_dupe_id", "cbls_dupe_order", "cbls_duplicate",
     # clean_street_address()
@@ -22,8 +24,8 @@ utils::globalVariables(
     "followup_interval",
     # fuzzy_compare()
     "sim_score",
-    # cbls_registry_merge()
-    "address_registry_id", "child_registry_id",
+    # md_results_table()
+    "code", "Results",
     # pick_max_result()
     "pid_unq",
     # pull_addresses()
