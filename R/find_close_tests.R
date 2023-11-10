@@ -30,7 +30,7 @@ find_close_tests <- function(df, days, silent = FALSE) {
 
   ct <- 1
 
-  if (silent) pb <- utils::txtProgressBar(1, nrow(df), width = 50, style = 3)
+  if (!silent) pb <- utils::txtProgressBar(1, nrow(df), width = 50, style = 3)
 
   for (i in 1:nrow(df)) {
     tests <- df %>%
@@ -51,10 +51,10 @@ find_close_tests <- function(df, days, silent = FALSE) {
       ct = ct + 1
     }
 
-    if (silent) utils::setTxtProgressBar(pb, i)
+    if (!silent) utils::setTxtProgressBar(pb, i)
   }
 
-  if (silent) close(pb)
+  if (!silent) close(pb)
 
   test_list
 }
