@@ -23,6 +23,6 @@ var_check <- function(df, var) {
       "Missing dataframe variable(s):",
       paste(missing, collapse = ", ")
     )
-    stop(m, call. = FALSE)
+    stop(m)
   }
 }

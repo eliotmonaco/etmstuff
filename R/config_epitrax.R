@@ -26,9 +26,9 @@
 config_epitrax <- function(df, var_dates = epitrax_date_vars, var_order = epitrax_vars_reordered) {
   if (!assertive::is_data.frame(df)) stop("`df` must be a dataframe", call. = FALSE)
 
-  var_check(df, var = epitrax_vars)
+  var_check(df, var = var_order)
 
-  vars_other <- !colnames(df) %in% epitrax_vars
+  vars_other <- colnames(df)[which(!colnames(df) %in% var_order)]
 
   if (length(vars_other) > 0) {
     m <- paste(
