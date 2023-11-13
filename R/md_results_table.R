@@ -18,37 +18,40 @@ md_results_table <- function(df, var = "Results") {
   df %>%
     dplyr::reframe(
       code = c(
-        "AS01",
-        "AS01 + AS23",
-        "AS02",
-        "AS13",
-        "AE02",
-        "AE06",
-        "AC02",
-        "AC20",
-        "NA"
+        "AS01",        # 1
+        "AS01 + AS23", # 2
+        "AS01 + AS26", # 3
+        "AS02",        # 4
+        "AS13",        # 5
+        "AE02",        # 6
+        "AE06",        # 7
+        "AC02",        # 8
+        "AC20",        # 9
+        "NA"           # 10
       ),
       description = c(
-        "valid address",
-        "valid address + extraneous street information",
-        "street only match",
-        "address updated by LACS",
-        "unknown street",
-        "early warning system",
-        "administrative area change",
-        "house number change",
-        "no response from Melissa Data"
+        "valid address",                                 # 1
+        "valid address + extraneous street information", # 2
+        "valid address + unidentified data",             # 3
+        "street only match",                             # 4
+        "address updated by LACS",                       # 5
+        "unknown street",                                # 6
+        "early warning system",                          # 7
+        "administrative area change",                    # 8
+        "house number change",                           # 9
+        "no response from Melissa Data"                  # 10
       ),
       n = c(
-        sum(stringr::str_detect(Results, "AS01(?!.{1,50}AS23)"), na.rm = T),
-        sum(stringr::str_detect(Results, "AS01(?=.{1,50}AS23)"), na.rm = T),
-        sum(stringr::str_detect(Results, "AS02"), na.rm = T),
-        sum(stringr::str_detect(Results, "AS13"), na.rm = T),
-        sum(stringr::str_detect(Results, "AE02"), na.rm = T),
-        sum(stringr::str_detect(Results, "AE06"), na.rm = T),
-        sum(stringr::str_detect(Results, "AC02"), na.rm = T),
-        sum(stringr::str_detect(Results, "AC20"), na.rm = T),
-        sum(is.na(Results))
+        sum(stringr::str_detect(Results, "AS01(?!(.{1,50}AS23)|(.{1,50}AS26))"), na.rm = T), # 1
+        sum(stringr::str_detect(Results, "AS01(?=.{1,50}AS23)"), na.rm = T),                 # 2
+        sum(stringr::str_detect(Results, "AS01(?=.{1,50}AS26)"), na.rm = T),                 # 3
+        sum(stringr::str_detect(Results, "AS02"), na.rm = T),                                # 4
+        sum(stringr::str_detect(Results, "AS13"), na.rm = T),                                # 5
+        sum(stringr::str_detect(Results, "AE02"), na.rm = T),                                # 6
+        sum(stringr::str_detect(Results, "AE06"), na.rm = T),                                # 7
+        sum(stringr::str_detect(Results, "AC02"), na.rm = T),                                # 8
+        sum(stringr::str_detect(Results, "AC20"), na.rm = T),                                # 9
+        sum(is.na(Results))                                                                  # 10
       )
     ) %>%
     dplyr::mutate(pct = etmstuff::pct(n, nrow(df))) %>%
