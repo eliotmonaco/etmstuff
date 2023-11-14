@@ -4,10 +4,28 @@
 \alias{usps_lookup}
 \title{Look up addresses at USPS.com}
 \usage{
-usps_lookup(df, row_id = NULL)
+usps_lookup(
+  df,
+  street = "street",
+  unit = "unit",
+  city = "city",
+  state = "state",
+  zip = "zip",
+  row_id = NULL
+)
 }
 \arguments{
 \item{df}{A dataframe of addresses with the variables \code{street}, \code{unit}, \code{city}, \code{state}, and \code{zip}.}
+
+\item{street}{The street component of the address.}
+
+\item{unit}{The unit component of the address.}
+
+\item{city}{The city component of the address.}
+
+\item{state}{The state component of the address.}
+
+\item{zip}{The zip code component of the address.}
 
 \item{row_id}{A unique row identifier variable in \code{df} (optional).}
 }

@@ -8,6 +8,11 @@
 #' * [Information about Delivery Point Validation (DPV)](https://www.accuzip.com/webhelp/Appendix/DPV_Codes_and_Information.htm)
 #'
 #' @param df A dataframe of addresses with the variables `street`, `unit`, `city`, `state`, and `zip`.
+#' @param street The street component of the address.
+#' @param unit The unit component of the address.
+#' @param city The city component of the address.
+#' @param state The state component of the address.
+#' @param zip The zip code component of the address.
 #' @param row_id A unique row identifier variable in `df` (optional).
 #'
 #' @return A dataframe of results from USPS.com.
@@ -27,8 +32,8 @@
 #' df_results <- usps_lookup(df, row_id = "id")
 #' }
 #'
-usps_lookup <- function(df, row_id = NULL) {
-  vars_addr <- c("street", "unit", "city", "state", "zip")
+usps_lookup <- function(df, street = "street", unit = "unit", city = "city", state = "state", zip = "zip", row_id = NULL) {
+  vars_addr <- c(street, unit, city, state, zip)
 
   var_check(df, var = vars_addr)
 
@@ -49,8 +54,13 @@ usps_lookup <- function(df, row_id = NULL) {
 
   df_usps <- usps_lookup_loop(
     input = df,
-    row_id = row_id,
-    output = df_usps
+    output = df_usps,
+    street = street,
+    unit = unit,
+    city = city,
+    state = state,
+    zip = zip,
+    row_id = row_id
   )
 
   df_usps
@@ -82,72 +92,25 @@ usps_lookup_shiny <- function(df) {
     )
   }
 
-  # j <- 1
-  # k <- -1
-
   shiny::withProgress(message = "Getting addresses", {
     df_usps <- usps_lookup_loop(
       input = df,
-      row_id = row_id,
       output = df_usps,
+      street = street,
+      unit = unit,
+      city = city,
+      state = state,
+      zip = zip,
+      row_id = row_id,
       shiny = TRUE
     )
-
-    # for (i in 1:nrow(df)) {
-    #   if (exists("row_id")) id <- df[i, row_id]
-    #
-    #   if (j > 1) {
-    #     k <- k + j - 1
-    #   }
-    #
-    #   html <- try(
-    #     usps_get_page(
-    #       street = df$street[i],
-    #       unit = df$unit[i],
-    #       city = df$city[i],
-    #       state = df$state[i],
-    #       zip = df$zip[i]
-    #     )
-    #   )
-    #
-    #   if ("try-error" %in% class(html) | length(html$addressList) == 0) {
-    #     n_results <- 1
-    #   } else {
-    #     n_results <- length(html$addressList)
-    #   }
-    #
-    #   for (j in 1:n_results) {
-    #     r <- i + j + k
-    #
-    #     df_usps[r,] <- ""
-    #     if (exists("row_id")) df_usps[r, row_id] <- id
-    #     df_usps$n_row_src[r] <- i
-    #     df_usps$n_result[r] <- j
-    #
-    #     if ("try-error" %in% class(html) | length(html$addressList) == 0) {
-    #       df_usps$street[r] <- "No result or unexpected/missing input"
-    #       next
-    #     }
-    #
-    #     result <- usps_get_result(html, j)
-    #
-    #     df_usps$street[r] <- result[1]
-    #     df_usps$city[r] <- result[2]
-    #     df_usps$state[r] <- result[3]
-    #     df_usps$zip5[r] <- result[4]
-    #     df_usps$zip4[r] <- result[5]
-    #     df_usps$county[r] <- result[6]
-    #     df_usps$DPV[r] <- result[7]
-    #   }
-    #
-    #   shiny::incProgress(1 / nrow(df))
-    # }
   })
 
   df_usps
 }
 
-usps_lookup_loop <- function(input, row_id = NULL, output, shiny = FALSE) {
+# usps_lookup_loop <- function(input, row_id = NULL, output, shiny = FALSE) {
+usps_lookup_loop <- function(input, output, street, unit, city, state, zip, row_id = NULL, shiny = FALSE) {
   df <- input
   df_usps <- output
 
@@ -163,11 +126,11 @@ usps_lookup_loop <- function(input, row_id = NULL, output, shiny = FALSE) {
 
     html <- try(
       usps_get_page(
-        street = df$street[i],
-        unit = df$unit[i],
-        city = df$city[i],
-        state = df$state[i],
-        zip = df$zip[i]
+        street = df[i, street],
+        unit = df[i, unit],
+        city = df[i, city],
+        state = df[i, state],
+        zip = df[i, zip]
       )
     )
 
