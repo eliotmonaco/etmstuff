@@ -62,7 +62,7 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
     df$blood_lead_poisoning_form_col_bl_funding_source == "Parent self-pay" ~ 3, # 3 – Parent self-pay
     df$blood_lead_poisoning_form_col_bl_funding_source == "Unknown" ~ 9, # 9 – Unknown
     df$blood_lead_poisoning_form_col_bl_funding_source == "Other" ~ 8, # 8 – Other
-    T ~ 9 # 9 – Unknown
+    TRUE ~ 9 # 9 – Unknown
   )
 
   # SAMP_TYPE (required)
@@ -70,7 +70,7 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
     df$lab_specimen_source == "Blood - venous" |
       df$lab_specimen_source == "Blood" ~ 1, # 1 – Venous, blood lead
     df$lab_specimen_source == "Blood - capillary" ~ 2, # 2 – Capillary, blood lead
-    T ~ 9 # 9 – Unknown
+    TRUE ~ 9 # 9 – Unknown
   )
 
   # TEST_RSN (required)
@@ -80,7 +80,7 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
     df$test_reason == "ven_cfm_elev" |
       df$test_reason == "cap_cfm_elev" ~ 3, # 3 – Confirmatory test following elevated value by fingerstick
     df$test_reason == "ven_flw" ~ 4, # 4 – Follow-up, child with confirmed elevated level
-    T ~ 9 # 9 – Unknown/other
+    TRUE ~ 9 # 9 – Unknown/other
   )
 
   # LAB_TYPE (required)
@@ -116,7 +116,7 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
     dplyr::mutate(LAB_TYPE = dplyr::case_when(
       grepl(pattern = ",", x = lab_type_unq) ~ 9,
       is.na(lab_type_unq) ~ 9,
-      T ~ as.numeric(lab_type_unq)
+      TRUE ~ as.numeric(lab_type_unq)
     ))
 
   df_lab <- df_lab %>%
@@ -155,7 +155,7 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
     dplyr::mutate(SCRN_SITE = dplyr::case_when(
       grepl(pattern = ",", x = scrn_site_unq) ~ 9,
       is.na(scrn_site_unq) ~ 9,
-      T ~ as.numeric(scrn_site_unq)
+      TRUE ~ as.numeric(scrn_site_unq)
     ))
 
   df_lab <- df_lab %>%
@@ -169,14 +169,14 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
   df_lab$METH_ANAZ <- 9 # Unknown
 
   # METH_LOD (not required)
-  df_lab$METH_LOD <- strrep(" ", 6)
+  df_lab$METH_LOD <- "000.00"
 
   # SAMP_ANAZ_DT (not required)
   lab_test_date <- format.Date(df$lab_test_date, "%Y%m%d")
 
   df_lab$SAMP_ANAZ_DT <- dplyr::case_when(
     stringr::str_detect(lab_test_date, "^\\d{8}$") ~ lab_test_date,
-    T ~ strrep(" ", 8)
+    TRUE ~ strrep(" ", 8)
   )
 
   # RSLT_RPT_DT (not required)
@@ -187,7 +187,7 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
     format(
       round(df$lab_result_number, digits = 2),
       nsmall = 2,
-      trim = T
+      trim = TRUE
     ),
     width = 6, side = "left", pad = "0"
   )
@@ -200,7 +200,7 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
   )
 
   # LAB_LOD (not required)
-  df_lab$LAB_LOD <- strrep(" ", 6)
+  df_lab$LAB_LOD <- "000.00"
 
   # LAB_NAME (not required)
   df_lab$LAB_NAME <- substr(

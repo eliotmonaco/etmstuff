@@ -47,52 +47,52 @@ cbls_investigation_table <- function(df, key) {
       DWELL_TYPE = substr(DWELL_TYPE, 1, 1),
       PAINT_HAZ = substr(PAINT_HAZ, 1, 1),
       XRF = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", XRF)), digits = 1), nsmall = 1, trim = T),
+        format(round(as.numeric(sub("<", "", XRF)), digits = 1), nsmall = 1, trim = TRUE),
         width = 5, side = "left", pad = "0"
       ),
       DUST_FLOOR = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", DUST_FLOOR)), digits = 1), nsmall = 1, trim = T),
+        format(round(as.numeric(sub("<", "", DUST_FLOOR)), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"
       ),
       FLOOR_MSR = dplyr::case_when(
         grepl("ug", FLOOR_MSR) ~ "U",
         grepl("ppm", FLOOR_MSR) ~ "P",
-        T ~ " "
+        TRUE ~ " "
       ),
       DUST_SILL = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", DUST_SILL)), digits = 1), nsmall = 1, trim = T),
+        format(round(as.numeric(sub("<", "", DUST_SILL)), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"
       ),
       SILL_MSR = dplyr::case_when(
         grepl("ug", SILL_MSR) ~ "U",
         grepl("ppm", SILL_MSR) ~ "P",
-        T ~ " "
+        TRUE ~ " "
       ),
       DUST_WELL = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", DUST_WELL)), digits = 1), nsmall = 1, trim = T),
+        format(round(as.numeric(sub("<", "", DUST_WELL)), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"
       ),
       WELL_MSR = dplyr::case_when(
         grepl("ug", WELL_MSR) ~ "U",
         grepl("ppm", WELL_MSR) ~ "P",
-        T ~ " "
+        TRUE ~ " "
       ),
       PAINT = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", PAINT)), digits = 1), nsmall = 1, trim = T),
+        format(round(as.numeric(sub("<", "", PAINT)), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"
       ),
       PAINT_MSR = dplyr::case_when(
         grepl("ug", PAINT_MSR) ~ "U",
         grepl("ppm", PAINT_MSR) ~ "P",
         grepl("mg", PAINT_MSR) ~ "M",
-        T ~ " "
+        TRUE ~ " "
       ),
       SOIL = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", SOIL)), digits = 1), nsmall = 1, trim = T),
+        format(round(as.numeric(sub("<", "", SOIL)), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"
       ),
       WATER = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", WATER)), digits = 1), nsmall = 1, trim = T),
+        format(round(as.numeric(sub("<", "", WATER)), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"
       ),
       INDHAZ = substr(INDHAZ, 1, 1),

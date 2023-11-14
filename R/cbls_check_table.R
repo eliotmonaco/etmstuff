@@ -141,12 +141,12 @@ cbls_check_table <- function(df) {
         LAB_TYPE = stringr::str_detect(LAB_TYPE, "^[1239]$"),
         SCRN_SITE = stringr::str_detect(SCRN_SITE, "^[123459]$"),
         METH_ANAZ = stringr::str_detect(METH_ANAZ, "^[1239]$"),
-        METH_LOD = stringr::str_detect(METH_LOD, "^\\s{6}$"),
+        METH_LOD = stringr::str_detect(METH_LOD, "^\\d{3}\\.\\d{2}$"),
         SAMP_ANAZ_DT = stringr::str_detect(SAMP_ANAZ_DT, "^(\\d{8}|\\s{8})$"),
         RSLT_RPT_DT = stringr::str_detect(RSLT_RPT_DT, "^\\s{8}$"),
         RESULT = stringr::str_detect(RESULT, "^\\d{3}\\.\\d{2}$"),
         RST_INTPCODE = stringr::str_detect(RST_INTPCODE, "^[123]$"),
-        LAB_LOD = stringr::str_detect(LAB_LOD, "^\\s{6}$"),
+        LAB_LOD = stringr::str_detect(LAB_LOD, "^\\d{3}\\.\\d{2}$"),
         LAB_NAME = stringr::str_detect(LAB_NAME, "^[[:graph:]\\s]{43}$"),
         LAB_ID = stringr::str_detect(LAB_ID, "^\\s{11}$"),
         NPI = stringr::str_detect(NPI, "^\\s{10}$"),
@@ -163,7 +163,7 @@ cbls_check_table <- function(df) {
   # Keep rows and columns with a value of FALSE
   df <- df %>%
     dplyr::filter(dplyr::if_any(tidyselect::everything(), ~ !.x)) %>%
-    dplyr::select(!tidyselect::where(~ all(. == T)))
+    dplyr::select(!tidyselect::where(~ all(. == TRUE)))
 
   if (nrow(df) == 0 & ncol(df) == 0) {
     message("No errors found")

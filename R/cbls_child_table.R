@@ -30,7 +30,7 @@ cbls_child_table <- function(df, row_id, key) {
   var_check(key, var = c("ACTION", "QTR", "RPT_YR", "PGMID"))
 
   df <- df %>%
-    dplyr::distinct(child_registry_id, .keep_all = T)
+    dplyr::distinct(child_registry_id, .keep_all = TRUE)
 
   # Add link variables, FILEID, and `key`
   df_chi <- df %>%
@@ -48,14 +48,14 @@ cbls_child_table <- function(df, row_id, key) {
   df_chi$SEX <- dplyr::case_when(
     df$patient_birth_sex == "Male" ~ 1, # 1 – Male
     df$patient_birth_sex == "Female" ~ 2, # 2 – Female
-    T ~ 9 # 9 – Unknown
+    TRUE ~ 9 # 9 – Unknown
   )
 
   # ETHNIC (required)
   df_chi$ETHNIC <- dplyr::case_when(
     df$patient_ethnicity == "Hispanic or Latino" ~ 1, # 1 – Hispanic or Latino
     df$patient_ethnicity == "Not Hispanic or Latino" ~ 2, # 2 – Not Hispanic or Latino
-    T ~ 9 # 9 – Unknown
+    TRUE ~ 9 # 9 – Unknown
   )
 
   # BLANK
@@ -93,64 +93,64 @@ cbls_child_table <- function(df, row_id, key) {
     df$person_country_of_birth == "United States" ~ 1, # 1 – U.S.
     df$person_country_of_birth == "Unknown" |
       is.na(df$person_country_of_birth) ~ 3, # 3 – Unknown
-    T ~ 2 # 2 – Other
+    TRUE ~ 2 # 2 – Other
   )
 
   # RACE_AIAN (required)
   p <- "American Indian or Alaska Native"
   df_chi$RACE_AIAN <- dplyr::case_when(
-    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = T)) ~ 1, # 1 – Yes
-    T ~ 2 # 2 – No
+    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = TRUE)) ~ 1, # 1 – Yes
+    TRUE ~ 2 # 2 – No
   )
 
   # RACE_ASIAN (required)
   p <- "Asian"
   df_chi$RACE_ASIAN <- dplyr::case_when(
-    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = T)) ~ 1, # 1 – Yes
-    T ~ 2 # 2 – No
+    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = TRUE)) ~ 1, # 1 – Yes
+    TRUE ~ 2 # 2 – No
   )
 
   # RACE_BLACK (required)
   p <- "Black or African American"
   df_chi$RACE_BLACK <- dplyr::case_when(
-    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = T)) ~ 1, # 1 – Yes
-    T ~ 2 # 2 – No
+    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = TRUE)) ~ 1, # 1 – Yes
+    TRUE ~ 2 # 2 – No
   )
 
   # RACE_NHOPI (required)
   p <- "Native Hawaiian or Other Pacific Islander"
   df_chi$RACE_NHOPI <- dplyr::case_when(
-    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = T)) ~ 1, # 1 – Yes
-    T ~ 2 # 2 – No
+    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = TRUE)) ~ 1, # 1 – Yes
+    TRUE ~ 2 # 2 – No
   )
 
   # RACE_WHITE (required)
   p <- "White"
   df_chi$RACE_WHITE <- dplyr::case_when(
-    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = T)) ~ 1, # 1 – Yes
-    T ~ 2 # 2 – No
+    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = TRUE)) ~ 1, # 1 – Yes
+    TRUE ~ 2 # 2 – No
   )
 
   # RACE_OTHER (required)
   p <- "Other"
   df_chi$RACE_OTHER <- dplyr::case_when(
-    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = T)) ~ 1, # 1 – Yes
-    T ~ 2 # 2 – No
+    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = TRUE)) ~ 1, # 1 – Yes
+    TRUE ~ 2 # 2 – No
   )
 
   # RACE_RTA (required)
   p <- "Refused"
   df_chi$RACE_RTA <- dplyr::case_when(
-    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = T)) ~ 1, # 1 – Yes
-    T ~ 2 # 2 – No
+    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = TRUE)) ~ 1, # 1 – Yes
+    TRUE ~ 2 # 2 – No
   )
 
   # RACE_UNK (required)
   p <- "Unknown"
   df_chi$RACE_UNK <- dplyr::case_when(
-    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = T)) |
+    stringr::str_detect(df$patient_race, stringr::regex(p, ignore_case = TRUE)) |
       is.na(df$patient_race) ~ 1, # 1 – Yes
-    T ~ 2 # 2 – No
+    TRUE ~ 2 # 2 – No
   )
 
   df_chi
