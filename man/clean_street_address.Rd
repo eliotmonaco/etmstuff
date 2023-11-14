@@ -4,14 +4,14 @@
 \alias{clean_street_address}
 \title{Clean addresses in a dataframe}
 \usage{
-clean_street_address(df, var = "street", type, row_id = "address_id")
+clean_street_address(df, type, var = "street", row_id = "address_id")
 }
 \arguments{
 \item{df}{A dataframe of addresses.}
 
-\item{var}{A variable name in \code{df} containing street addresses.}
-
 \item{type}{The type of cleaning to perform. One of \code{c("concat1", "concat2", "embed_punct", "fraction", "nondigit", "num", "num_dir", "num_word", "ordinal_dir", "phone", "pobox", "punct", "symbol", "unit", "unknown")}.}
+
+\item{var}{A variable name in \code{df} containing street addresses.}
 
 \item{row_id}{A unique row identifier variable in \code{df}. Defaults to \code{address_id}.}
 }

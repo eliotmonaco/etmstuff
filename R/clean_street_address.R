@@ -20,7 +20,7 @@
 #' @family address processing functions
 # @examples
 #'
-clean_street_address <- function(df, var = "street", type, row_id = "address_id") {
+clean_street_address <- function(df, type, var = "street", row_id = "address_id") {
   var_check(df, var = c(var, row_id))
 
   col_order_src <- colnames(df)
@@ -91,7 +91,6 @@ clean_street_address <- function(df, var = "street", type, row_id = "address_id"
         dplyr::select(-tidyselect::all_of(var)),
       by = row_id
     ) %>%
-    # dplyr::relocate(replacement_text, .before = removed_text) %>%
     dplyr::select(
       tidyselect::all_of(cols1),
       replacement_text, removed_text,

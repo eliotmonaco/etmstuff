@@ -23,3 +23,13 @@ v2 <- str_to_title(v2)
 ks_cities <- sort(unique(c(v, v_saint1, v_saint2, v2, "Fort Riley North")))
 
 usethis::use_data(ks_cities, overwrite = T)
+
+
+
+## Modify 11/14/2023
+
+load(file = "data/ks_cities.rda")
+
+ks_cities <- sort(unique(c(ks_cities, "Kingsdown", "Modoc")))
+
+usethis::use_data(ks_cities, overwrite = T)

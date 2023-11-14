@@ -59,9 +59,10 @@ saveRDS(md_response_vars, "dev_aux/helpers/md_response_vars.rds")
 
 epitrax_vars_reordered <- c(
   # Record IDs
-  "lab_id", "lab_test_id",
+  "lab_id", "lab_test_id", "accession_number",
   # Person IDs & info
-  "patient_id", "patient_record_number", "patient_birth_date",
+  "patient_id", "patient_record_number",
+  "patient_birth_date", "age_at_event_date",
   "person_last_name", "person_first_name", "person_middle_name",
   # Lab test info
   "lab_collection_date", "lab_result_value", "lab_units",
@@ -112,7 +113,7 @@ saveRDS(epitrax_vars_reordered, "dev_aux/helpers/epitrax_vars_reordered.rds")
 # epitrax_vars ####
 
 epitrax_vars <- c(
-  "address_at_diagnosis_city", "address_at_diagnosis_county", "address_at_diagnosis_state", "address_at_diagnosis_street", "address_at_diagnosis_unit_number", "address_at_diagnosis_zip", "bl_medicaid_eligible", "blood_lead_poisoning_form_col_bl_funding_source", "current_address_city", "current_address_county", "current_address_state", "current_address_street", "current_address_unit_number", "current_address_zip", "first_accepted_by_lhd_date", "first_investigation_started_date", "lab_collection_city", "lab_collection_county", "lab_collection_date", "lab_collection_postal_code", "lab_collection_state", "lab_collection_street", "lab_collection_unit_number", "lab_created_at", "lab_id", "lab_loinc_code", "lab_name", "lab_result_value", "lab_specimen_source", "lab_test_date", "lab_test_id", "lab_test_type", "lab_units", "last_approved_by_lhd_date", "last_investigation_completed_lhd_date", "last_routed_to_lhd_date", "lhd_date_closed", "lhd_investigation_start_date", "medicaid_id", "ordering_clinician", "ordering_facility_name", "patient_birth_date", "patient_birth_sex", "patient_ethnicity", "patient_event_disposition", "patient_id", "patient_investigation_completed_lhd_date", "patient_jurisdiction_of_investigation", "patient_pregnant", "patient_race", "patient_record_number", "patient_results_reported_to_lhd", "patient_state_case_status", "patient_workflow_state", "person_country_of_birth", "person_facility_name", "person_facility_type", "person_facility_visit_type", "person_first_name", "person_last_name", "person_middle_name", "treatment_date", "treatment_given", "treatment_name"
+  "accession_number", "address_at_diagnosis_city", "address_at_diagnosis_county", "address_at_diagnosis_state", "address_at_diagnosis_street", "address_at_diagnosis_unit_number", "address_at_diagnosis_zip", "age_at_event_date", "bl_medicaid_eligible", "blood_lead_poisoning_form_col_bl_funding_source", "current_address_city", "current_address_county", "current_address_state", "current_address_street", "current_address_unit_number", "current_address_zip", "first_accepted_by_lhd_date", "first_investigation_started_date", "lab_collection_city", "lab_collection_county", "lab_collection_date", "lab_collection_postal_code", "lab_collection_state", "lab_collection_street", "lab_collection_unit_number", "lab_created_at", "lab_id", "lab_loinc_code", "lab_name", "lab_result_value", "lab_specimen_source", "lab_test_date", "lab_test_id", "lab_test_type", "lab_units", "last_approved_by_lhd_date", "last_investigation_completed_lhd_date", "last_routed_to_lhd_date", "lhd_date_closed", "lhd_investigation_start_date", "medicaid_id", "ordering_clinician", "ordering_facility_name", "patient_birth_date", "patient_birth_sex", "patient_ethnicity", "patient_event_disposition", "patient_id", "patient_investigation_completed_lhd_date", "patient_jurisdiction_of_investigation", "patient_pregnant", "patient_race", "patient_record_number", "patient_results_reported_to_lhd", "patient_state_case_status", "patient_workflow_state", "person_country_of_birth", "person_facility_name", "person_facility_type", "person_facility_visit_type", "person_first_name", "person_last_name", "person_middle_name", "treatment_date", "treatment_given", "treatment_name"
 )
 
 saveRDS(epitrax_vars, "dev_aux/helpers/epitrax_vars.rds")
@@ -268,7 +269,7 @@ regex_various["unit", 1]
 
 regex_various["unit", 1] <- paste0(
   "(?<=\\s)",
-  "(#|ap|apt|apartment|lot|no|num|number|rm|room|ste|suite|trlr|trailer|unit)",
+  "(#|ap|apt|apartment|lot|no(?!rth)|num|number|rm|room|ste|suite|trlr|trailer|unit)",
   "(\\s|[:punct:])*[:alnum:]+$"
 )
 
