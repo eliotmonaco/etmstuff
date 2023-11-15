@@ -9,9 +9,9 @@ clean_street_address(df, type, var = "street", row_id = "address_id")
 \arguments{
 \item{df}{A dataframe of addresses.}
 
-\item{type}{The type of cleaning to perform. One of \code{c("concat1", "concat2", "embed_punct", "fraction", "nondigit", "num", "num_dir", "num_word", "ordinal_dir", "phone", "pobox", "punct", "symbol", "unit", "unknown")}.}
+\item{type}{The type of cleaning to perform. One of \code{c("embed_punct", "house_frac", "nondigit", "nonres", "num_dir", "num_only", "num_word", "numsign", "ordinal_dir", "phone", "pobox", "symbol", "unit", "unknown")}.}
 
-\item{var}{A variable name in \code{df} containing street addresses.}
+\item{var}{A variable name in \code{df} containing the targeted address component.}
 
 \item{row_id}{A unique row identifier variable in \code{df}. Defaults to \code{address_id}.}
 }

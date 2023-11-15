@@ -6,13 +6,8 @@ directions_ordinal <- readRDS("dev_aux/helpers/directions_ordinal.rds")
 epitrax_date_vars <- readRDS("dev_aux/helpers/epitrax_date_vars.rds")
 epitrax_vars <- readRDS("dev_aux/helpers/epitrax_vars.rds")
 epitrax_vars_reordered <- readRDS("dev_aux/helpers/epitrax_vars_reordered.rds")
-# ks_cities <- readRDS("dev_aux/helpers/ks_cities.rds")
-# ks_fips <- readRDS("dev_aux/helpers/ks_fips.rds")
 ks_locations <- readRDS("dev_aux/helpers/ks_locations.rds")
-# ks_zipcodes <- readRDS("dev_aux/helpers/ks_zipcodes.rds")
 md_response_vars <- readRDS("dev_aux/helpers/md_response_vars.rds")
-# pm_direction_dictionary <- readRDS("dev_aux/helpers/pm_direction_dictionary.rds")
-# pm_street_suffix <- readRDS("dev_aux/helpers/pm_street_suffix.rds")
 regex_pobox <- readRDS("dev_aux/helpers/regex_pobox.rds")
 regex_various <- readRDS("dev_aux/helpers/regex_various.rds")
 street_names <- readRDS("dev_aux/helpers/street_names.rds")
@@ -27,13 +22,8 @@ usethis::use_data(
   epitrax_date_vars,
   epitrax_vars,
   epitrax_vars_reordered,
-  # ks_cities,
-  # ks_fips,
   ks_locations,
-  # ks_zipcodes,
   md_response_vars,
-  # pm_direction_dictionary,
-  # pm_street_suffix,
   regex_pobox,
   regex_various,
   street_names,
@@ -42,6 +32,8 @@ usethis::use_data(
   unit_prefixes,
   internal = T, overwrite = T
 )
+
+#####
 
 
 
@@ -295,55 +287,92 @@ regex_various <- regex_various %>%
 saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
 
 
+
 ## Embedded punctuation
 
-new <- data.frame(
-  pattern = "(?<=[:alnum:])[:punct:]+(?=[:alnum:])",
-  replacement = " "
+### Current
+regex_various["embed_punct", "pattern"]
+# "(?<=[:alnum:])[:punct:]+(?=[:alnum:])"
+
+### New
+regex_various["embed_punct", "pattern"] <- paste0(
+  "(?x) ", # Turn on free-spacing
+  "(?<= [:alnum:]) ", # Preceded by an alphanumeric
+  "[:punct:]+ ", # One or more punctuation
+  "(?= [:alnum:])" # Followed by an alphanumeric
 )
 
-rownames(new) <- "embed_punct"
-
-regex_various <- regex_various %>%
-  bind_rows(new)
-
 saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
+
 
 
 ## Unknown address
 
-new <- data.frame(
-  pattern = "^.*(9999|address|needed|unknown).*$",
-  replacement = ""
-)
+### Current
+regex_various["unknown", "pattern"]
+# "^.*(9999|address|needed|unknown).*$"
 
-rownames(new) <- "unknown"
-
-regex_various <- regex_various %>%
-  bind_rows(new)
+### New
+regex_various["unknown", "pattern"] <- "(?x) ^ .* unknown .* $"
 
 saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
 
 
 
-# Modify `pm_direction_dictionary` ####
+## Non-resident (refugee)
 
-pm_direction_dictionary <- postmastr::dic_us_dir
+### Current
+regex_various["nonres", "pattern"]
+# "(?x) ^ .* (9999.*address | 9999.*need | address.*need) .* $"
 
-pm_dd_add <- data.frame(
-  dir.output = c("NE", "NW", "SE", "SW"),
-  dir.input = c("Ne", "Nw", "Se", "Sw")
+### New
+regex_various["nonres", "pattern"] <- paste0(
 )
 
-pm_direction_dictionary <- pm_direction_dictionary %>%
-  bind_rows(pm_dd_add)
-
-saveRDS(pm_direction_dictionary, "dev_aux/helpers/pm_direction_dictionary.rds")
+saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
 
 
 
+## Fractional house number
+
+### Current
+regex_various["house_frac", "pattern"]
+# "(?<=\\d)\\s+(1|ONE|([:alpha:]*\\s*AND\\s+[:alpha:]*))*\\s*HALF\\s*(?=\\s[:alnum:])"
+
+### New
+regex_various["house_frac", "pattern"] <- paste0(
+  "(?x) ", # Turn on free-spacing
+  "(?<= \\d) ", # Preceded by a digit
+  "\\s+ (1 | ONE | ([:alpha:]* \\s* AND \\s+ [:alpha:]*))* \\s* HALF \\s* ",
+  "(?= \\s [:alnum:]) ", # Followed by a space and alphanumeric
+  "(?! \\s full)" # Not followed by " Full", as in the street name "Half Full"
+)
+
+saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
 
 
+
+## New row
+
+p <- "#"
+p <- paste0(
+  "(?x) ", # Turn on free-spacing
+  ""
+)
+
+new <- data.frame(
+  pattern = p,
+  replacement = " "
+)
+
+rownames(new) <- "numsign"
+
+regex_various <- regex_various %>%
+  bind_rows(new)
+
+regex_various <- regex_various[sort(rownames(regex_various)),]
+
+saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
 
 
 

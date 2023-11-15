@@ -3,7 +3,7 @@
 #' This function applies a pattern to clean street address strings in `df$var` based on the `type` chosen. The returned dataframe has two new columns, `removed_text` and `replacement_text`. Only cleaned rows are returned. After visually confirming the results and making any needed adjustments to the returned dataframe, use [replace_values()] to substitute the value in `replacement_text` for the original value in `var`.
 #'
 #' @param df A dataframe of addresses.
-#' @param var A variable name in `df` containing street addresses.
+#' @param var A variable name in `df` containing the targeted address component.
 #' ```{r echo=FALSE}
 #' types <- sort(c("pobox", "ordinal_dir", rownames(regex_various)))
 #' types <- paste0('"', paste(types, collapse = '", "'), '"')
