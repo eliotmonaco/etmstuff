@@ -7,6 +7,46 @@ devtools::load_all()
 
 
 
+# stop ####
+
+
+
+
+
+# stop ####
+
+
+
+
+
+# clean_street_address ####
+
+library(tidyverse)
+
+df_addr_full <- readRDS("~/r_projects/bl_2023q3/data/addresses/df_addr_full_2023q3.rds")
+
+df_addr <- df_addr_full %>%
+  distinct(address_id, .keep_all = T)
+
+debugonce(clean_street_address)
+
+df <- clean_street_address(df_addr, type = "nth")
+
+
+
+df_addr <- readRDS("../bl_2023q2/data/addresses/df_addr_full.rds")
+
+df_addr <- df_addr %>%
+  distinct(address_id, .keep_all = T)
+
+df <- clean_street_address(df_addr, type = "pobox")
+
+debugonce(replace_values)
+
+df_addr2 <- replace_values(df_addr, var = "street", df_src = df)
+
+
+
 # pick_max_test_result ####
 
 df <- pick_max_test_result(bl_data_2019, "all_tests")
@@ -83,41 +123,7 @@ all.equal(df_data_child, data_cbls_2023q2)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-df_addr <- readRDS("../bl_2023q2/data/addresses/df_addr_full.rds")
-
-df_addr <- df_addr %>%
-  distinct(address_id, .keep_all = T)
-
-df <- clean_street_address(df_addr, type = "pobox")
-
-debugonce(replace_values)
-
-df_addr2 <- replace_values(df_addr, var = "street", df_src = df)
-
-
-
-
-
-
-
-
-
-
-
-
+# my_xl_table, my_xlsx ####
 
 my_xl_table(mtcars, "cars_wkbk", c("mpg", "cyl"))
 
@@ -125,16 +131,11 @@ my_xl_table(mtcars, "cars_wkbk", as_table = F)
 
 
 
-
-
 # my_xlsx: works with or wo ".xlsx" in name? how to name separate sheets? (use ...?)
 
 
 
-
 openxlsx::write.xlsx(mtcars, "cars")
-
-
 
 
 
@@ -149,34 +150,6 @@ xl_sheets <- list(
 debugonce(my_xlsx)
 
 my_xlsx(mtcars, "cars", sheetName = "bigfastcars")
-
-
-# stop ####
-
-
-library(tidyverse)
-
-
-
-debugonce(classify_test_reason)
-
-data2 <- classify_test_reason(
-  data,
-  bl_ref_val = 3.5,
-  max_interval = 90,
-  silent = F
-)
-
-data2 %>%
-  group_by(test_reason) %>%
-  count()
-
-
-
-
-# stop ####
-
-
 
 
 

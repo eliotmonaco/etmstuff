@@ -30,10 +30,156 @@ usethis::use_data(
   street_suffixes,
   styles_css,
   unit_prefixes,
-  internal = T, overwrite = T
+  internal = TRUE,
+  overwrite = TRUE
 )
 
 #####
+
+
+
+# Modify `regex_various` ####
+
+library(tidyverse)
+
+## unit ####
+
+### Current
+regex_various["unit", "pattern"]
+# "(?<=\\s)(#|ap|apt|apartment|lot|no(?!rth)|num|number|rm|room|ste|suite|trlr|trailer|unit)(\\s|[:punct:])*[:alnum:]+$"
+
+### New
+regex_various["unit", "pattern"] <- paste0(
+  "(?x) ", # Turn on free-spacing
+  "(?<= \\s) ", # Preceded by a space
+  "(#|ap|apt|apartment|lot|no(?!rth)|num|number|rm|room|ste|suite|trlr|trailer|unit) ", # Unit prefix
+  "(\\s | [:punct:])* ", # Spaces and/or punctuation marks
+  "[:alnum:]+$" # Unit identifier, adjacent to end of string
+)
+
+saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
+
+
+
+## num_dir ####
+
+### Current
+regex_various["num_dir", "pattern"]
+# "(?<=^\\d{1,1000})[ENSW]\\b"
+
+### New
+regex_various["num_dir", "pattern"] <- paste0(
+  "(?x) ", # Turn on free-spacing
+  "(?<= ^ \\d{1,1000}) ", # Initial digit(s)
+  "[ENSW] \\b" # Concatenated with a direction letter, then a word boundary
+)
+
+saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
+
+
+
+## num_word ####
+
+### Current
+regex_various["num_word", "pattern"]
+# "(?<=^\\d{1,1000})[:alpha:]{2,}"
+
+### New
+regex_various["num_word", "pattern"] <- paste0(
+  "(?x) ", # Turn on free-spacing
+  "(?<= ^ \\d{1,1000}) ", # Initial digit(s)
+  "[:alpha:]{2,}" # Concatenated with a word
+)
+
+saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
+
+
+
+## embed_punct ####
+
+### Current
+regex_various["embed_punct", "pattern"]
+# "(?<=[:alnum:])[:punct:]+(?=[:alnum:])"
+
+### New
+regex_various["embed_punct", "pattern"] <- paste0(
+  "(?x) ", # Turn on free-spacing
+  "(?<= [:alnum:]) ", # Preceded by an alphanumeric
+  "[:punct:]+ ", # One or more punctuation
+  "(?= [:alnum:])" # Followed by an alphanumeric
+)
+
+saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
+
+
+
+## unknown ####
+
+### Current
+regex_various["unknown", "pattern"]
+# "^.*(9999|address|needed|unknown).*$"
+
+### New
+regex_various["unknown", "pattern"] <- "(?x) ^ .* unknown .* $"
+
+saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
+
+
+
+## nonres ####
+
+### Current
+regex_various["nonres", "pattern"]
+# "(?x) ^ .* (9999.*address | 9999.*need | address.*need) .* $"
+
+### New
+regex_various["nonres", "pattern"] <- paste0(
+)
+
+saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
+
+
+
+## house_frac ####
+
+### Current
+regex_various["house_frac", "pattern"]
+# "(?<=\\d)\\s+(1|ONE|([:alpha:]*\\s*AND\\s+[:alpha:]*))*\\s*HALF\\s*(?=\\s[:alnum:])"
+
+### New
+regex_various["house_frac", "pattern"] <- paste0(
+  "(?x) ", # Turn on free-spacing
+  "(?<= \\d) ", # Preceded by a digit
+  "\\s+ (1 | ONE | ([:alpha:]* \\s* AND \\s+ [:alpha:]*))* \\s* HALF \\s* ",
+  "(?= \\s [:alnum:]) ", # Followed by a space and alphanumeric
+  "(?! \\s full)" # Not followed by " Full", as in the street name "Half Full"
+)
+
+saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
+
+
+
+## New row ####
+
+p <- "(?x) "
+p <- paste0(
+  "(?x) ", # Turn on free-spacing
+  "" # Target
+)
+
+new <- data.frame(
+  pattern = p,
+  replacement = ""
+)
+
+rownames(new) <- ""
+
+regex_various <- regex_various %>%
+  bind_rows(new)
+
+regex_various <- regex_various[sort(rownames(regex_various)),]
+
+saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
 
 
 
@@ -245,136 +391,6 @@ ks_fips$fips <- as.character(ks_fips$fips)
 ks_fips$st_fips <- as.character(ks_fips$st_fips)
 
 saveRDS(ks_fips, "dev_aux/helpers/ks_fips.rds")
-
-
-
-# Modify `regex_various` ####
-
-library(tidyverse)
-
-## Unit
-
-regex_various["unit", 1]
-
-# Old: "(?<=\\s)((apt|ap|unit|ste|suite|lot|trlr)(\\s|[:punct:])|#)[:graph:]+$"
-# New: "(?<=\\s)(#|ap|apt|lot|rm|room|ste|suite|trlr|unit)(\\s|[:punct:])*[:alnum:]+$"
-
-regex_various["unit", 1] <- paste0(
-  "(?<=\\s)",
-  "(#|ap|apt|apartment|lot|no(?!rth)|num|number|rm|room|ste|suite|trlr|trailer|unit)",
-  "(\\s|[:punct:])*[:alnum:]+$"
-)
-
-saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
-
-
-
-## Concatenated number/direction & number/word
-
-new <- data.frame(
-  pattern = c(
-    "(?<=^\\d{1,1000})[ENSW]\\b",
-    "(?<=^\\d{1,1000})[:alpha:]{2,}"
-  ),
-  replacement = c("", "")
-)
-
-rownames(new) <- c("num_dir", "num_word")
-
-regex_various <- regex_various %>%
-  bind_rows(new)
-
-saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
-
-
-
-## Embedded punctuation
-
-### Current
-regex_various["embed_punct", "pattern"]
-# "(?<=[:alnum:])[:punct:]+(?=[:alnum:])"
-
-### New
-regex_various["embed_punct", "pattern"] <- paste0(
-  "(?x) ", # Turn on free-spacing
-  "(?<= [:alnum:]) ", # Preceded by an alphanumeric
-  "[:punct:]+ ", # One or more punctuation
-  "(?= [:alnum:])" # Followed by an alphanumeric
-)
-
-saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
-
-
-
-## Unknown address
-
-### Current
-regex_various["unknown", "pattern"]
-# "^.*(9999|address|needed|unknown).*$"
-
-### New
-regex_various["unknown", "pattern"] <- "(?x) ^ .* unknown .* $"
-
-saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
-
-
-
-## Non-resident (refugee)
-
-### Current
-regex_various["nonres", "pattern"]
-# "(?x) ^ .* (9999.*address | 9999.*need | address.*need) .* $"
-
-### New
-regex_various["nonres", "pattern"] <- paste0(
-)
-
-saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
-
-
-
-## Fractional house number
-
-### Current
-regex_various["house_frac", "pattern"]
-# "(?<=\\d)\\s+(1|ONE|([:alpha:]*\\s*AND\\s+[:alpha:]*))*\\s*HALF\\s*(?=\\s[:alnum:])"
-
-### New
-regex_various["house_frac", "pattern"] <- paste0(
-  "(?x) ", # Turn on free-spacing
-  "(?<= \\d) ", # Preceded by a digit
-  "\\s+ (1 | ONE | ([:alpha:]* \\s* AND \\s+ [:alpha:]*))* \\s* HALF \\s* ",
-  "(?= \\s [:alnum:]) ", # Followed by a space and alphanumeric
-  "(?! \\s full)" # Not followed by " Full", as in the street name "Half Full"
-)
-
-saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
-
-
-
-## New row
-
-p <- "#"
-p <- paste0(
-  "(?x) ", # Turn on free-spacing
-  ""
-)
-
-new <- data.frame(
-  pattern = p,
-  replacement = " "
-)
-
-rownames(new) <- "numsign"
-
-regex_various <- regex_various %>%
-  bind_rows(new)
-
-regex_various <- regex_various[sort(rownames(regex_various)),]
-
-saveRDS(regex_various, "dev_aux/helpers/regex_various.rds")
-
-
 
 
 
