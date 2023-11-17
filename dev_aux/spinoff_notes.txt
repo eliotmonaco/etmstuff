@@ -7,7 +7,7 @@ Spin-off packages: kslead, addresses, undupe
 
 
 
-1) Critical and specific to lead only:
+1) Critical and specific to lead only: kslead
 
 assign_bll_class
 assign_test_reason
@@ -35,7 +35,7 @@ track_followups
 
 2) Critical but not specific to lead:
 
-Addresses:
+Addresses: ???
 
 build_md_url
 clean_street_address
@@ -46,7 +46,7 @@ replace_values
 usps_lookup
 validate_address
 
-Deduplication:
+Deduplication: undupe
 
 count_conflicts
 flatten_conflicts
@@ -63,14 +63,13 @@ get_year
 id_distinct_rows
 match_elements
 pattern_check_df
-sim_address
+sim_address          ???????
 subset_date_range
 var_check
 
 
 
-
-3) Not critical or specific to lead:
+3) Not critical or specific to lead: keep etmstuff
 
 create_bl_project
 my_kable
