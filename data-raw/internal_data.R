@@ -1,5 +1,6 @@
 # Generate internal data for package
 
+address_regex <- readRDS("dev_aux/helpers/address_regex.rds")
 directions <- readRDS("dev_aux/helpers/directions.rds")
 directions_cardinal <- readRDS("dev_aux/helpers/directions_cardinal.rds")
 directions_ordinal <- readRDS("dev_aux/helpers/directions_ordinal.rds")
@@ -16,6 +17,7 @@ styles_css <- readRDS("dev_aux/helpers/styles_css.rds")
 unit_prefixes <- readRDS("dev_aux/helpers/unit_prefixes.rds")
 
 usethis::use_data(
+  address_regex,
   directions,
   directions_cardinal,
   directions_ordinal,
@@ -133,22 +135,6 @@ epitrax_date_vars <- c(
 )
 
 saveRDS(epitrax_date_vars, "dev_aux/helpers/epitrax_date_vars.rds")
-
-
-
-# Write and update styles.css ####
-
-## Write styles.css
-writeLines(
-  styles_css,
-  con = "dev_aux/helpers/styles.css"
-)
-
-## Read updated styles.css
-styles_css <- readLines("dev_aux/helpers/styles.css")
-
-## Save as RDS
-saveRDS(styles_css, "dev_aux/helpers/styles_css.rds")
 
 
 

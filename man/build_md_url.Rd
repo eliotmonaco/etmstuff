@@ -63,6 +63,7 @@ More information is at \url{https://wiki.melissadata.com/index.php?title=Persona
 
 \seealso{
 Other address processing functions: 
+\code{\link{clean_address}()},
 \code{\link{clean_street_address}()},
 \code{\link{md_request}()},
 \code{\link{pull_addresses}()},

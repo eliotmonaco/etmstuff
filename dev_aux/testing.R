@@ -21,6 +21,9 @@ devtools::load_all()
 
 # clean_street_address ####
 
+
+
+
 library(tidyverse)
 
 df_addr_full <- readRDS("~/r_projects/bl_2023q3/data/addresses/df_addr_full_2023q3.rds")
@@ -30,7 +33,82 @@ df_addr <- df_addr_full %>%
 
 debugonce(clean_street_address)
 
-df <- clean_street_address(df_addr, type = "nth")
+df <- clean_street_address(df_addr, type = "embed_punct")
+
+
+
+
+
+
+
+
+
+# Matches and non-matches
+df_test <- data.frame(
+  street = c(
+    "123 Main St. #8",
+    "456 9th St/PO Box 42",
+    "456 9th St./PO Box 42",
+    "999 1/2 Half Full Rd",
+    "10,10 1/2 Grand Blvd Apt.5",
+    "1010 1/.2 Grand Blvd Apt.5",
+    "333 B.V.D Ave"
+  )
+)
+df_test <- id_distinct_rows(df_test, "street", "address_id")
+
+# Non-matches only
+df_test2 <- data.frame(
+  street = c(
+    "123 Main St. #8",
+    "999 1/2 Half Full Rd"
+  )
+)
+df_test2 <- id_distinct_rows(df_test2, "street", "address_id")
+
+
+
+extracted <- stringr::str_match_all(df_test$street, regex_various[1,1])
+extracted <- lapply(extracted, "[", , 2)
+extracted <- lapply(extracted, function (x) replace(x, list = which(is.na(x)), values = ""))
+extracted <- lapply(extracted, paste, collapse = " ")
+unlist(extracted)
+
+
+
+debugonce(clean_street_address)
+
+df <- clean_street_address(df_test, type = "embed_punct")
+
+
+
+regex_various2 <- regex_various
+
+ref <- regex_various2[1,]
+
+pat <- stats::setNames(r, p)
+
+z <- "[[:punct:]\\s]*"
+punct <- paste0("(^", z, ")|(", z, "$)")
+
+df_test$street2 <- stringr::str_squish(
+  stringr::str_remove_all(
+    stringr::str_replace_all(
+      df_test$street,
+      stringr::regex(pat, ignore_case = TRUE)
+    ),
+    punct
+  )
+)
+
+
+
+
+
+
+
+
+
 
 
 

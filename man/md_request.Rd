@@ -51,6 +51,7 @@ More information is at \url{https://wiki.melissadata.com/index.php?title=Persona
 \seealso{
 Other address processing functions: 
 \code{\link{build_md_url}()},
+\code{\link{clean_address}()},
 \code{\link{clean_street_address}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},
@@ -58,6 +59,7 @@ Other address processing functions:
 
 Other address processing functions: 
 \code{\link{build_md_url}()},
+\code{\link{clean_address}()},
 \code{\link{clean_street_address}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},

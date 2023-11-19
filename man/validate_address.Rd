@@ -24,6 +24,7 @@ This function checks an address component in \code{df$var} against elements in a
 \seealso{
 Other address processing functions: 
 \code{\link{build_md_url}()},
+\code{\link{clean_address}()},
 \code{\link{clean_street_address}()},
 \code{\link{md_request}()},
 \code{\link{pull_addresses}()},
