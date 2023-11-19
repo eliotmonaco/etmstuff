@@ -42,9 +42,21 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
 
   extracted <- stringr::str_match_all(
     string = df2[[var]],
-    pattern = stringr::regex(p, ignore_case = TRUE)
+    pattern = stringr::regex(ref$pattern, ignore_case = TRUE)
   )
-  extracted <- lapply(extracted, "[", , 2)
+
+  if (purrr::is_empty(purrr::compact(extracted))) {
+    return(message("No matching values found"))
+  }
+
+  # If the number of capturing groups from `address_regex$pattern` is specified, get those matches only, otherwise get full match only
+  if (!is.na(ref$n_cap_gps)) {
+    n <- ref$n_cap_gps + 1
+    extracted <- lapply(extracted, "[", , 2:n)
+  } else {
+    extracted <- lapply(extracted, "[", , 1)
+  }
+
   extracted <- lapply(extracted, function (x) replace(x, list = which(is.na(x)), values = ""))
   extracted <- lapply(extracted, paste, collapse = " ")
   extracted <- unlist(extracted)
