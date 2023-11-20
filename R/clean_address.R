@@ -1,6 +1,6 @@
 #' Clean dirty addresses
 #'
-#' This function applies a pattern to clean street address strings in `df$var` based on the `type` chosen. The returned dataframe has two new columns, `removed_text` and `replacement_text`. Only cleaned rows are returned. After visually confirming the results and making any needed adjustments to the returned dataframe, use [replace_values()] to substitute the value in `replacement_text` for the original value in `var`.
+#' This function cleans addresses by using regular expressions to match common error patterns. Each `type` option corresponds to a pattern in `address_regex` that targets text for removal and provides a suggestion for replacement. The function returns a dataframe with two new variables, `removed_text` and `replacement_text`, adjacent to the variable targeted for cleaning. Only rows containing values that match the error pattern are returned. The user should examine the returned dataframe to confirm, reject, or modify the suggested replacements and then use [replace_values()] to apply the corrections to the original dataframe.
 #'
 #' @param df A dataframe of addresses.
 #' ```{r echo=FALSE}
@@ -12,7 +12,7 @@
 #' @param var A variable in `df` containing the targeted address component.
 #' @param row_id A unique row identifier variable in `df`. Defaults to `address_id`.
 #'
-#' @return A dataframe containing only the rows that have been cleaned.
+#' @return A dataframe containing values that match the selected error pattern and the suggested replacements.
 #' @export
 #'
 #' @importFrom magrittr %>%
@@ -23,11 +23,10 @@
 clean_address <- function(df, type, var = "street", row_id = "address_id") {
   var_check(df, var = c(var, row_id))
 
+  # Stop if `row_id` values are not unique
   if (any(duplicated(df[row_id]))) stop("`row_id` is not a unique row identifier")
 
-  cols_src <- colnames(df)
-
-  # Load `ref` based on `type`
+  # Load `ref` based on the selected `type`
   if (type %in% rownames(address_regex)) {
     ref <- address_regex[which(rownames(address_regex) == type), ]
   } else {
@@ -36,15 +35,17 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
     stop(m, call. = FALSE)
   }
 
-  df2 <- df %>%
-    dplyr::select(tidyselect::all_of(c(row_id, var))) %>%
+  # Filter out rows where the targeted variable contains NA
+  df <- df %>%
     dplyr::filter(!is.na(.data[[var]]))
 
+  # Pull pattern matches
   extracted <- stringr::str_match_all(
-    string = df2[[var]],
+    string = df[[var]],
     pattern = stringr::regex(ref$pattern, ignore_case = TRUE)
   )
 
+  # If all list elements have length of 0, no matches have been found
   if (purrr::is_empty(purrr::compact(extracted))) {
     return(message("No matching values found"))
   }
@@ -57,6 +58,7 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
     extracted <- lapply(extracted, "[", , 1)
   }
 
+  # Convert list of matches to a vector
   extracted <- lapply(extracted, function (x) replace(x, list = which(is.na(x)), values = ""))
   extracted <- lapply(extracted, paste, collapse = " ")
   extracted <- unlist(extracted)
@@ -65,43 +67,32 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
     return(message("No matching values found"))
   }
 
-  df2$removed_text <- stringr::str_squish(extracted)
+  df$removed_text <- stringr::str_squish(extracted)
 
+  # Set replacement pattern
   if (!is.na(ref$pattern_replace)) {
     p <- stats::setNames(ref$replacement, ref$pattern_replace)
   } else {
     p <- stats::setNames(ref$replacement, ref$pattern)
   }
 
+  # Create replacement suggestion
   replacement_text <- stringr::str_replace_all(
-    string = df2[[var]],
+    string = df[[var]],
     pattern = stringr::regex(p, ignore_case = TRUE)
   )
 
-  df2$replacement_text <- stringr::str_squish(
+  # Clean outer punctuation or extra spaces from replacement text
+  df$replacement_text <- stringr::str_squish(
     stringr::str_remove_all(
       string = replacement_text,
       pattern = "(^[[:punct:]\\s]*)|([[:punct:]\\s]*$)"
     )
   )
 
-  df2$replacement_text[which(df2$replacement_text == "")] <- NA
+  df$replacement_text[which(df$replacement_text == "")] <- NA
 
-  # Column order of returned dataframe
-  n <- which(cols_src == var)
-  cols1 <- cols_src[1:n]
-  cols2 <- cols_src[(n + 1):length(cols_src)]
-
-  df2 %>%
+  df %>%
     dplyr::filter(removed_text != "") %>%
-    dplyr::left_join(
-      df %>%
-        dplyr::select(-tidyselect::all_of(var)),
-      by = row_id
-    ) %>%
-    dplyr::select(
-      tidyselect::all_of(cols1),
-      replacement_text, removed_text,
-      tidyselect::all_of(cols2)
-    )
+    dplyr::relocate(replacement_text, removed_text, .after = tidyselect::all_of(var))
 }

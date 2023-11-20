@@ -16,10 +16,10 @@ clean_address(df, type, var = "street", row_id = "address_id")
 \item{row_id}{A unique row identifier variable in \code{df}. Defaults to \code{address_id}.}
 }
 \value{
-A dataframe containing only the rows that have been cleaned.
+A dataframe containing values that match the selected error pattern and the suggested replacements.
 }
 \description{
-This function applies a pattern to clean street address strings in \code{df$var} based on the \code{type} chosen. The returned dataframe has two new columns, \code{removed_text} and \code{replacement_text}. Only cleaned rows are returned. After visually confirming the results and making any needed adjustments to the returned dataframe, use \code{\link[=replace_values]{replace_values()}} to substitute the value in \code{replacement_text} for the original value in \code{var}.
+This function cleans addresses by using regular expressions to match common error patterns. Each \code{type} option corresponds to a pattern in \code{address_regex} that targets text for removal and provides a suggestion for replacement. The function returns a dataframe with two new variables, \code{removed_text} and \code{replacement_text}, adjacent to the variable targeted for cleaning. Only rows containing values that match the error pattern are returned. The user should examine the returned dataframe to confirm, reject, or modify the suggested replacements and then use \code{\link[=replace_values]{replace_values()}} to apply the corrections to the original dataframe.
 }
 \seealso{
 Other address processing functions: 

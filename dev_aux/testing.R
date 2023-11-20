@@ -21,25 +21,20 @@ devtools::load_all()
 
 # clean_street_address ####
 
-
-
-
 library(tidyverse)
+
+df_addr_full <- readRDS("../bl_2023q2/data/addresses/df_addr_full.rds")
 
 df_addr_full <- readRDS("~/r_projects/bl_2023q3/data/addresses/df_addr_full_2023q3.rds")
 
 df_addr <- df_addr_full %>%
   distinct(address_id, .keep_all = T)
 
-debugonce(clean_street_address)
+debugonce(clean_address)
 
-df <- clean_street_address(df_addr, type = "embed_punct")
+df <- clean_address(df_addr, type = "embed_punct")
 
-
-
-
-
-
+df_addr <- replace_values(df_addr, var = "street", df_src = df)
 
 
 
@@ -68,60 +63,9 @@ df_test2 <- id_distinct_rows(df_test2, "street", "address_id")
 
 
 
-extracted <- stringr::str_match_all(df_test$street, regex_various[1,1])
-extracted <- lapply(extracted, "[", , 2)
-extracted <- lapply(extracted, function (x) replace(x, list = which(is.na(x)), values = ""))
-extracted <- lapply(extracted, paste, collapse = " ")
-unlist(extracted)
+debugonce(clean_address)
 
-
-
-debugonce(clean_street_address)
-
-df <- clean_street_address(df_test, type = "embed_punct")
-
-
-
-regex_various2 <- regex_various
-
-ref <- regex_various2[1,]
-
-pat <- stats::setNames(r, p)
-
-z <- "[[:punct:]\\s]*"
-punct <- paste0("(^", z, ")|(", z, "$)")
-
-df_test$street2 <- stringr::str_squish(
-  stringr::str_remove_all(
-    stringr::str_replace_all(
-      df_test$street,
-      stringr::regex(pat, ignore_case = TRUE)
-    ),
-    punct
-  )
-)
-
-
-
-
-
-
-
-
-
-
-
-
-df_addr <- readRDS("../bl_2023q2/data/addresses/df_addr_full.rds")
-
-df_addr <- df_addr %>%
-  distinct(address_id, .keep_all = T)
-
-df <- clean_street_address(df_addr, type = "pobox")
-
-debugonce(replace_values)
-
-df_addr2 <- replace_values(df_addr, var = "street", df_src = df)
+df <- clean_address(df_test, type = "embed_punct")
 
 
 
