@@ -11,7 +11,7 @@ clean_address(df, type, var = "street", row_id = "address_id")
 
 \item{type}{The type of cleaning to perform. One of \code{c("digit_char", "dir_street", "embed_punct", "house_frac", "nondigit", "nonres", "nth", "num_dir", "num_only", "num_word", "numsign", "phone", "pobox", "rep_seg", "symbol", "unit", "unknown")}.}
 
-\item{var}{A variable in \code{df} containing the targeted address component.}
+\item{var}{A variable in \code{df} containing the targeted address component. Defaults to \code{street}.}
 
 \item{row_id}{A unique row identifier variable in \code{df}. Defaults to \code{address_id}.}
 }
@@ -19,7 +19,7 @@ clean_address(df, type, var = "street", row_id = "address_id")
 A dataframe containing values that match the selected error pattern and the suggested replacements.
 }
 \description{
-This function cleans addresses by using regular expressions to match common error patterns. Each \code{type} option corresponds to a pattern in \code{address_regex} that targets text for removal and provides a suggestion for replacement. The function returns a dataframe with two new variables, \code{removed_text} and \code{replacement_text}, adjacent to the variable targeted for cleaning. Only rows containing values that match the error pattern are returned. The user should examine the returned dataframe to confirm, reject, or modify the suggested replacements and then use \code{\link[=replace_values]{replace_values()}} to apply the corrections to the original dataframe.
+This function cleans addresses by using regular expressions to match common error patterns. Each \code{type} option corresponds to a pattern in \code{etmstuff::address_regex} that targets certain text for removal and provides a suggestion for replacement. The function returns a dataframe with two new variables, \code{removed_text} and \code{replacement_text}, adjacent to the variable targeted for cleaning. Only rows containing values that match the error pattern are returned. The user should examine the returned dataframe to confirm, reject, or modify the suggested replacements. \code{\link[=replace_values]{replace_values()}} can be used to apply the corrections to the original dataframe.
 }
 \seealso{
 Other address processing functions: 
