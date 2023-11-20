@@ -1,15 +1,15 @@
 #' Clean dirty addresses
 #'
-#' This function cleans addresses by using regular expressions to match common error patterns. Each `type` option corresponds to a pattern in `address_regex` that targets text for removal and provides a suggestion for replacement. The function returns a dataframe with two new variables, `removed_text` and `replacement_text`, adjacent to the variable targeted for cleaning. Only rows containing values that match the error pattern are returned. The user should examine the returned dataframe to confirm, reject, or modify the suggested replacements and then use [replace_values()] to apply the corrections to the original dataframe.
+#' This function cleans addresses by using regular expressions to match common error patterns. Each `type` option corresponds to a pattern in `etmstuff::address_regex` that targets certain text for removal and provides a suggestion for replacement. The function returns a dataframe with two new variables, `removed_text` and `replacement_text`, adjacent to the variable targeted for cleaning. Only rows containing values that match the error pattern are returned. The user should examine the returned dataframe to confirm, reject, or modify the suggested replacements. [replace_values()] can be used to apply the corrections to the original dataframe.
 #'
 #' @param df A dataframe of addresses.
 #' ```{r echo=FALSE}
-#' types <- rownames(address_regex)
+#' types <- rownames(etmstuff::address_regex)
 #' types <- paste0('"', paste(types, collapse = '", "'), '"')
 #' types <- paste0("c(", types, ")")
 #' ```
 #' @param type The type of cleaning to perform. One of ``r types``.
-#' @param var A variable in `df` containing the targeted address component.
+#' @param var A variable in `df` containing the targeted address component. Defaults to `street`.
 #' @param row_id A unique row identifier variable in `df`. Defaults to `address_id`.
 #'
 #' @return A dataframe containing values that match the selected error pattern and the suggested replacements.
@@ -27,10 +27,10 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
   if (any(duplicated(df[row_id]))) stop("`row_id` is not a unique row identifier")
 
   # Load `ref` based on the selected `type`
-  if (type %in% rownames(address_regex)) {
-    ref <- address_regex[which(rownames(address_regex) == type), ]
+  if (type %in% rownames(etmstuff::address_regex)) {
+    ref <- etmstuff::address_regex[which(rownames(etmstuff::address_regex) == type), ]
   } else {
-    types <- rownames(address_regex)
+    types <- rownames(etmstuff::address_regex)
     m <- paste0("`type` must be one of c(", paste0('"', paste(types, collapse = '", "'), '"'), ")")
     stop(m, call. = FALSE)
   }
@@ -69,7 +69,7 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
 
   df$removed_text <- stringr::str_squish(extracted)
 
-  # Set replacement pattern
+  # Set find and replace patterns
   if (!is.na(ref$pattern_replace)) {
     p <- stats::setNames(ref$replacement, ref$pattern_replace)
   } else {
@@ -82,7 +82,7 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
     pattern = stringr::regex(p, ignore_case = TRUE)
   )
 
-  # Clean outer punctuation or extra spaces from replacement text
+  # Clean outer punctuation and extra spaces from replacement text
   df$replacement_text <- stringr::str_squish(
     stringr::str_remove_all(
       string = replacement_text,

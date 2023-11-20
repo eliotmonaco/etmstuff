@@ -1,4 +1,6 @@
-# `address_regex` used in `clean_street_address()`
+# Generates `address_regex` used in `clean_street_address()`
+
+
 
 ## Dataframe ####
 
@@ -289,4 +291,6 @@ address_regex["unknown",] <- c(p, NA, NA, "")
 
 address_regex$n_cap_gps <- as.numeric(address_regex$n_cap_gps)
 
-saveRDS(address_regex, "dev_aux/helpers/address_regex.rds")
+# saveRDS(address_regex, "dev_aux/helpers/address_regex.rds")
+
+usethis::use_data(address_regex, overwrite = T)

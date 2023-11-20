@@ -1,36 +1,34 @@
 # Generate internal data for package
 
-address_regex <- readRDS("dev_aux/helpers/address_regex.rds")
+# address_regex <- readRDS("dev_aux/helpers/address_regex.rds")
 directions <- readRDS("dev_aux/helpers/directions.rds")
 directions_cardinal <- readRDS("dev_aux/helpers/directions_cardinal.rds")
 directions_ordinal <- readRDS("dev_aux/helpers/directions_ordinal.rds")
-epitrax_date_vars <- readRDS("dev_aux/helpers/epitrax_date_vars.rds")
-epitrax_vars <- readRDS("dev_aux/helpers/epitrax_vars.rds")
-epitrax_vars_reordered <- readRDS("dev_aux/helpers/epitrax_vars_reordered.rds")
+# epitrax_date_vars <- readRDS("dev_aux/helpers/epitrax_date_vars.rds")
+# epitrax_vars <- readRDS("dev_aux/helpers/epitrax_vars.rds")
+# epitrax_vars_reordered <- readRDS("dev_aux/helpers/epitrax_vars_reordered.rds")
 ks_locations <- readRDS("dev_aux/helpers/ks_locations.rds")
 md_response_vars <- readRDS("dev_aux/helpers/md_response_vars.rds")
 regex_pobox <- readRDS("dev_aux/helpers/regex_pobox.rds")
 regex_various <- readRDS("dev_aux/helpers/regex_various.rds")
 street_names <- readRDS("dev_aux/helpers/street_names.rds")
 street_suffixes <- readRDS("dev_aux/helpers/street_suffixes.rds")
-styles_css <- readRDS("dev_aux/helpers/styles_css.rds")
 unit_prefixes <- readRDS("dev_aux/helpers/unit_prefixes.rds")
 
 usethis::use_data(
-  address_regex,
+  # address_regex,
   directions,
   directions_cardinal,
   directions_ordinal,
-  epitrax_date_vars,
-  epitrax_vars,
-  epitrax_vars_reordered,
+  # epitrax_date_vars,
+  # epitrax_vars,
+  # epitrax_vars_reordered,
   ks_locations,
   md_response_vars,
   regex_pobox,
   regex_various,
   street_names,
   street_suffixes,
-  styles_css,
   unit_prefixes,
   internal = TRUE,
   overwrite = TRUE
@@ -47,94 +45,6 @@ md_response_vars <- c(
 )
 
 saveRDS(md_response_vars, "dev_aux/helpers/md_response_vars.rds")
-
-
-
-# epitrax_vars_reordered ####
-
-epitrax_vars_reordered <- c(
-  # Record IDs
-  "lab_id", "lab_test_id", "accession_number",
-  # Person IDs & info
-  "patient_id", "patient_record_number",
-  "patient_birth_date", "age_at_event_date",
-  "person_last_name", "person_first_name", "person_middle_name",
-  # Lab test info
-  "lab_collection_date", "lab_result_value", "lab_units",
-  "lab_specimen_source", "lab_loinc_code", "lab_test_type",
-  "lab_name", "ordering_facility_name", "ordering_clinician",
-  # Demographic info
-  "patient_birth_sex", "patient_ethnicity", "patient_race",
-  "person_country_of_birth", "patient_pregnant",
-  # Address at lab collection
-  "lab_collection_street", "lab_collection_unit_number", "lab_collection_city",
-  "lab_collection_state", "lab_collection_postal_code","lab_collection_county",
-  # Jurisdiction
-  "patient_jurisdiction_of_investigation",
-  # Treatment
-  "treatment_name", "treatment_given", "treatment_date",
-  # Insurance
-  "bl_medicaid_eligible", "medicaid_id",
-  "blood_lead_poisoning_form_col_bl_funding_source",
-  # Status
-  "patient_state_case_status",
-  "patient_workflow_state",
-  "patient_event_disposition",
-  # Investigation dates
-  "first_investigation_started_date",
-  "lhd_investigation_start_date",
-  "first_accepted_by_lhd_date",
-  "patient_investigation_completed_lhd_date",
-  "last_investigation_completed_lhd_date",
-  "last_approved_by_lhd_date",
-  "last_routed_to_lhd_date",
-  "patient_results_reported_to_lhd",
-  "lhd_date_closed",
-  # Other addresses
-  "address_at_diagnosis_street", "address_at_diagnosis_unit_number", "address_at_diagnosis_city",
-  "address_at_diagnosis_state", "address_at_diagnosis_zip", "address_at_diagnosis_county",
-  "current_address_street", "current_address_unit_number", "current_address_city",
-  "current_address_state", "current_address_zip", "current_address_county",
-  # Other dates
-  "lab_test_date", "lab_created_at",
-  # Person facility
-  "person_facility_name", "person_facility_type", "person_facility_visit_type"
-)
-
-saveRDS(epitrax_vars_reordered, "dev_aux/helpers/epitrax_vars_reordered.rds")
-
-
-
-# epitrax_vars ####
-
-epitrax_vars <- c(
-  "accession_number", "address_at_diagnosis_city", "address_at_diagnosis_county", "address_at_diagnosis_state", "address_at_diagnosis_street", "address_at_diagnosis_unit_number", "address_at_diagnosis_zip", "age_at_event_date", "bl_medicaid_eligible", "blood_lead_poisoning_form_col_bl_funding_source", "current_address_city", "current_address_county", "current_address_state", "current_address_street", "current_address_unit_number", "current_address_zip", "first_accepted_by_lhd_date", "first_investigation_started_date", "lab_collection_city", "lab_collection_county", "lab_collection_date", "lab_collection_postal_code", "lab_collection_state", "lab_collection_street", "lab_collection_unit_number", "lab_created_at", "lab_id", "lab_loinc_code", "lab_name", "lab_result_value", "lab_specimen_source", "lab_test_date", "lab_test_id", "lab_test_type", "lab_units", "last_approved_by_lhd_date", "last_investigation_completed_lhd_date", "last_routed_to_lhd_date", "lhd_date_closed", "lhd_investigation_start_date", "medicaid_id", "ordering_clinician", "ordering_facility_name", "patient_birth_date", "patient_birth_sex", "patient_ethnicity", "patient_event_disposition", "patient_id", "patient_investigation_completed_lhd_date", "patient_jurisdiction_of_investigation", "patient_pregnant", "patient_race", "patient_record_number", "patient_results_reported_to_lhd", "patient_state_case_status", "patient_workflow_state", "person_country_of_birth", "person_facility_name", "person_facility_type", "person_facility_visit_type", "person_first_name", "person_last_name", "person_middle_name", "treatment_date", "treatment_given", "treatment_name"
-)
-
-saveRDS(epitrax_vars, "dev_aux/helpers/epitrax_vars.rds")
-
-
-
-# epitrax_date_vars ####
-
-epitrax_date_vars <- c(
-  "patient_birth_date",
-  "lab_collection_date",
-  "treatment_date",
-  "lab_test_date",
-  "lab_created_at",
-  "first_investigation_started_date",
-  "lhd_investigation_start_date",
-  "first_accepted_by_lhd_date",
-  "patient_investigation_completed_lhd_date",
-  "last_investigation_completed_lhd_date",
-  "last_approved_by_lhd_date",
-  "last_routed_to_lhd_date",
-  "patient_results_reported_to_lhd",
-  "lhd_date_closed"
-)
-
-saveRDS(epitrax_date_vars, "dev_aux/helpers/epitrax_date_vars.rds")
 
 
 

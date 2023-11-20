@@ -5,7 +5,7 @@
 #' * Adds a unique identifier (`record_id_src`) based on the values in the unmodified source file.
 #' * Adds a unique row identifier (`row_id_src`).
 #' * Formats all date variables as "YYYY-MM-DD".
-#' * Reorders the columns according to `epitrax_vars_reordered`.
+#' * Reorders the columns according to `etmstuff::epitrax_lead_vars[["ordered"]]`.
 #'
 #' @param df A dataframe.
 #' @param var_dates The EpiTrax date variables to format.
@@ -23,7 +23,7 @@
 #'
 # @examples
 #'
-config_epitrax <- function(df, var_dates = epitrax_date_vars, var_order = epitrax_vars_reordered) {
+config_epitrax <- function(df, var_dates = etmstuff::epitrax_lead_vars[["date"]], var_order = etmstuff::epitrax_lead_vars[["ordered"]]) {
   if (!assertive::is_data.frame(df)) stop("`df` must be a dataframe", call. = FALSE)
 
   var_check(df, var = var_order)
