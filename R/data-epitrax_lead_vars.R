@@ -2,11 +2,15 @@
 #'
 #' @name epitrax_lead_vars
 #'
-#' @description A list of vectors containing variables used in the lead data processing pipeline, including in [config_epitrax()].
+#' @description Variable names contained in the EpiTrax lead data export file. Used in [config_epitrax()]. The list contains three vectors:
+#'
+#' * `export`: All variable names in the EpiTrax export file
+#' * `ordered`: The order of variables for data processing
+#' * `date`: EpiTrax variables containing date values
 #'
 #' @usage epitrax_lead_vars
 #'
-#' @format A dataframe.
+#' @format A list of three vectors.
 #'
 #' @source Created for lead data processing.
 #'

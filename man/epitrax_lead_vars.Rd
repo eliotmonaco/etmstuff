@@ -5,7 +5,7 @@
 \alias{epitrax_lead_vars}
 \title{EpiTrax variables used in lead data processing}
 \format{
-A dataframe.
+A list of three vectors.
 }
 \source{
 Created for lead data processing.
@@ -14,6 +14,11 @@ Created for lead data processing.
 epitrax_lead_vars
 }
 \description{
-A list of vectors containing variables used in the lead data processing pipeline, including in \code{\link[=config_epitrax]{config_epitrax()}}.
+Variable names contained in the EpiTrax lead data export file. Used in \code{\link[=config_epitrax]{config_epitrax()}}. The list contains three vectors:
+\itemize{
+\item \code{export}: All variable names in the EpiTrax export file
+\item \code{ordered}: The order of variables for data processing
+\item \code{date}: EpiTrax variables containing date values
+}
 }
 \keyword{datasets}
