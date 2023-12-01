@@ -16,6 +16,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 #' @family address processing functions
 # @examples
@@ -32,7 +33,7 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
   } else {
     types <- rownames(etmstuff::address_regex)
     m <- paste0("`type` must be one of c(", paste0('"', paste(types, collapse = '", "'), '"'), ")")
-    stop(m, call. = FALSE)
+    stop(m)
   }
 
   # Filter out rows where the targeted variable contains NA
@@ -93,6 +94,6 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
   df$replacement_text[which(df$replacement_text == "")] <- NA
 
   df %>%
-    dplyr::filter(removed_text != "") %>%
-    dplyr::relocate(replacement_text, removed_text, .after = tidyselect::all_of(var))
+    dplyr::filter(.data$removed_text != "") %>%
+    dplyr::relocate("replacement_text", "removed_text", .after = tidyselect::all_of(var))
 }

@@ -62,7 +62,7 @@ pick_max_test_result <- function(df, eval = c("all_tests", "cfmd_preferred", "cf
       if (!silent) utils::setTxtProgressBar(pb, i)
     }
   } else {
-    stop('`eval` must be one of `c("all_tests", "cfmd_preferred", "cfmd_only")`', call. = FALSE)
+    stop('`eval` must be one of `c("all_tests", "cfmd_preferred", "cfmd_only")`')
   }
 
   if (!silent) close(pb)

@@ -21,7 +21,7 @@ my_xlsx <- function(x, file, ...) {
   } else if (is.list(x) && all(sapply(x, is.data.frame))) {
     if (all(sapply(x, nrow) == 0)) return(invisible(x))
   } else {
-    stop("`x` must be a dataframe or a list of dataframes", call. = FALSE)
+    stop("`x` must be a dataframe or a list of dataframes")
   }
 
   # Add ".xlsx" if not included in the file name

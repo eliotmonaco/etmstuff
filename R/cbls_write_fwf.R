@@ -1,4 +1,4 @@
-#' Create a CBLS FWF for submission
+#' Create a fixed-width file for the CBLS submission
 #'
 #' @param df A dataframe returned by one of the CBLS table functions and checked by [cbls_check_table()].
 #' @param path A string consisting of a file path and file name. Must end with `".txt"`.
@@ -14,7 +14,7 @@ cbls_write_fwf <- function(df, path) {
   var_check(df, var = c("FILEID", "ACTION", "QTR", "RPT_YR", "PGMID"))
 
   if (substr(path, nchar(path) - 3, nchar(path)) != ".txt") {
-    stop("`path` must end with \".txt\"", call. = FALSE)
+    stop("`path` must end with \".txt\"")
   }
 
   df <- df %>%

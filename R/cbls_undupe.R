@@ -9,6 +9,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 # @examples
 #'
@@ -21,7 +22,7 @@ cbls_undupe <- function(df, row_id) {
   ))
 
   if (!all(df$age < 6)) {
-    stop("`df$age` must be < 6 for all records", call. = FALSE)
+    stop("`df$age` must be < 6 for all records")
   }
 
   # Find duplicates based on `patient_id` and sample date
@@ -39,19 +40,19 @@ cbls_undupe <- function(df, row_id) {
   # Algorithm to resolve duplicate tests
   for (i in 1:nrow(dupe_ids)) {
     df2 <- df_dupesets %>%
-      dplyr::filter(cbls_dupe_id == dupe_ids$id[i])
+      dplyr::filter(.data$cbls_dupe_id == dupe_ids$id[i])
     if (any(df2$lab_specimen_source == "Blood - venous")) {
       # If samples are all venous, take the highest test result
       # If samples are mixed capillary and venous, take the (highest) venous
       df2 <- df2 %>%
-        dplyr::filter(lab_specimen_source == "Blood - venous") %>%
-        dplyr::slice_max(lab_result_number, n = 1, with_ties = FALSE)
+        dplyr::filter(.data$lab_specimen_source == "Blood - venous") %>%
+        dplyr::slice_max(.data$lab_result_number, n = 1, with_ties = FALSE)
       df_keep <- rbind(df_keep, df2)
     } else if (any(df2$lab_specimen_source == "Blood - capillary")) {
       # If the samples are all capillary, take the lowest test result
       df2 <- df2 %>%
-        dplyr::filter(lab_specimen_source == "Blood - capillary") %>%
-        dplyr::slice_min(lab_result_number, n = 1, with_ties = FALSE)
+        dplyr::filter(.data$lab_specimen_source == "Blood - capillary") %>%
+        dplyr::slice_min(.data$lab_result_number, n = 1, with_ties = FALSE)
       df_keep <- rbind(df_keep, df2)
     } else {
       m <- paste0(
@@ -63,12 +64,12 @@ cbls_undupe <- function(df, row_id) {
   }
 
   df_keep <- df_keep %>%
-    dplyr::select(-c(cbls_dupe_id, cbls_dupe_order)) %>%
+    dplyr::select(-c("cbls_dupe_id", "cbls_dupe_order")) %>%
     dplyr::mutate(cbls_duplicate = "true_keep")
 
   df_remove <- df_dupesets %>%
     dplyr::anti_join(df_keep, by = row_id) %>%
-    dplyr::select(-c(cbls_dupe_id, cbls_dupe_order)) %>%
+    dplyr::select(-c("cbls_dupe_id", "cbls_dupe_order")) %>%
     dplyr::mutate(cbls_duplicate = "true_remove")
 
   df_nondupes <- df %>%
@@ -77,5 +78,5 @@ cbls_undupe <- function(df, row_id) {
     dplyr::mutate(cbls_duplicate = "false")
 
   rbind(df_keep, df_remove, df_nondupes) %>%
-    dplyr::arrange(lab_collection_date, patient_id, cbls_duplicate)
+    dplyr::arrange(.data$lab_collection_date, .data$patient_id, .data$cbls_duplicate)
 }

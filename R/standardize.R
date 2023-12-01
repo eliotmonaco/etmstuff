@@ -26,7 +26,7 @@ standardize <- function(df,
   var_check(df, var = c(var, var_ignore))
 
   if (!is.null(var) & !is.null(var_ignore)) {
-    stop("Only one of `var` or `var_ignore` can be supplied", call. = FALSE)
+    stop("Only one of `var` or `var_ignore` can be supplied")
   } else if (is.null(var) & is.null(var_ignore)) {
     var <- colnames(df)
   } else if (is.null(var)) var <- colnames(df)[!colnames(df) %in% var_ignore]

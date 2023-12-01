@@ -4,14 +4,14 @@
 \alias{flatten_conflicts}
 \title{Flatten conflicting values for each variable in a dupeset}
 \usage{
-flatten_conflicts(df, var, dupe_id, sep = " | ", silent = FALSE)
+flatten_conflicts(df, var, dupe_id = "dupe_id", sep = " | ", silent = FALSE)
 }
 \arguments{
 \item{df}{A dataframe of dupesets (or the full data set) returned by \code{\link[=undupe]{undupe()}}.}
 
 \item{var}{A character vector of variable names in \code{df}.}
 
-\item{dupe_id}{The duplicate ID variable name, which groups all members of a duplicate set.}
+\item{dupe_id}{The variable name for the ID that groups all members of a duplicate set, created by \code{\link[=undupe]{undupe()}}. Defaults to \code{"dupe_id"}.}
 
 \item{sep}{A string to use as a separator between the aggregated values from a duplicate set. Defaults to \code{" | "}.}
 
@@ -42,7 +42,7 @@ df <- data.frame(
   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 )
 undp <- undupe(df, visible_var = c("x", "y"))
-df_flat <- flatten_conflicts(undp[["df_dupesets"]], var = "z", dupe_id = "dupe_id")
+df_flat <- flatten_conflicts(undp[["df_dupesets"]], var = "z")
 
 }
 \seealso{

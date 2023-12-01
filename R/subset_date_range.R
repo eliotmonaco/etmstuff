@@ -51,7 +51,7 @@ subset_date_range <- function(df, var, range) {
     } else if (q1 %in% 1:4) {
       t1 <- paste0(y1, q_dates[q1])
     } else {
-      stop("The quarter must be a digit from 1 to 4", call. = FALSE)
+      stop("The quarter must be a digit from 1 to 4")
     }
 
     if (is.na(q2) | q2 == 4) {
@@ -59,7 +59,7 @@ subset_date_range <- function(df, var, range) {
     } else if (q2 %in% 1:3) {
       t2 <- paste0(y2, q_dates[q2 + 1])
     } else {
-      stop("The quarter must be a digit from 1 to 4", call. = FALSE)
+      stop("The quarter must be a digit from 1 to 4")
     }
 
     # Includes t1 but not t2
@@ -81,7 +81,7 @@ subset_date_range <- function(df, var, range) {
       "- a single year (e.g., \"2023\") or year-quarter (e.g., \"2023q1\")\n",
       "- a year and/or year-quarter pair (start & end)\n",
       "- a pair (start & end) of dates (e.g., c(\"2022-02-02\", \"2023-03-03\"))"
-    ), call. = FALSE)
+    ))
   }
 
   if (nrow(df_subset) > 0) {

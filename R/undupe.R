@@ -30,6 +30,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 #' @family undupe functions
 #' @examples
@@ -39,22 +40,22 @@
 #'   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
 #'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 #' )
-#' undupe_list <- undupe(df, visible_var = c("x", "y"))
+#' undp <- undupe(df, visible_var = c("x", "y"))
 #'
 undupe <- function(df, visible_var = NULL, invisible_var = NULL, prefix = "dupe") {
   # Are both `visible_var` & `invisible_var` provided?
   if (!is.null(visible_var) & !is.null(invisible_var)) {
-    stop("Only one of `visible_var` or `invisible_var` can be provided", call. = F)
+    stop("Only one of `visible_var` or `invisible_var` can be provided")
     # Are both `visible_var` & `invisible_var` missing?
   } else if (is.null(visible_var) & is.null(invisible_var)) {
-    stop("One of `visible_var` or `invisible_var` must be provided", call. = F)
+    stop("One of `visible_var` or `invisible_var` must be provided")
   }
 
   id_var <- paste(prefix, "id", sep = "_")
   order_var <- paste(prefix, "order", sep = "_")
 
   if (any(c(id_var, order_var) %in% colnames(df))) {
-    stop("Provide a different `prefix`", call. = FALSE)
+    stop("Provide a different `prefix`")
   }
 
   var_check(df, var = c(visible_var, invisible_var))
@@ -90,8 +91,8 @@ undupe <- function(df, visible_var = NULL, invisible_var = NULL, prefix = "dupe"
   df_dupe_ids <- df %>%
     dplyr::group_by(.data[[id_var]]) %>%
     dplyr::count() %>%
-    dplyr::filter(n > 1) %>%
-    dplyr::select(-n) %>%
+    dplyr::filter(.data$n > 1) %>%
+    dplyr::select(-"n") %>%
     dplyr::ungroup()
 
   # Remove extra class attributes added in previous line
@@ -108,18 +109,17 @@ undupe <- function(df, visible_var = NULL, invisible_var = NULL, prefix = "dupe"
 
   if (nrow(df_dupesets) == 0) {
     return(message("No duplicates found"))
-    stop()
   }
 
   list(
     # Original dataframe
     df_full = df %>%
-      dplyr::select(-n_row),
+      dplyr::select(-"n_row"),
     # Distinct rows only
     df_distinct = df_distinct %>%
-      dplyr::select(-n_row),
+      dplyr::select(-"n_row"),
     # Dupesets only
     df_dupesets = df_dupesets %>%
-      dplyr::select(-n_row)
+      dplyr::select(-"n_row")
   )
 }

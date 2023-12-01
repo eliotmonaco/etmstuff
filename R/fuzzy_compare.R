@@ -15,6 +15,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 #' @examples
 #' df1 <- sim_address(nrow = 10)
@@ -31,6 +32,8 @@ fuzzy_compare <- function(df1, df2, fuzzy_var, exact_var = NULL, ignore_case = T
   var_check(df1, var = c(fuzzy_var, exact_var))
   var_check(df2, var = c(fuzzy_var, exact_var))
 
+  all_vars <- c(fuzzy_var, exact_var)
+
   # Convert variables being compared to character, and optionally to upper case
   if (ignore_case) {
     f <- function(x) {
@@ -43,16 +46,10 @@ fuzzy_compare <- function(df1, df2, fuzzy_var, exact_var = NULL, ignore_case = T
   }
 
   df1 <- df1 %>%
-    dplyr::mutate(dplyr::across(c(
-      tidyselect::all_of(fuzzy_var),
-      tidyselect::all_of(exact_var)
-    ), f))
+    dplyr::mutate(dplyr::across(tidyselect::all_of(all_vars), f))
 
   df2 <- df2 %>%
-    dplyr::mutate(dplyr::across(c(
-      tidyselect::all_of(fuzzy_var),
-      tidyselect::all_of(exact_var)
-    ), f))
+    dplyr::mutate(dplyr::across(tidyselect::all_of(all_vars), f))
 
   # Vector of names in `fuzzy_var` after inner_join(), to be used in unite()
   fzy1 <- paste0(fuzzy_var, "_1")
@@ -84,7 +81,7 @@ fuzzy_compare <- function(df1, df2, fuzzy_var, exact_var = NULL, ignore_case = T
         sep = " ",
         na.rm = TRUE
       ) %>%
-      dplyr::pull(c)
+      dplyr::pull("c")
 
     # Merge values in `fzy2`
     str2 <- match_list[[i]] %>%
@@ -94,14 +91,14 @@ fuzzy_compare <- function(df1, df2, fuzzy_var, exact_var = NULL, ignore_case = T
         sep = " ",
         na.rm = TRUE
       ) %>%
-      dplyr::pull(c)
+      dplyr::pull("c")
 
     # Score similarity of strings in `str1` & `str2`
     match_list[[i]]$sim_score <- stringdist::stringsim(str1, str2)
 
     match_list[[i]] <- match_list[[i]] %>%
-      dplyr::relocate(sim_score) %>%
-      dplyr::arrange(dplyr::desc(sim_score))
+      dplyr::relocate("sim_score") %>%
+      dplyr::arrange(dplyr::desc(.data$sim_score))
   }
 
   as.data.frame(do.call(rbind, match_list))

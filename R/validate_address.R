@@ -25,7 +25,7 @@ validate_address <- function(df, var, type = var, max_dist = 0.1) {
     ref <- etmstuff::ks_zipcodes
   } else {
     m <- '`type` must be one of c("city", "zip")'
-    stop(m, call. = FALSE)
+    stop(m)
   }
 
   # Filter values in `var` not found in `ref` (ignoring case)

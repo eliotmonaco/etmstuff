@@ -23,7 +23,7 @@
 #'
 create_bl_project <- function(data_range, parent_dir = "C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Documents/r_projects") {
   if (!dir.exists(parent_dir)) {
-    stop("`parent_dir` not found", call. = FALSE)
+    stop("`parent_dir` not found")
   }
 
   # Add "/" to end of `parent_dir` if it's not already the final character
@@ -36,7 +36,7 @@ create_bl_project <- function(data_range, parent_dir = "C:/Users/eliot.monaco/On
   # Check if `project_dir` already exists
   if (dir.exists(project_dir)) {
     m <- paste0("Directory already exists:\n", project_dir)
-    stop(m, call. = FALSE)
+    stop(m)
   }
 
   usethis::create_project(path = project_dir)

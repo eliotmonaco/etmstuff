@@ -8,8 +8,6 @@
 #' @return A numeric vector.
 #' @export
 #'
-#' @importFrom magrittr %>%
-#'
 #' @examples
 #' start <- sample(
 #'   seq.Date(
@@ -34,12 +32,12 @@
 calculate_age <- function(d1, d2) {
   # Check if vectors are formatted as dates
   if (!lubridate::is.Date(d1) | !lubridate::is.Date(d2)) {
-    stop("`d1` and `d2` must be formatted as dates", call. = FALSE)
+    stop("`d1` and `d2` must be formatted as dates")
   }
 
   # Check if vectors are the same length
   if (length(d1) != length(d2)) {
-    stop("`d1` and `d2` must be the same length", call. = FALSE)
+    stop("`d1` and `d2` must be the same length")
   }
 
   # Check for NAs

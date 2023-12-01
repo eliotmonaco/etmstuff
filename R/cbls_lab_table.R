@@ -10,6 +10,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 # @examples
 #'
@@ -26,14 +27,14 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
   ))
 
   if (!all(df$age < 6)) {
-    stop("`df$age` must be < 6 for all records", call. = FALSE)
+    stop("`df$age` must be < 6 for all records")
   }
 
   var_check(key, var = c("ACTION", "QTR", "RPT_YR", "PGMID"))
 
   # Add link variables and FILEID
   df_lab <- df %>%
-    dplyr::select(tidyselect::all_of(row_id), patient_id) %>%
+    dplyr::select(tidyselect::all_of(row_id), "patient_id") %>%
     dplyr::mutate(FILEID = "LAB")
 
   # Add basic format variables
@@ -114,9 +115,9 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
 
   df_lab_type <- df_lab_type %>%
     dplyr::mutate(LAB_TYPE = dplyr::case_when(
-      grepl(pattern = ",", x = lab_type_unq) ~ 9,
-      is.na(lab_type_unq) ~ 9,
-      TRUE ~ as.numeric(lab_type_unq)
+      grepl(pattern = ",", x = .data$lab_type_unq) ~ 9,
+      is.na(.data$lab_type_unq) ~ 9,
+      TRUE ~ as.numeric(.data$lab_type_unq)
     ))
 
   df_lab <- df_lab %>%
@@ -153,15 +154,15 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
 
   df_scrn_site <- df_scrn_site %>%
     dplyr::mutate(SCRN_SITE = dplyr::case_when(
-      grepl(pattern = ",", x = scrn_site_unq) ~ 9,
-      is.na(scrn_site_unq) ~ 9,
-      TRUE ~ as.numeric(scrn_site_unq)
+      grepl(pattern = ",", x = .data$scrn_site_unq) ~ 9,
+      is.na(.data$scrn_site_unq) ~ 9,
+      TRUE ~ as.numeric(.data$scrn_site_unq)
     ))
 
   df_lab <- df_lab %>%
     dplyr::left_join(
       df_scrn_site %>%
-        dplyr::select(tidyselect::all_of(row_id), SCRN_SITE),
+        dplyr::select(tidyselect::all_of(row_id), "SCRN_SITE"),
       by = row_id
     )
 
