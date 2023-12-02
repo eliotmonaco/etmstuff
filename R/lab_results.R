@@ -10,6 +10,7 @@
 #' @return A dataframe.
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 # @examples
 #'
@@ -58,8 +59,8 @@ clean_lab_results <- function(df, var) {
 
   df %>%
     dplyr::mutate(lab_result_clean = f(.data[[var]])) %>%
-    dplyr::mutate(lab_result_clean = stringr::str_remove_all(lab_result_clean, p)) %>%
-    dplyr::relocate(lab_result_clean, .after = tidyselect::all_of(var))
+    dplyr::mutate(lab_result_clean = stringr::str_remove_all(.data$lab_result_clean, p)) %>%
+    dplyr::relocate("lab_result_clean", .after = tidyselect::all_of(var))
 }
 
 #' @export
@@ -77,5 +78,5 @@ parse_lab_results <- function(df, var) {
   if (any(is.na(df$lab_result_number))) message("`lab_result_number` contains NAs")
 
   df %>%
-    dplyr::relocate(lab_result_symbol, lab_result_number, .after = tidyselect::all_of(var))
+    dplyr::relocate("lab_result_symbol", "lab_result_number", .after = tidyselect::all_of(var))
 }

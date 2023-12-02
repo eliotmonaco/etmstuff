@@ -1,14 +1,11 @@
 # Generate internal data for package
 
-# address_regex <- readRDS("dev_aux/helpers/address_regex.rds")
 directions <- readRDS("dev_aux/helpers/directions.rds")
 directions_cardinal <- readRDS("dev_aux/helpers/directions_cardinal.rds")
 directions_ordinal <- readRDS("dev_aux/helpers/directions_ordinal.rds")
-# epitrax_date_vars <- readRDS("dev_aux/helpers/epitrax_date_vars.rds")
-# epitrax_vars <- readRDS("dev_aux/helpers/epitrax_vars.rds")
-# epitrax_vars_reordered <- readRDS("dev_aux/helpers/epitrax_vars_reordered.rds")
 ks_locations <- readRDS("dev_aux/helpers/ks_locations.rds")
 md_response_vars <- readRDS("dev_aux/helpers/md_response_vars.rds")
+md_summarize <- readRDS("dev_aux/helpers/md_summarize.rds")
 regex_pobox <- readRDS("dev_aux/helpers/regex_pobox.rds")
 regex_various <- readRDS("dev_aux/helpers/regex_various.rds")
 street_names <- readRDS("dev_aux/helpers/street_names.rds")
@@ -16,13 +13,9 @@ street_suffixes <- readRDS("dev_aux/helpers/street_suffixes.rds")
 unit_prefixes <- readRDS("dev_aux/helpers/unit_prefixes.rds")
 
 usethis::use_data(
-  # address_regex,
   directions,
   directions_cardinal,
   directions_ordinal,
-  # epitrax_date_vars,
-  # epitrax_vars,
-  # epitrax_vars_reordered,
   ks_locations,
   md_response_vars,
   regex_pobox,

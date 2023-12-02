@@ -10,12 +10,17 @@ devtools::load_all()
 # stop ####
 
 
-
-
-
 # stop ####
 
 
+
+
+
+# md_results_table ####
+
+df_md <- readRDS("../bl_2023q3/data/addresses/df_md_response1.rds")
+
+md_results_table(df_md)
 
 
 
