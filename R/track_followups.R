@@ -9,6 +9,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 # @examples
 #'
@@ -64,10 +65,10 @@ get_followup_same_day <- function(df, test) {
   # 1) the current test is capillary, and 2) the same-day test is venous
   df %>%
     dplyr::filter(
-      patient_id == test$patient_id,
-      lab_collection_date == test$lab_collection_date,
-      lab_specimen_source == "Blood - venous",
-      dupe_id != test$dupe_id
+      .data$patient_id == test$patient_id,
+      .data$lab_collection_date == test$lab_collection_date,
+      .data$lab_specimen_source == "Blood - venous",
+      .data$dupe_id != test$dupe_id
     ) %>%
     dplyr::slice(1)
 }
@@ -79,17 +80,17 @@ get_followup <- function(df, test) {
       test$lab_result_number >= 3.5 & test$lab_result_number < 5) {
     df %>%
       dplyr::filter(
-        patient_id == test$patient_id,
-        lab_collection_date > test$lab_collection_date
+        .data$patient_id == test$patient_id,
+        .data$lab_collection_date > test$lab_collection_date
         ) %>%
-      dplyr::slice_min(lab_collection_date, n = 1, with_ties = FALSE)
+      dplyr::slice_min(.data$lab_collection_date, n = 1, with_ties = FALSE)
   } else {
     df %>%
       dplyr::filter(
-        patient_id == test$patient_id,
-        lab_collection_date > test$lab_collection_date,
-        lab_specimen_source == "Blood - venous"
+        .data$patient_id == test$patient_id,
+        .data$lab_collection_date > test$lab_collection_date,
+        .data$lab_specimen_source == "Blood - venous"
         ) %>%
-      dplyr::slice_min(lab_collection_date, n = 1, with_ties = FALSE)
+      dplyr::slice_min(.data$lab_collection_date, n = 1, with_ties = FALSE)
   }
 }

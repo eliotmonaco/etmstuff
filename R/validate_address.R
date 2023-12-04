@@ -1,6 +1,10 @@
 #' Validate address components
 #'
+#' @description
 #' This function checks an address component in `df$var` against elements in a reference list, e.g., cities in Kansas. If an exact match isn't found, it uses [agrep()] to find an approximate match or matches. The returned dataframe has one new column, `replacement_text`. Only rows without an exact match are returned. After visually confirming the results and making any needed adjustments to the returned dataframe, use [replace_values()] to substitute the value in `replacement_text` for the original value in `var`.
+#'
+#' @inheritSection pull_addresses Address validation workflow
+#' @inheritSection pull_addresses Melissa Data
 #'
 #' @param df A dataframe of addresses.
 #' @param var A variable name in `df` containing the address component to validate.
@@ -61,5 +65,5 @@ validate_address <- function(df, var, type = var, max_dist = 0.1) {
   )
 
   df2 %>%
-    dplyr::relocate(replacement_text, .after = tidyselect::all_of(var))
+    dplyr::relocate("replacement_text", .after = tidyselect::all_of(var))
 }

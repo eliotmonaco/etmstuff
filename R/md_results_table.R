@@ -1,6 +1,10 @@
 #' Count result codes in the Melissa Data response
 #'
+#' @description
 #' This function creates a table with counts of the result codes that are most relevant to the lead address validation and geocoding process. The following result codes or result code combinations are included: AS01, AS01 + AS23, AS01 + AS26, AS02, AS13, AE02, AE06, , , , , , ,
+#'
+#' @inheritSection pull_addresses Address validation workflow
+#' @inheritSection pull_addresses Melissa Data
 #'
 #' @param df A dataframe of Melissa Data responses returned by [md_batch_request()].
 #' @param var The variable containing result codes. The default is `"Results"`.

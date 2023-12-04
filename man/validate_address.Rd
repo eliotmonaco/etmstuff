@@ -21,11 +21,46 @@ A dataframe with a column of possible matches to replace the values in \code{var
 \description{
 This function checks an address component in \code{df$var} against elements in a reference list, e.g., cities in Kansas. If an exact match isn't found, it uses \code{\link[=agrep]{agrep()}} to find an approximate match or matches. The returned dataframe has one new column, \code{replacement_text}. Only rows without an exact match are returned. After visually confirming the results and making any needed adjustments to the returned dataframe, use \code{\link[=replace_values]{replace_values()}} to substitute the value in \code{replacement_text} for the original value in \code{var}.
 }
+\section{Address validation workflow}{
+
+\enumerate{
+\item Prepare addresses
+\itemize{
+\item \code{\link[=pull_addresses]{pull_addresses()}}
+}
+\item Clean addresses
+\itemize{
+\item \code{\link[=validate_address]{validate_address()}}
+\item \code{\link[=clean_address]{clean_address()}}
+\item \code{\link[=replace_values]{replace_values()}}
+}
+\item Validate/geocode addresses
+\itemize{
+\item \code{\link[=build_md_url]{build_md_url()}}
+\item \code{\link[=md_batch_request]{md_batch_request()}}
+}
+\item Review results
+\itemize{
+\item \code{\link[=md_results_table]{md_results_table()}}
+}
+}
+}
+
+\section{Melissa Data}{
+
+The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for requests are either of these value combinations:
+\itemize{
+\item \code{street}, \code{city}, and \code{state}
+\item \code{street} and \code{zip}
+}
+
+More information is at \url{https://wiki.melissadata.com/index.php?title=Personator_Consumer}.
+}
+
 \seealso{
 Other address processing functions: 
 \code{\link{build_md_url}()},
 \code{\link{clean_address}()},
-\code{\link{clean_street_address}()},
 \code{\link{md_request}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()}

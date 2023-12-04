@@ -21,10 +21,45 @@ A dataframe containing values that match the selected error pattern and the sugg
 \description{
 This function cleans addresses by using regular expressions to match common error patterns. Each \code{type} option corresponds to a pattern in \code{etmstuff::address_regex} that targets certain text for removal and provides a suggestion for replacement. The function returns a dataframe with two new variables, \code{removed_text} and \code{replacement_text}, adjacent to the variable targeted for cleaning. Only rows containing values that match the error pattern are returned. The user should examine the returned dataframe to confirm, reject, or modify the suggested replacements. \code{\link[=replace_values]{replace_values()}} can be used to apply the corrections to the original dataframe.
 }
+\section{Address validation workflow}{
+
+\enumerate{
+\item Prepare addresses
+\itemize{
+\item \code{\link[=pull_addresses]{pull_addresses()}}
+}
+\item Clean addresses
+\itemize{
+\item \code{\link[=validate_address]{validate_address()}}
+\item \code{\link[=clean_address]{clean_address()}}
+\item \code{\link[=replace_values]{replace_values()}}
+}
+\item Validate/geocode addresses
+\itemize{
+\item \code{\link[=build_md_url]{build_md_url()}}
+\item \code{\link[=md_batch_request]{md_batch_request()}}
+}
+\item Review results
+\itemize{
+\item \code{\link[=md_results_table]{md_results_table()}}
+}
+}
+}
+
+\section{Melissa Data}{
+
+The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for requests are either of these value combinations:
+\itemize{
+\item \code{street}, \code{city}, and \code{state}
+\item \code{street} and \code{zip}
+}
+
+More information is at \url{https://wiki.melissadata.com/index.php?title=Personator_Consumer}.
+}
+
 \seealso{
 Other address processing functions: 
 \code{\link{build_md_url}()},
-\code{\link{clean_street_address}()},
 \code{\link{md_request}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},

@@ -24,4 +24,4 @@ for (i in 1:nrow(df)) {
   df[i,] <- codes_list[[i]]
 }
 
-saveRDS(df, "dev_aux/helpers/md_summarize.rds")
+saveRDS(df, "data-raw/md_summarize.rds")

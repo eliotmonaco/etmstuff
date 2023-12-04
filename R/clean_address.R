@@ -1,6 +1,10 @@
 #' Clean dirty addresses
 #'
+#' @description
 #' This function cleans addresses by using regular expressions to match common error patterns. Each `type` option corresponds to a pattern in `etmstuff::address_regex` that targets certain text for removal and provides a suggestion for replacement. The function returns a dataframe with two new variables, `removed_text` and `replacement_text`, adjacent to the variable targeted for cleaning. Only rows containing values that match the error pattern are returned. The user should examine the returned dataframe to confirm, reject, or modify the suggested replacements. [replace_values()] can be used to apply the corrections to the original dataframe.
+#'
+#' @inheritSection pull_addresses Address validation workflow
+#' @inheritSection pull_addresses Melissa Data
 #'
 #' @param df A dataframe of addresses.
 #' ```{r echo=FALSE}

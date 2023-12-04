@@ -1,6 +1,6 @@
 #' Simulate addresses to test functions
 #'
-#' Create a dataframe of simulated addresses. Street names are from `street_names`, which is based on a list of the most common street names in the US. Cities and zip codes are from `ks_cities` and `ks_zipcodes`, which are the reference lists used to check those components in [validate_address()]. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using `sample()`. By setting `dirty = TRUE`, the function will alter values in `street`, `city`, and `zip` for the purpose of testing [validate_address()] and [clean_street_address()].
+#' Create a dataframe of simulated addresses. Street names are from `street_names`, which is based on a list of the most common street names in the US. Cities and zip codes are from `ks_cities` and `ks_zipcodes`, which are the reference lists used to check those components in [validate_address()]. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using `sample()`. By setting `dirty = TRUE`, the function will alter values in `street`, `city`, and `zip` for the purpose of testing [validate_address()] and [clean_address()].
 #'
 #' @param nrow An integer to set the number of rows in the output.
 #' @param dirty Logical: creates dirty data in `street`, `city`, and `zip` when set to `TRUE`.
@@ -9,6 +9,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 #' @examples
 #' df <- sim_address(nrow = 1000, dirty = TRUE)
@@ -21,13 +22,13 @@ sim_address <- function(nrow, dirty = FALSE) {
   )
 
   ks_locations <- ks_locations %>%
-    dplyr::filter(!stringr::str_detect(city, "Airport|University"))
+    dplyr::filter(!stringr::str_detect(.data$city, "Airport|University"))
 
   df <- df %>%
     dplyr::bind_cols(
       ks_locations[sample(1:nrow(ks_locations), size = nrow, replace = TRUE),]
     ) %>%
-    dplyr::select(street, unit, city, state, zip, county)
+    dplyr::select("street", "unit", "city", "state", "zip", "county")
 
   # Add dirty data to `df`
   if (dirty) {

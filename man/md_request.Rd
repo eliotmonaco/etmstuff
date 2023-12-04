@@ -25,15 +25,25 @@ These functions send the URL requests created by \code{\link[=build_md_url]{buil
 \section{Address validation workflow}{
 
 \enumerate{
+\item Prepare addresses
+\itemize{
 \item \code{\link[=pull_addresses]{pull_addresses()}}
+}
 \item Clean addresses
 \itemize{
 \item \code{\link[=validate_address]{validate_address()}}
-\item \code{\link[=clean_street_address]{clean_street_address()}}
+\item \code{\link[=clean_address]{clean_address()}}
 \item \code{\link[=replace_values]{replace_values()}}
 }
+\item Validate/geocode addresses
+\itemize{
 \item \code{\link[=build_md_url]{build_md_url()}}
 \item \code{\link[=md_batch_request]{md_batch_request()}}
+}
+\item Review results
+\itemize{
+\item \code{\link[=md_results_table]{md_results_table()}}
+}
 }
 }
 
@@ -52,7 +62,6 @@ More information is at \url{https://wiki.melissadata.com/index.php?title=Persona
 Other address processing functions: 
 \code{\link{build_md_url}()},
 \code{\link{clean_address}()},
-\code{\link{clean_street_address}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},
 \code{\link{validate_address}()}
@@ -60,7 +69,6 @@ Other address processing functions:
 Other address processing functions: 
 \code{\link{build_md_url}()},
 \code{\link{clean_address}()},
-\code{\link{clean_street_address}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},
 \code{\link{validate_address}()}
