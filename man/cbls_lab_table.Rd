@@ -13,9 +13,9 @@ cbls_lab_table(df, row_id, key, ref_lab_type, ref_scrn_site)
 
 \item{key}{A dataframe returned by \code{\link[=cbls_table_key]{cbls_table_key()}}.}
 
-\item{ref_lab_type}{A reference list of lab names and their classification numbers for the LAB_TYPE column in the Lab Results table.}
+\item{ref_lab_type}{A reference list of lab names and their classification numbers for the \code{LAB_TYPE} column in the Lab Results table.}
 
-\item{ref_scrn_site}{A reference list of facility names and their classification numbers for the SCRN_SITE column in the Lab Results table.}
+\item{ref_scrn_site}{A reference list of facility names and their classification numbers for the \code{SCRN_SITE} column in the Lab Results table.}
 }
 \value{
 A dataframe formatted as a Lab Results table per CBLS guidelines.

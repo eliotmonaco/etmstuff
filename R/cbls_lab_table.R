@@ -3,8 +3,8 @@
 #' @param df A dataframe of records prepared for CBLS submission.
 #' @param key A dataframe returned by [cbls_table_key()].
 #' @param row_id A unique row identifier variable in `df`.
-#' @param ref_lab_type A reference list of lab names and their classification numbers for the LAB_TYPE column in the Lab Results table.
-#' @param ref_scrn_site A reference list of facility names and their classification numbers for the SCRN_SITE column in the Lab Results table.
+#' @param ref_lab_type A reference list of lab names and their classification numbers for the `LAB_TYPE` column in the Lab Results table.
+#' @param ref_scrn_site A reference list of facility names and their classification numbers for the `SCRN_SITE` column in the Lab Results table.
 #'
 #' @return A dataframe formatted as a Lab Results table per CBLS guidelines.
 #' @export
@@ -123,7 +123,7 @@ cbls_lab_table <- function(df, row_id, key, ref_lab_type, ref_scrn_site) {
   df_lab <- df_lab %>%
     dplyr::left_join(
       df_lab_type %>%
-        dplyr::select(tidyselect::all_of(row_id), LAB_TYPE),
+        dplyr::select(tidyselect::all_of(row_id), "LAB_TYPE"),
       by = row_id
     )
 

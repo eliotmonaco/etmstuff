@@ -25,17 +25,17 @@ md_results_table <- function(df, var = "Results") {
       code = md_summarize$code,
       description = md_summarize$description,
       n = c(
-        sum(stringr::str_detect(Results, md_summarize$pattern[1]), na.rm = T),
-        sum(stringr::str_detect(Results, md_summarize$pattern[2]), na.rm = T),
-        sum(stringr::str_detect(Results, md_summarize$pattern[3]), na.rm = T),
-        sum(stringr::str_detect(Results, md_summarize$pattern[4]), na.rm = T),
-        sum(stringr::str_detect(Results, md_summarize$pattern[5]), na.rm = T),
-        sum(stringr::str_detect(Results, md_summarize$pattern[6]), na.rm = T),
-        sum(stringr::str_detect(Results, md_summarize$pattern[7]), na.rm = T),
-        sum(stringr::str_detect(Results, md_summarize$pattern[8]), na.rm = T),
-        sum(stringr::str_detect(Results, md_summarize$pattern[9]), na.rm = T),
-        sum(stringr::str_detect(Results, md_summarize$pattern[10]), na.rm = T),
-        sum(is.na(Results))
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[1]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[2]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[3]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[4]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[5]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[6]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[7]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[8]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[9]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[10]), na.rm = T),
+        sum(is.na(.data$Results))
       )
     ) %>%
     dplyr::mutate(pct = etmstuff::pct(.data$n, nrow(df))) %>%

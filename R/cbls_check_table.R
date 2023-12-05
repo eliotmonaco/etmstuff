@@ -152,7 +152,7 @@ cbls_check_table <- function(df) {
   }
 
   df <- df %>%
-    dplyr::select(-tidyselect::all_of(vars_key), -all_chars)
+    dplyr::select(-tidyselect::all_of(vars_key), -"all_chars")
 
   # Replace NA with FALSE
   df[is.na(df)] <- FALSE

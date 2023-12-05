@@ -18,7 +18,7 @@ cbls_write_fwf <- function(df, path) {
   }
 
   df <- df %>%
-    dplyr::select(FILEID:tidyselect::last_col())
+    dplyr::select("FILEID":tidyselect::last_col())
 
   gdata::write.fwf(
     df,

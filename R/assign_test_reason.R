@@ -23,6 +23,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 # @examples
 #'
@@ -38,7 +39,7 @@ assign_test_reason <- function(df, max_interval = 92, df_past = NULL, silent = F
   # Prep `df_target`
   df_target <- df %>%
     dplyr::select(tidyselect::all_of(vars)) %>%
-    dplyr::arrange(patient_id, lab_collection_date, lab_specimen_source) %>%
+    dplyr::arrange(.data$patient_id, .data$lab_collection_date, .data$lab_specimen_source) %>%
     dplyr::mutate(
       test_reason = NA,
       test_seq_alert = NA
@@ -49,7 +50,7 @@ assign_test_reason <- function(df, max_interval = 92, df_past = NULL, silent = F
     var_check(df_past, var = c(vars, vars_new))
     df_past <- df_past %>%
       dplyr::select(tidyselect::all_of(c(vars, vars_new))) %>%
-      dplyr::arrange(patient_id, lab_collection_date, lab_specimen_source)
+      dplyr::arrange(.data$patient_id, .data$lab_collection_date, .data$lab_specimen_source)
   }
 
   # Empty row for when no prior test is found (used in `get_prior_test()`)
@@ -79,12 +80,16 @@ assign_test_reason <- function(df, max_interval = 92, df_past = NULL, silent = F
     df_target[i, vars_new] <- df_target[i,] %>%
       dplyr::mutate(
         test_reason = fn_reason(
-          cur_src = lab_specimen_source, prior_src = prior_test$lab_specimen_source,
-          prior_rsn = prior_test$test_reason, prior_elev = prior_test$lab_result_elev
+          cur_src = .data$lab_specimen_source,
+          prior_src = prior_test$lab_specimen_source,
+          prior_rsn = prior_test$test_reason,
+          prior_elev = prior_test$lab_result_elev
         ),
         test_seq_alert = fn_seq_alert(
-          cur_src = lab_specimen_source, prior_src = prior_test$lab_specimen_source,
-          prior_rsn = prior_test$test_reason, prior_elev = prior_test$lab_result_elev
+          cur_src = .data$lab_specimen_source,
+          prior_src = prior_test$lab_specimen_source,
+          prior_rsn = prior_test$test_reason,
+          prior_elev = prior_test$lab_result_elev
         )
       ) %>%
       dplyr::select(tidyselect::all_of(vars_new))
@@ -121,7 +126,7 @@ assign_test_reason <- function(df, max_interval = 92, df_past = NULL, silent = F
   df %>%
     dplyr::left_join(
       df_target %>%
-        dplyr::select(dupe_id, tidyselect::all_of(vars_new)),
+        dplyr::select("dupe_id", tidyselect::all_of(vars_new)),
       by = "dupe_id"
     )
 }
@@ -129,7 +134,7 @@ assign_test_reason <- function(df, max_interval = 92, df_past = NULL, silent = F
 get_all_tests <- function(df1, df2 = NULL, row) {
   df1 %>%
     dplyr::bind_rows(df2) %>%
-    dplyr::filter(patient_id == df1$patient_id[row])
+    dplyr::filter(.data$patient_id == df1$patient_id[row])
 }
 
 get_prior_test <- function(df1, df2 = NULL, row, days, blank) {
@@ -137,27 +142,27 @@ get_prior_test <- function(df1, df2 = NULL, row, days, blank) {
   past_tests <- df1 %>%
     dplyr::bind_rows(df2) %>%
     dplyr::filter(
-      patient_id == df1$patient_id[row],
-      lab_collection_date <= df1$lab_collection_date[row],
-      lab_collection_date >= df1$lab_collection_date[row] - days,
-      dupe_id != df1$dupe_id[row]
+      .data$patient_id == df1$patient_id[row],
+      .data$lab_collection_date <= df1$lab_collection_date[row],
+      .data$lab_collection_date >= df1$lab_collection_date[row] - days,
+      .data$dupe_id != df1$dupe_id[row]
     )
 
   # Get all tests from most recent test date
   prior_test <- past_tests %>%
-    dplyr::slice_max(lab_collection_date, n = 1, with_ties = TRUE)
+    dplyr::slice_max(.data$lab_collection_date, n = 1, with_ties = TRUE)
 
   if (nrow(prior_test) > 1) {
     # If multiple tests are found on the prior test date...
     if ("Blood - venous" %in% prior_test$lab_specimen_source) {
       # If any venous are present, keep only venous, then keep the highest result
       prior_test <- prior_test %>%
-        dplyr::filter(lab_specimen_source == "Blood - venous") %>%
-        dplyr::slice_max(lab_result_number, n = 1, with_ties = FALSE)
+        dplyr::filter(.data$lab_specimen_source == "Blood - venous") %>%
+        dplyr::slice_max(.data$lab_result_number, n = 1, with_ties = FALSE)
     } else {
       # If only capillary are present, keep the highest result
       prior_test <- prior_test %>%
-        dplyr::slice_max(lab_result_number, n = 1, with_ties = FALSE)
+        dplyr::slice_max(.data$lab_result_number, n = 1, with_ties = FALSE)
     }
   }
 
@@ -170,8 +175,8 @@ get_prior_test <- function(df1, df2 = NULL, row, days, blank) {
         (prior_test$lab_specimen_source != "Blood - capillary" | df1$lab_specimen_source[row] != "Blood - venous")) {
       # If the test is same-day, the prior test must be capillary and the current test must be venous, otherwise look on an earlier day
       prior_test <- past_tests %>%
-        dplyr::filter(lab_collection_date < df1$lab_collection_date[row]) %>%
-        dplyr::slice_max(lab_collection_date, n = 1, with_ties = TRUE)
+        dplyr::filter(.data$lab_collection_date < df1$lab_collection_date[row]) %>%
+        dplyr::slice_max(.data$lab_collection_date, n = 1, with_ties = TRUE)
       if (nrow(prior_test) == 0) {
         # If no other prior test is found, fill the prior test with NAs
         prior_test <- blank
@@ -179,11 +184,11 @@ get_prior_test <- function(df1, df2 = NULL, row, days, blank) {
         # Same reduction logic as above
         if ("Blood - venous" %in% prior_test$lab_specimen_source) {
           prior_test <- prior_test %>%
-            dplyr::filter(lab_specimen_source == "Blood - venous") %>%
-            dplyr::slice_max(lab_result_number, n = 1, with_ties = FALSE)
+            dplyr::filter(.data$lab_specimen_source == "Blood - venous") %>%
+            dplyr::slice_max(.data$lab_result_number, n = 1, with_ties = FALSE)
         } else {
           prior_test <- prior_test %>%
-            dplyr::slice_max(lab_result_number, n = 1, with_ties = FALSE)
+            dplyr::slice_max(.data$lab_result_number, n = 1, with_ties = FALSE)
         }
       }
     }

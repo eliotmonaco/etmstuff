@@ -41,14 +41,17 @@ usps_lookup <- function(df, street = "street", unit = "unit", city = "city", sta
   if (!is.null(row_id)) {
     df_usps <- data.frame(matrix(nrow = 0, ncol = 10))
     colnames(df_usps) <- c(
-      row_id, "n_row_src", "n_result", "street", "city",
-      "state", "zip5", "zip4", "county", "DPV"
+      row_id,
+      "n_row_src", "n_result",
+      "street", "city", "state",
+      "zip5", "zip4", "county", "DPV"
     )
   } else {
     df_usps <- data.frame(matrix(nrow = 0, ncol = 9))
     colnames(df_usps) <- c(
-      "n_row_src", "n_result", "street", "city",
-      "state", "zip5", "zip4", "county", "DPV"
+      "n_row_src", "n_result",
+      "street", "city", "state",
+      "zip5", "zip4", "county", "DPV"
     )
   }
 
@@ -80,15 +83,18 @@ usps_lookup_shiny <- function(df) {
     row_id <- colnames(df)[which(!colnames(df) %in% vars_addr)]
     df_usps <- data.frame(matrix(nrow = 0, ncol = 10))
     colnames(df_usps) <- c(
-      row_id, "n_row_src", "n_result", "street", "city",
-      "state", "zip5", "zip4", "county", "DPV"
+      row_id,
+      "n_row_src", "n_result",
+      "street", "city", "state",
+      "zip5", "zip4", "county", "DPV"
     )
   } else {
     row_id <- NULL
     df_usps <- data.frame(matrix(nrow = 0, ncol = 9))
     colnames(df_usps) <- c(
-      "n_row_src", "n_result", "street", "city",
-      "state", "zip5", "zip4", "county", "DPV"
+      "n_row_src", "n_result",
+      "street", "city", "state",
+      "zip5", "zip4", "county", "DPV"
     )
   }
 
@@ -96,11 +102,11 @@ usps_lookup_shiny <- function(df) {
     df_usps <- usps_lookup_loop(
       input = df,
       output = df_usps,
-      street = street,
-      unit = unit,
-      city = city,
-      state = state,
-      zip = zip,
+      street = "street",
+      unit = "unit",
+      city = "city",
+      state = "state",
+      zip = "zip",
       row_id = row_id,
       shiny = TRUE
     )
