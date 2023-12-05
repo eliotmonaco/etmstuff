@@ -36,30 +36,56 @@ check_lab_results <- function(df, var) {
 #' @export
 #' @rdname lab_results
 #' @family lab result processing functions
+# clean_lab_results <- function(df, var) {
+#   var_check(df, var = c("lab_result_value", var))
+#
+#   # Replace or remove text in results
+#   f <- function(var) {
+#     dplyr::case_when(
+#       # Replace "not/none detected" with "< 1.0"
+#       stringr::str_detect(var, stringr::regex("(not|none) detected", ignore_case = TRUE)) ~ "< 1.0",
+#       # Remove units ("mcg/dL" and "ug/dL")
+#       stringr::str_detect(var, stringr::regex("(mc|u)g/dl", ignore_case = TRUE)) ~
+#         stringr::str_remove_all(var, stringr::regex("(mc|u)g/dl", ignore_case = TRUE)),
+#       # If ">" operator precedes a number below 3.5, replace it with "<"
+#       stringr::str_detect(var, "^>") & as.numeric(stringr::str_remove(var, ">")) < 3.5 ~
+#         stringr::str_replace(var, ">", "<"),
+#       T ~ var
+#     )
+#   }
+#
+#   # Characters to remove: "=" (first character), spaces, punctuation or "`" (last character)
+#   p <- paste("^=", "\\s", "([:punct:]|`)$", sep = "|")
+#
+#   df %>%
+#     dplyr::mutate(lab_result_clean = f(.data[[var]])) %>%
+#     dplyr::mutate(lab_result_clean = stringr::str_remove_all(.data$lab_result_clean, p)) %>%
+#     dplyr::relocate("lab_result_clean", .after = tidyselect::all_of(var))
+# }
+
 clean_lab_results <- function(df, var) {
   var_check(df, var = c("lab_result_value", var))
 
-  # Replace or remove text in results
-  f <- function(var) {
-    dplyr::case_when(
-      # Replace "not/none detected" with "< 1.0"
-      stringr::str_detect(var, stringr::regex("(not|none) detected", ignore_case = TRUE)) ~ "< 1.0",
-      # Remove units ("mcg/dL" and "ug/dL")
-      stringr::str_detect(var, stringr::regex("(mc|u)g/dl", ignore_case = TRUE)) ~
-        stringr::str_remove_all(var, stringr::regex("(mc|u)g/dl", ignore_case = TRUE)),
-      # If ">" operator precedes a number below 3.5, replace it with "<"
-      stringr::str_detect(var, "^>") & as.numeric(stringr::str_remove(var, ">")) < 3.5 ~
-        stringr::str_replace(var, ">", "<"),
-      T ~ var
-    )
-  }
-
-  # Characters to remove: "=" (first character), spaces, punctuation or "`" (last character)
-  p <- paste("^=", "\\s", "([:punct:]|`)$", sep = "|")
-
   df %>%
-    dplyr::mutate(lab_result_clean = f(.data[[var]])) %>%
-    dplyr::mutate(lab_result_clean = stringr::str_remove_all(.data$lab_result_clean, p)) %>%
+    # Replace "not/none detected" with "< 1.0"
+    dplyr::mutate(lab_result_clean = dplyr::if_else(
+      stringr::str_detect(.data[[var]], stringr::regex("(not|none) detected", ignore_case = TRUE)),
+      true = "< 1.0",
+      false = .data[[var]]
+    )) %>%
+    # Remove units ("mcg/dL" and "ug/dL")
+    dplyr::mutate(lab_result_clean = stringr::str_remove_all(.data$lab_result_clean, stringr::regex("(mc|u)g/dl", ignore_case = TRUE))) %>%
+    # If ">" operator precedes a number below 3.5, replace it with "<"
+    dplyr::mutate(lab_result_clean = dplyr::if_else(
+      stringr::str_detect(.data$lab_result_clean, "^>") &
+        suppressWarnings(as.numeric(stringr::str_remove(.data$lab_result_clean, ">"))) < 3.5,
+      true = stringr::str_replace(.data$lab_result_clean, ">", "<"),
+      false = .data$lab_result_clean
+    )) %>%
+    # Remove "=" (as first character), any spaces, punctuation or "`" (as last character)
+    dplyr::mutate(lab_result_clean = stringr::str_remove_all(
+      .data$lab_result_clean,
+      paste("^=", "\\s", "([:punct:]|`)$", sep = "|"))) %>%
     dplyr::relocate("lab_result_clean", .after = tidyselect::all_of(var))
 }
 
@@ -73,9 +99,9 @@ parse_lab_results <- function(df, var) {
   df$lab_result_symbol <- stringr::str_extract(df[[var]], "^(<|>)")
 
   # Extract number
-  df$lab_result_number <- as.numeric(stringr::str_remove(df[[var]], "^(<|>)"))
+  df$lab_result_number <- suppressWarnings(as.numeric(stringr::str_remove(df[[var]], "^(<|>)")))
 
-  if (any(is.na(df$lab_result_number))) message("`lab_result_number` contains NAs")
+  if (any(is.na(df$lab_result_number))) warning("`lab_result_number` contains NAs")
 
   df %>%
     dplyr::relocate("lab_result_symbol", "lab_result_number", .after = tidyselect::all_of(var))

@@ -694,18 +694,18 @@ epitrax_data$age <- calculate_age(
 
 # lab_results functions ####
 
-df <- check_lab_results(epitrax_data, var = "lab_result_value")
+devtools::load_all()
 
-epitrax_data_cln <- clean_lab_results(epitrax_data, var = "lab_result_value")
+df <- check_lab_results(data_lab, var = "lab_result_value")
 
-df <- check_lab_results(epitrax_data_cln, var = "lab_result_clean")
+# data_cln <- clean_lab_results(df, var = "lab_result_value")
 
-debugonce(parse_lab_results)
-epitrax_data_cln <- parse_lab_results(epitrax_data_cln, var = "lab_result_clean")
+data_cln <- clean_lab_results(data_lab, var = "lab_result_value")
 
+df <- check_lab_results(data_cln, var = "lab_result_clean")
 
-
-df <- pull_addresses(epitrax_data, row_id = "src_row_id")
+# debugonce(parse_lab_results)
+data_cln <- parse_lab_results(data_cln, var = "lab_result_clean")
 
 
 
