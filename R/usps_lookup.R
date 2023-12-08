@@ -115,7 +115,6 @@ usps_lookup_shiny <- function(df) {
   df_usps
 }
 
-# usps_lookup_loop <- function(input, row_id = NULL, output, shiny = FALSE) {
 usps_lookup_loop <- function(input, output, street, unit, city, state, zip, row_id = NULL, shiny = FALSE) {
   df <- input
   df_usps <- output
