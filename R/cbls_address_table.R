@@ -8,6 +8,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 # @examples
 #'
@@ -15,48 +16,48 @@ cbls_address_table <- function(df, key, registry) {
   var_check(df, var = "address_registry_id")
 
   if (!all(df$age < 6)) {
-    stop("`df$age` must be < 6 for all records", call. = FALSE)
+    stop("`df$age` must be < 6 for all records")
   }
 
   var_check(key, var = c("ACTION", "QTR", "RPT_YR", "PGMID"))
 
   df <- df %>%
-    dplyr::filter(address_registry_id != "00000000")
+    dplyr::filter(.data$address_registry_id != "00000000")
 
   registry <- registry %>%
-    dplyr::distinct(address_registry_id, .keep_all = TRUE)
+    dplyr::distinct(.data$address_registry_id, .keep_all = TRUE)
 
   df_add <- df %>%
-    dplyr::select(address_registry_id) %>%
+    dplyr::select("address_registry_id") %>%
     dplyr::distinct() %>%
     dplyr::left_join(registry, by = "address_registry_id") %>%
     dplyr::select(
-      ADDR_ID = address_registry_id,
-      CITY = City,
-      CNTY_FIPS = CountyFIPS,
-      ZIP = PostalCode,
-      STATE = State,
-      CENSUS = CensusTract
+      ADDR_ID = "address_registry_id",
+      CITY = "City",
+      CNTY_FIPS = "CountyFIPS",
+      ZIP = "PostalCode",
+      STATE = "State",
+      CENSUS = "CensusTract"
     ) %>%
     dplyr::mutate(
       FILEID = "ADD",
       CITY = substr(
         stringr::str_pad(
-          toupper(CITY),
+          toupper(.data$CITY),
           width = 15,
           side = "right",
           pad = " "
         ), 1, 15
       ),
-      CNTY_FIPS = substr(CNTY_FIPS, 3, 5),
+      CNTY_FIPS = substr(.data$CNTY_FIPS, 3, 5),
       ZIP = stringr::str_pad(
-        sub("-", "", ZIP),
+        sub("-", "", .data$ZIP),
         width = 9,
         side = "right",
         pad = " "
       ),
       CENSUS = stringr::str_pad(
-        CENSUS,
+        .data$CENSUS,
         width = 7,
         side = "right",
         pad = " "
@@ -67,7 +68,7 @@ cbls_address_table <- function(df, key, registry) {
   df_add <- df_add %>%
     dplyr::bind_cols(key) %>%
     dplyr::select(
-      FILEID,
+      "FILEID",
       tidyselect::all_of(colnames(key)),
       tidyselect::everything()
     )

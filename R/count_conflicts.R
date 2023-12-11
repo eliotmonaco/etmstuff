@@ -11,6 +11,7 @@
 #' For a more detailed explanation of deduplication, see the [undupe()] documentation.
 #'
 #' @param df A dataframe of dupesets returned by [undupe()].
+#' @param dupe_id The variable name for the ID that groups all members of a duplicate set, created by [undupe()]. Defaults to `"dupe_id"`.
 #' @param ignore_empty Logical: omit blank strings and `NA`s when finding conflicts if `TRUE`.
 #' @param silent Logical: silence progress indicator if `TRUE`.
 #'
@@ -21,6 +22,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 #' @family undupe functions
 #' @examples
@@ -30,27 +32,27 @@
 #'   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
 #'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 #' )
-#' undupe <- undupe(df, visible_var = c("x", "y"))
-#' df_count <- count_conflicts(undupe[["df_dupesets"]])
+#' undp <- undupe(df, visible_var = c("x", "y"))
+#' df_count <- count_conflicts(undp[["df_dupesets"]])
 #'
-count_conflicts <- function(df, ignore_empty = TRUE, silent = FALSE) {
-  var_check(df, var = "dupe_id")
+count_conflicts <- function(df, dupe_id = "dupe_id", ignore_empty = TRUE, silent = FALSE) {
+  var_check(df, var = dupe_id)
 
   # Vector of unique `dupe_id`s
-  dupe_ids <- unique(df$dupe_id)
+  dupe_ids <- unique(df[[dupe_id]])
 
   # Find the row sequence matching each `dupe_id` value
   f_seq <- function(x) {
-    which(df$dupe_id == dupe_ids[x])
+    which(df[[dupe_id]] == dupe_ids[x])
   }
 
   # Get the list of all duplicate sequences
   seq <- sapply(X = 1:length(dupe_ids), FUN = f_seq)
 
   if ("dupe_order" %in% colnames(df)) {
-    var_rm <- c("dupe_id", "dupe_order")
+    var_rm <- c(dupe_id, "dupe_order")
   } else {
-    var_rm <- "dupe_id"
+    var_rm <- dupe_id
   }
 
   # Remove columns that shouldn't be counted
@@ -92,7 +94,7 @@ count_conflicts <- function(df, ignore_empty = TRUE, silent = FALSE) {
 
   # Add percentage variable to `df_ct`
   df_ct <- df_ct %>%
-    dplyr::mutate(pct = round(n / length(dupe_ids) * 100, digits = 2))
+    dplyr::mutate(pct = etmstuff::pct(.data$n, length(dupe_ids)))
 
   df_ct
 }

@@ -5,7 +5,7 @@
 #' * Adds a unique identifier (`record_id_src`) based on the values in the unmodified source file.
 #' * Adds a unique row identifier (`row_id_src`).
 #' * Formats all date variables as "YYYY-MM-DD".
-#' * Reorders the columns according to `etmstuff::epitrax_lead_vars[["ordered"]]`.
+#' * Reorders the columns according to `etmstuff::epitrax_lead_vars$ordered`.
 #'
 #' @param df A dataframe.
 #' @param var_dates The EpiTrax date variables to format.
@@ -20,11 +20,12 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 # @examples
 #'
-config_epitrax <- function(df, var_dates = etmstuff::epitrax_lead_vars[["date"]], var_order = etmstuff::epitrax_lead_vars[["ordered"]]) {
-  if (!is.data.frame(df)) stop("`df` must be a dataframe", call. = FALSE)
+config_epitrax <- function(df, var_dates = etmstuff::epitrax_lead_vars$date, var_order = etmstuff::epitrax_lead_vars$ordered) {
+  if (!is.data.frame(df)) stop("`df` must be a dataframe")
 
   var_check(df, var = var_order)
 
@@ -36,7 +37,7 @@ config_epitrax <- function(df, var_dates = etmstuff::epitrax_lead_vars[["date"]]
       paste(vars_other, collapse = ", "),
       "\nAdd to `var_order` argument."
     )
-    stop(m, call. = FALSE)
+    stop(m)
   }
 
   # Reorder variables
@@ -70,8 +71,8 @@ config_epitrax <- function(df, var_dates = etmstuff::epitrax_lead_vars[["date"]]
 
   # Sort by `lab_collection_date` & `lab_id`, and relocate `row_id_src`
   df <- df %>%
-    dplyr::arrange(lab_collection_date, lab_id) %>%
-    dplyr::relocate(row_id_src)
+    dplyr::arrange(.data$lab_collection_date, .data$lab_id) %>%
+    dplyr::relocate("row_id_src")
 
   message(
     "Configuration complete\n",
@@ -81,15 +82,9 @@ config_epitrax <- function(df, var_dates = etmstuff::epitrax_lead_vars[["date"]]
   )
 
   list(
-    # `data` contains all variables, reordered
-    data = df,
-    # `keys` contains ID variables only
-    keys = df %>%
-      dplyr::select(
-        row_id_src,
-        patient_id,
-        patient_record_number,
-        record_id_src) %>%
+    data = df, # Contains all variables, reordered
+    keys = df %>% # Contains ID variables only
+      dplyr::select("row_id_src", "patient_id", "patient_record_number", "record_id_src") %>%
       dplyr::mutate(timestamp = Sys.time())
   )
 }

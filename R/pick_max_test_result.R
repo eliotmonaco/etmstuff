@@ -31,6 +31,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 # @examples
 #'
@@ -39,7 +40,7 @@ pick_max_test_result <- function(df, eval = c("all_tests", "cfmd_preferred", "cf
 
   # Unique `patient_id`s
   pid <- df %>%
-    dplyr::distinct(patient_id) %>%
+    dplyr::distinct(.data$patient_id) %>%
     dplyr::pull()
 
   if (!silent) pb <- utils::txtProgressBar(1, length(pid), width = 50, style = 3)
@@ -62,7 +63,7 @@ pick_max_test_result <- function(df, eval = c("all_tests", "cfmd_preferred", "cf
       if (!silent) utils::setTxtProgressBar(pb, i)
     }
   } else {
-    stop('`eval` must be one of `c("all_tests", "cfmd_preferred", "cfmd_only")`', call. = FALSE)
+    stop('`eval` must be one of `c("all_tests", "cfmd_preferred", "cfmd_only")`')
   }
 
   if (!silent) close(pb)
@@ -74,9 +75,9 @@ pick_max_test_result <- function(df, eval = c("all_tests", "cfmd_preferred", "cf
 max_result_all <- function(df, id) {
   # Keep all tests from `df` where `patient_id` is `id`
   df %>%
-    dplyr::filter(patient_id == id) %>%
+    dplyr::filter(.data$patient_id == id) %>%
     dplyr::slice_max(
-      lab_result_number,
+      .data$lab_result_number,
       n = 1,
       with_ties = FALSE
     )
@@ -93,14 +94,14 @@ max_result_cfmd_pref <- function(df, id) {
 
   # Keep all tests from `df` where `patient_id` is `id`
   df <- df %>%
-    dplyr::filter(patient_id == id)
+    dplyr::filter(.data$patient_id == id)
 
   if (any(df$test_reason %in% rsn_cfmd)) {
     # If any results are confirmed, drop unconfirmed results, and keep the highest confirmed result
     df %>%
-      dplyr::filter(test_reason %in% rsn_cfmd) %>%
+      dplyr::filter(.data$test_reason %in% rsn_cfmd) %>%
       dplyr::slice_max(
-        lab_result_number,
+        .data$lab_result_number,
         n = 1,
         with_ties = FALSE
       )
@@ -108,7 +109,7 @@ max_result_cfmd_pref <- function(df, id) {
     # If no results are confirmed, keep the highest unconfirmed result
     df %>%
       dplyr::slice_max(
-        lab_result_number,
+        .data$lab_result_number,
         n = 1,
         with_ties = FALSE
       )
@@ -127,11 +128,11 @@ max_result_cfmd_only <- function(df, id) {
   # Keep only tests with confirmed results from `df` where `patient_id` is `id`
   df %>%
     dplyr::filter(
-      patient_id == id,
-      test_reason %in% rsn_cfmd
+      .data$patient_id == id,
+      .data$test_reason %in% rsn_cfmd
     ) %>%
     dplyr::slice_max(
-      lab_result_number,
+      .data$lab_result_number,
       n = 1,
       with_ties = FALSE
     )

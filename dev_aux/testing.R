@@ -10,12 +10,17 @@ devtools::load_all()
 # stop ####
 
 
-
-
-
 # stop ####
 
 
+
+
+
+# md_results_table ####
+
+df_md <- readRDS("../bl_2023q3/data/addresses/df_md_response1.rds")
+
+md_results_table(df_md)
 
 
 
@@ -689,18 +694,18 @@ epitrax_data$age <- calculate_age(
 
 # lab_results functions ####
 
-df <- check_lab_results(epitrax_data, var = "lab_result_value")
+devtools::load_all()
 
-epitrax_data_cln <- clean_lab_results(epitrax_data, var = "lab_result_value")
+df_test <- df_test_lrv
 
-df <- check_lab_results(epitrax_data_cln, var = "lab_result_clean")
+df <- check_lab_results(df_test, var = "lab_result_value")
 
-debugonce(parse_lab_results)
-epitrax_data_cln <- parse_lab_results(epitrax_data_cln, var = "lab_result_clean")
+df_test <- clean_lab_results(df_test, var = "lab_result_value")
 
+df <- check_lab_results(df_test, var = "lab_result_clean")
 
-
-df <- pull_addresses(epitrax_data, row_id = "src_row_id")
+# debugonce(parse_lab_results)
+df_test <- parse_lab_results(df_test, var = "lab_result_clean")
 
 
 

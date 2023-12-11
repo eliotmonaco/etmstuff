@@ -2,18 +2,54 @@
 % Please edit documentation in R/md_results_table.R
 \name{md_results_table}
 \alias{md_results_table}
-\title{Tally addresses sent to Melissa Data by result code}
+\title{Count result codes in the Melissa Data response}
 \usage{
 md_results_table(df, var = "Results")
 }
 \arguments{
-\item{df}{A dataframe of Melissa Data responses.}
+\item{df}{A dataframe of Melissa Data responses returned by \code{\link[=md_batch_request]{md_batch_request()}}.}
 
-\item{var}{The variable containing result codes. The default is \code{Results}.}
+\item{var}{The variable containing result codes. The default is \code{"Results"}.}
 }
 \value{
 A dataframe tallying addresses by certain Melissa Data result codes.
 }
 \description{
-This function takes a dataframe of Melissa Data responses returned by \code{\link[=md_batch_request]{md_batch_request()}} and returns a table tallying the responses by result codes that are relevant for the lead address validation and geocoding process.
+This function creates a table with counts of the result codes that are most relevant to the lead address validation and geocoding process. The following result codes or result code combinations are included: AS01, AS01 + AS23, AS01 + AS26, AS02, AS13, AE02, AE06, , , , , , ,
 }
+\section{Address validation workflow}{
+
+\enumerate{
+\item Prepare addresses
+\itemize{
+\item \code{\link[=pull_addresses]{pull_addresses()}}
+}
+\item Clean addresses
+\itemize{
+\item \code{\link[=validate_address]{validate_address()}}
+\item \code{\link[=clean_address]{clean_address()}}
+\item \code{\link[=replace_values]{replace_values()}}
+}
+\item Validate/geocode addresses
+\itemize{
+\item \code{\link[=build_md_url]{build_md_url()}}
+\item \code{\link[=md_batch_request]{md_batch_request()}}
+}
+\item Review results
+\itemize{
+\item \code{\link[=md_results_table]{md_results_table()}}
+}
+}
+}
+
+\section{Melissa Data}{
+
+The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for requests are either of these value combinations:
+\itemize{
+\item \code{street}, \code{city}, and \code{state}
+\item \code{street} and \code{zip}
+}
+
+More information is at \url{https://wiki.melissadata.com/index.php?title=Personator_Consumer}.
+}
+

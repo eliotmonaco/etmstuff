@@ -1,14 +1,19 @@
-#' Tally addresses sent to Melissa Data by result code
+#' Count result codes in the Melissa Data response
 #'
-#' This function takes a dataframe of Melissa Data responses returned by [md_batch_request()] and returns a table tallying the responses by result codes that are relevant for the lead address validation and geocoding process.
+#' @description
+#' This function creates a table with counts of the result codes that are most relevant to the lead address validation and geocoding process. The following result codes or result code combinations are included: AS01, AS01 + AS23, AS01 + AS26, AS02, AS13, AE02, AE06, , , , , , ,
 #'
-#' @param df A dataframe of Melissa Data responses.
-#' @param var The variable containing result codes. The default is `Results`.
+#' @inheritSection pull_addresses Address validation workflow
+#' @inheritSection pull_addresses Melissa Data
+#'
+#' @param df A dataframe of Melissa Data responses returned by [md_batch_request()].
+#' @param var The variable containing result codes. The default is `"Results"`.
 #'
 #' @return A dataframe tallying addresses by certain Melissa Data result codes.
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 # @examples
 #'
@@ -17,47 +22,27 @@ md_results_table <- function(df, var = "Results") {
 
   df %>%
     dplyr::reframe(
-      code = c(
-        "AS01",        # 1
-        "AS01 + AS23", # 2
-        "AS01 + AS26", # 3
-        "AS02",        # 4
-        "AS13",        # 5
-        "AE02",        # 6
-        "AE06",        # 7
-        "AC02",        # 8
-        "AC20",        # 9
-        "NA"           # 10
-      ),
-      description = c(
-        "valid address",                                 # 1
-        "valid address + extraneous street information", # 2
-        "valid address + unidentified data",             # 3
-        "street only match",                             # 4
-        "address updated by LACS",                       # 5
-        "unknown street",                                # 6
-        "early warning system",                          # 7
-        "administrative area change",                    # 8
-        "house number change",                           # 9
-        "no response from Melissa Data"                  # 10
-      ),
+      code = md_summarize$code,
+      description = md_summarize$description,
       n = c(
-        sum(stringr::str_detect(Results, "AS01(?!(.{1,50}AS23)|(.{1,50}AS26))"), na.rm = T), # 1
-        sum(stringr::str_detect(Results, "AS01(?=.{1,50}AS23)"), na.rm = T),                 # 2
-        sum(stringr::str_detect(Results, "AS01(?=.{1,50}AS26)"), na.rm = T),                 # 3
-        sum(stringr::str_detect(Results, "AS02"), na.rm = T),                                # 4
-        sum(stringr::str_detect(Results, "AS13"), na.rm = T),                                # 5
-        sum(stringr::str_detect(Results, "AE02"), na.rm = T),                                # 6
-        sum(stringr::str_detect(Results, "AE06"), na.rm = T),                                # 7
-        sum(stringr::str_detect(Results, "AC02"), na.rm = T),                                # 8
-        sum(stringr::str_detect(Results, "AC20"), na.rm = T),                                # 9
-        sum(is.na(Results))                                                                  # 10
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[1]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[2]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[3]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[4]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[5]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[6]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[7]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[8]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[9]), na.rm = T),
+        sum(stringr::str_detect(.data$Results, md_summarize$pattern[10]), na.rm = T),
+        sum(is.na(.data$Results))
       )
     ) %>%
-    dplyr::mutate(pct = etmstuff::pct(n, nrow(df))) %>%
+    dplyr::mutate(pct = etmstuff::pct(.data$n, nrow(df))) %>%
     dplyr::rename(
-      "MD result code" = code,
-      "addresses (n)" = n,
-      "addresses (pct)" = pct
+      "MD result code" = "code",
+      "Description" = "description",
+      "Addresses (n)" = "n",
+      "Addresses (pct)" = "pct"
     )
 }

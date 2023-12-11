@@ -35,7 +35,7 @@ clean_street_address <- function(df, type, var = "street", row_id = "address_id"
   } else {
     types <- sort(c("pobox", "ordinal_dir", rownames(regex_various)))
     m <- paste0("`type` must be one of c(", paste0('"', paste(types, collapse = '", "'), '"'), ")")
-    stop(m, call. = FALSE)
+    stop(m)
   }
 
   df2 <- df %>%

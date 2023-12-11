@@ -9,7 +9,7 @@
 #'
 #' @param df A dataframe of dupesets (or the full data set) returned by [undupe()].
 #' @param var A character vector of variable names in `df`.
-#' @param dupe_id The duplicate ID variable name, which groups all members of a duplicate set.
+#' @param dupe_id The variable name for the ID that groups all members of a duplicate set, created by [undupe()]. Defaults to `"dupe_id"`.
 #' @param sep A string to use as a separator between the aggregated values from a duplicate set. Defaults to `" | "`.
 #' @param silent Logical: silence progress indicator if `TRUE`.
 #'
@@ -27,9 +27,9 @@
 #'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 #' )
 #' undp <- undupe(df, visible_var = c("x", "y"))
-#' df_flat <- flatten_conflicts(undp[["df_dupesets"]], var = "z", dupe_id = "dupe_id")
+#' df_flat <- flatten_conflicts(undp[["df_dupesets"]], var = "z")
 #'
-flatten_conflicts <- function(df, var, dupe_id, sep = " | ", silent = FALSE) {
+flatten_conflicts <- function(df, var, dupe_id = "dupe_id", sep = " | ", silent = FALSE) {
   var_check(df, var = c(var, dupe_id))
 
   # List of unique `dupe_id` values

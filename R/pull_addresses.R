@@ -5,13 +5,17 @@
 #'
 #' @section Address validation workflow:
 #'
-#' 1. [pull_addresses()]
+#' 1. Prepare addresses
+#'     - [pull_addresses()]
 #' 2. Clean addresses
 #'     - [validate_address()]
-#'     - [clean_street_address()]
+#'     - [clean_address()]
 #'     - [replace_values()]
-#' 3. [build_md_url()]
-#' 4. [md_batch_request()]
+#' 3. Validate/geocode addresses
+#'     - [build_md_url()]
+#'     - [md_batch_request()]
+#' 4. Review results
+#'     - [md_results_table()]
 #'
 #' @section Melissa Data:
 #' The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for requests are either of these value combinations:
@@ -28,6 +32,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 #' @family address processing functions
 # @examples
@@ -41,19 +46,19 @@ pull_addresses <- function(df, row_id) {
 
   df %>%
     dplyr::mutate(
-      street = stringr::str_squish(lab_collection_street),
-      unit = stringr::str_squish(lab_collection_unit_number),
-      city = stringr::str_squish(lab_collection_city),
-      state = stringr::str_squish(lab_collection_state),
-      zip = stringr::str_squish(lab_collection_postal_code),
-      county = stringr::str_squish(lab_collection_county)
+      street = stringr::str_squish(.data$lab_collection_street),
+      unit = stringr::str_squish(.data$lab_collection_unit_number),
+      city = stringr::str_squish(.data$lab_collection_city),
+      state = stringr::str_squish(.data$lab_collection_state),
+      zip = stringr::str_squish(.data$lab_collection_postal_code),
+      county = stringr::str_squish(.data$lab_collection_county)
     ) %>%
-    dplyr::mutate(street_src = street) %>%
+    dplyr::mutate(street_src = .data$street) %>%
     dplyr::select(
       tidyselect::all_of(row_id),
-      street_src,
-      street, unit, city, state, zip, county
+      "street_src",
+      "street", "unit", "city", "state", "zip", "county"
     ) %>%
     # Remove insufficient addresses
-    dplyr::filter(!is.na(street) & (!is.na(city) | !is.na(zip)))
+    dplyr::filter(!is.na(.data$street) & (!is.na(.data$city) | !is.na(.data$zip)))
 }

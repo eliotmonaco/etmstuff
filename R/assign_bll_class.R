@@ -8,6 +8,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 # @examples
 #'
@@ -17,13 +18,13 @@ assign_bll_class <- function(df) {
   # Create BLL classes
   df <- df %>%
     dplyr::mutate(bll_class = dplyr::case_when(
-      lab_result_number                             <  3.5 ~ 1,
-      lab_result_number >=  3.5 & lab_result_number <  5   ~ 2,
-      lab_result_number >=  5   & lab_result_number < 10   ~ 3,
-      lab_result_number >= 10   & lab_result_number < 15   ~ 4,
-      lab_result_number >= 15   & lab_result_number < 25   ~ 5,
-      lab_result_number >= 25   & lab_result_number < 45   ~ 6,
-      lab_result_number >= 45                              ~ 7
+      .data$lab_result_number                                   <  3.5 ~ 1,
+      .data$lab_result_number >=  3.5 & .data$lab_result_number <  5   ~ 2,
+      .data$lab_result_number >=  5   & .data$lab_result_number < 10   ~ 3,
+      .data$lab_result_number >= 10   & .data$lab_result_number < 15   ~ 4,
+      .data$lab_result_number >= 15   & .data$lab_result_number < 25   ~ 5,
+      .data$lab_result_number >= 25   & .data$lab_result_number < 45   ~ 6,
+      .data$lab_result_number >= 45                                    ~ 7
     ))
 
   # Convert `bll_class` to factor

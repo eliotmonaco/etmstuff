@@ -9,6 +9,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 # @examples
 #'
@@ -18,12 +19,12 @@ flag_elevated_results <- function(df, blrv) {
   df %>%
     dplyr::mutate(
       lab_result_elev = dplyr::case_when( # TRUE = elevated BLL; FALSE = non-elevated BLL
-        is.na(lab_result_symbol) & lab_result_number < blrv ~ FALSE,
-        is.na(lab_result_symbol) & lab_result_number >= blrv ~ TRUE,
-        lab_result_symbol == "<" & lab_result_number <= blrv ~ FALSE,
-        lab_result_symbol == "<" & lab_result_number > blrv ~ NA,
-        lab_result_symbol == ">" & lab_result_number < blrv ~ NA,
-        lab_result_symbol == ">" & lab_result_number >= blrv ~ TRUE
+        is.na(.data$lab_result_symbol) & .data$lab_result_number < blrv ~ FALSE,
+        is.na(.data$lab_result_symbol) & .data$lab_result_number >= blrv ~ TRUE,
+        .data$lab_result_symbol == "<" & .data$lab_result_number <= blrv ~ FALSE,
+        .data$lab_result_symbol == "<" & .data$lab_result_number > blrv ~ NA,
+        .data$lab_result_symbol == ">" & .data$lab_result_number < blrv ~ NA,
+        .data$lab_result_symbol == ">" & .data$lab_result_number >= blrv ~ TRUE
       ),
       bl_ref_val = blrv
     )

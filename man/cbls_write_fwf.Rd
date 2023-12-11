@@ -2,7 +2,7 @@
 % Please edit documentation in R/cbls_write_fwf.R
 \name{cbls_write_fwf}
 \alias{cbls_write_fwf}
-\title{Create a CBLS FWF for submission}
+\title{Create a fixed-width file for the CBLS submission}
 \usage{
 cbls_write_fwf(df, path)
 }
@@ -15,5 +15,5 @@ cbls_write_fwf(df, path)
 A fixed-width file written by \code{\link[gdata:write.fwf]{gdata::write.fwf()}} exported to the path specified.
 }
 \description{
-Create a CBLS FWF for submission
+Create a fixed-width file for the CBLS submission
 }

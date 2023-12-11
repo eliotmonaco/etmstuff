@@ -15,7 +15,7 @@
 #'
 pct <- function(n, total, dec = 1) {
   if (!is.numeric(n) | !is.numeric(total) | dec != round(dec)) {
-    stop("`n` and `total` must be numeric, and `dec` must be an integer", call. = FALSE)
+    stop("`n` and `total` must be numeric, and `dec` must be an integer")
   }
 
   round(n * 100 / total, digits = dec)

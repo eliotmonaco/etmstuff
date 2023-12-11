@@ -7,6 +7,7 @@
 #'
 #' @param df A dataframe of dupesets returned by [undupe()].
 #' @param var A character vector of variable names in `df`.
+#' @param dupe_id The variable name for the ID that groups all members of a duplicate set, created by [undupe()]. Defaults to `"dupe_id"`.
 #' @param ignore_empty Logical: omit blank strings and `NA`s when finding conflicts if `TRUE`.
 #' @param silent Logical: silence progress indicator if `TRUE`.
 #'
@@ -21,18 +22,18 @@
 #'   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
 #'   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 #' )
-#' undupe <- undupe(df, visible_var = c("x", "y"))
-#' df_isolated <- isolate_conflicts(undupe[["df_dupesets"]], var = "z")
+#' undp <- undupe(df, visible_var = c("x", "y"))
+#' df_isolated <- isolate_conflicts(undp[["df_dupesets"]], var = "z")
 #'
-isolate_conflicts <- function(df, var, ignore_empty = TRUE, silent = FALSE) {
-  var_check(df, var = c("dupe_id", var))
+isolate_conflicts <- function(df, var, dupe_id = "dupe_id", ignore_empty = TRUE, silent = FALSE) {
+  var_check(df, var = c(dupe_id, var))
 
   # Vector of unique `dupe_id`s
-  dupe_ids <- unique(df$dupe_id)
+  dupe_ids <- unique(df[[dupe_id]])
 
   # Find the row sequence matching each `dupe_id` value
   f_seq <- function(x) {
-    which(df$dupe_id == dupe_ids[x])
+    which(df[[dupe_id]] == dupe_ids[x])
   }
 
   # Get the list of all duplicate sequences

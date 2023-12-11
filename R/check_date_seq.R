@@ -9,6 +9,8 @@
 #' @return If any dates are out of sequence, a dataframe containing the affected rows is returned. Only the `row_id` and `dates` variables are returned from `df`.
 #' @export
 #'
+#' @importFrom magrittr %>%
+#'
 #' @examples
 #' rows <- 100
 #'
@@ -56,7 +58,6 @@ check_date_seq <- function(df, dates, row_id = NULL) {
 
   if (nrow(df) == 0) {
     return(message("Dates are in the expected sequence in all rows"))
-    stop()
   }
 
   df

@@ -23,7 +23,7 @@ my_xl_table <- function(df, file, style_cols = NULL, as_table = TRUE, sheet = "S
   if (is.data.frame(df)) {
     if (nrow(df) == 0) return(invisible(df))
   } else {
-    stop("`df` must be a dataframe", call. = FALSE)
+    stop("`df` must be a dataframe")
   }
 
   # Add ".xlsx" if not included in the file name

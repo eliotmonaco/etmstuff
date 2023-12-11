@@ -48,7 +48,7 @@ df <- data.frame(
   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 )
-undupe_list <- undupe(df, visible_var = c("x", "y"))
+undp <- undupe(df, visible_var = c("x", "y"))
 
 }
 \seealso{

@@ -16,16 +16,12 @@
 #' @examples
 #' prox_check(105, 100)
 #'
-prox_check <- function(x,
-                       y,
-                       pct = 5,
-                       n = 2,
-                       side = "both") {
+prox_check <- function(x, y, pct = 5, n = 2, side = "both") {
   if (!is.numeric(x) |
     !is.numeric(y) |
     !is.numeric(pct) |
     !is.numeric(n)) {
-    stop("`x`, `y`, `pct`, & `n` must be numeric", call. = FALSE)
+    stop("`x`, `y`, `pct`, & `n` must be numeric")
   }
 
   pct_above <- x >= y & x <= y + y * (pct / 100)
@@ -40,6 +36,6 @@ prox_check <- function(x,
   } else if (side == "below") {
     pct_below | n_below
   } else {
-    stop('`side` must be one of c("both", "above", "below")', call. = FALSE)
+    stop('`side` must be one of c("both", "above", "below")')
   }
 }

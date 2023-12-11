@@ -4,12 +4,20 @@
 \alias{isolate_conflicts}
 \title{Focus on dupesets with conflicting values in selected variables}
 \usage{
-isolate_conflicts(df, var, ignore_empty = TRUE, silent = FALSE)
+isolate_conflicts(
+  df,
+  var,
+  dupe_id = "dupe_id",
+  ignore_empty = TRUE,
+  silent = FALSE
+)
 }
 \arguments{
 \item{df}{A dataframe of dupesets returned by \code{\link[=undupe]{undupe()}}.}
 
 \item{var}{A character vector of variable names in \code{df}.}
+
+\item{dupe_id}{The variable name for the ID that groups all members of a duplicate set, created by \code{\link[=undupe]{undupe()}}. Defaults to \code{"dupe_id"}.}
 
 \item{ignore_empty}{Logical: omit blank strings and \code{NA}s when finding conflicts if \code{TRUE}.}
 
@@ -37,8 +45,8 @@ df <- data.frame(
   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 )
-undupe <- undupe(df, visible_var = c("x", "y"))
-df_isolated <- isolate_conflicts(undupe[["df_dupesets"]], var = "z")
+undp <- undupe(df, visible_var = c("x", "y"))
+df_isolated <- isolate_conflicts(undp[["df_dupesets"]], var = "z")
 
 }
 \seealso{

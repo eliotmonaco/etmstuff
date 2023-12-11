@@ -7,6 +7,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 # @examples
 #'
@@ -27,75 +28,75 @@ cbls_investigation_table <- function(df, key) {
   df_inv <- df %>%
     dplyr::mutate(
       FILEID = "INV",
-      DATE_REF = gsub("-", "", DATE_REF),
+      DATE_REF = gsub("-", "", .data$DATE_REF),
       INSP_COMP = dplyr::if_else(
-        is.na(INSP_COMP),
+        is.na(.data$INSP_COMP),
         true = strrep(" ", 8),
-        false = gsub("-", "", INSP_COMP)
+        false = gsub("-", "", .data$INSP_COMP)
       ),
       ABAT_COMP = dplyr::if_else(
-        is.na(ABAT_COMP),
+        is.na(.data$ABAT_COMP),
         true = strrep(" ", 8),
-        false = gsub("-", "", ABAT_COMP)
+        false = gsub("-", "", .data$ABAT_COMP)
       ),
       YEAR = dplyr::if_else(
-        is.na(YEAR),
+        is.na(.data$YEAR),
         true = strrep(" ", 4),
-        false = as.character(YEAR)
+        false = as.character(.data$YEAR)
       ),
-      OWNERSHIP = substr(OWNERSHIP, 1, 1),
-      DWELL_TYPE = substr(DWELL_TYPE, 1, 1),
-      PAINT_HAZ = substr(PAINT_HAZ, 1, 1),
+      OWNERSHIP = substr(.data$OWNERSHIP, 1, 1),
+      DWELL_TYPE = substr(.data$DWELL_TYPE, 1, 1),
+      PAINT_HAZ = substr(.data$PAINT_HAZ, 1, 1),
       XRF = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", XRF)), digits = 1), nsmall = 1, trim = TRUE),
+        format(round(as.numeric(sub("<", "", .data$XRF)), digits = 1), nsmall = 1, trim = TRUE),
         width = 5, side = "left", pad = "0"
       ),
       DUST_FLOOR = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", DUST_FLOOR)), digits = 1), nsmall = 1, trim = TRUE),
+        format(round(as.numeric(sub("<", "", .data$DUST_FLOOR)), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"
       ),
       FLOOR_MSR = dplyr::case_when(
-        grepl("ug", FLOOR_MSR) ~ "U",
-        grepl("ppm", FLOOR_MSR) ~ "P",
+        grepl("ug", .data$FLOOR_MSR) ~ "U",
+        grepl("ppm", .data$FLOOR_MSR) ~ "P",
         TRUE ~ " "
       ),
       DUST_SILL = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", DUST_SILL)), digits = 1), nsmall = 1, trim = TRUE),
+        format(round(as.numeric(sub("<", "", .data$DUST_SILL)), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"
       ),
       SILL_MSR = dplyr::case_when(
-        grepl("ug", SILL_MSR) ~ "U",
-        grepl("ppm", SILL_MSR) ~ "P",
+        grepl("ug", .data$SILL_MSR) ~ "U",
+        grepl("ppm", .data$SILL_MSR) ~ "P",
         TRUE ~ " "
       ),
       DUST_WELL = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", DUST_WELL)), digits = 1), nsmall = 1, trim = TRUE),
+        format(round(as.numeric(sub("<", "", .data$DUST_WELL)), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"
       ),
       WELL_MSR = dplyr::case_when(
-        grepl("ug", WELL_MSR) ~ "U",
-        grepl("ppm", WELL_MSR) ~ "P",
+        grepl("ug", .data$WELL_MSR) ~ "U",
+        grepl("ppm", .data$WELL_MSR) ~ "P",
         TRUE ~ " "
       ),
       PAINT = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", PAINT)), digits = 1), nsmall = 1, trim = TRUE),
+        format(round(as.numeric(sub("<", "", .data$PAINT)), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"
       ),
       PAINT_MSR = dplyr::case_when(
-        grepl("ug", PAINT_MSR) ~ "U",
-        grepl("ppm", PAINT_MSR) ~ "P",
-        grepl("mg", PAINT_MSR) ~ "M",
+        grepl("ug", .data$PAINT_MSR) ~ "U",
+        grepl("ppm", .data$PAINT_MSR) ~ "P",
+        grepl("mg", .data$PAINT_MSR) ~ "M",
         TRUE ~ " "
       ),
       SOIL = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", SOIL)), digits = 1), nsmall = 1, trim = TRUE),
+        format(round(as.numeric(sub("<", "", .data$SOIL)), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"
       ),
       WATER = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", WATER)), digits = 1), nsmall = 1, trim = TRUE),
+        format(round(as.numeric(sub("<", "", .data$WATER)), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"
       ),
-      INDHAZ = substr(INDHAZ, 1, 1),
+      INDHAZ = substr(.data$INDHAZ, 1, 1),
       DATE_DUE = strrep(" ", 8),
       INV_CLOS_RES = strrep(" ", 1),
       CLEAR_DATE = strrep(" ", 8),
@@ -103,47 +104,47 @@ cbls_investigation_table <- function(df, key) {
     ) %>%
     dplyr::mutate(
       XRF = dplyr::if_else(
-        XRF == "000NA",
+        .data$XRF == "000NA",
         true = "000.0",
-        false = XRF
+        false = .data$XRF
       ),
       DUST_FLOOR = dplyr::if_else(
-        DUST_FLOOR == "000000NA",
+        .data$DUST_FLOOR == "000000NA",
         true = "000000.0",
-        false = DUST_FLOOR
+        false = .data$DUST_FLOOR
       ),
       DUST_SILL = dplyr::if_else(
-        DUST_SILL == "000000NA",
+        .data$DUST_SILL == "000000NA",
         true = "000000.0",
-        false = DUST_SILL
+        false = .data$DUST_SILL
       ),
       DUST_WELL = dplyr::if_else(
-        DUST_WELL == "000000NA",
+        .data$DUST_WELL == "000000NA",
         true = "000000.0",
-        false = DUST_WELL
+        false = .data$DUST_WELL
       ),
       PAINT = dplyr::if_else(
-        PAINT == "000000NA",
+        .data$PAINT == "000000NA",
         true = "000000.0",
-        false = PAINT
+        false = .data$PAINT
       ),
       SOIL = dplyr::if_else(
-        SOIL == "000000NA",
+        .data$SOIL == "000000NA",
         true = "000000.0",
-        false = SOIL
+        false = .data$SOIL
       ),
       WATER = dplyr::if_else(
-        WATER == "000000NA",
+        .data$WATER == "000000NA",
         true = "000000.0",
-        false = WATER
+        false = .data$WATER
       )
     ) %>%
     dplyr::bind_cols(key) %>%
     dplyr::select(
-      FILEID,
+      "FILEID",
       tidyselect::all_of(colnames(key)),
       tidyselect::all_of(toupper(vars_inv)),
-      DATE_DUE, INV_CLOS_RES, CLEAR_DATE, CLEAR_RSLT
+      "DATE_DUE", "INV_CLOS_RES", "CLEAR_DATE", "CLEAR_RSLT"
     )
 
   df_inv

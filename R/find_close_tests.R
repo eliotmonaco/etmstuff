@@ -10,6 +10,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 # @examples
 #'
@@ -21,7 +22,7 @@ find_close_tests <- function(df, days, silent = FALSE) {
 
   var_check(df, var = vars)
 
-  if (days != round(days)) stop("`days` must be an integer", call. = FALSE)
+  if (days != round(days)) stop("`days` must be an integer")
 
   df <- df %>%
     dplyr::select(tidyselect::all_of(vars))
@@ -35,14 +36,14 @@ find_close_tests <- function(df, days, silent = FALSE) {
   for (i in 1:nrow(df)) {
     tests <- df %>%
       dplyr::filter(
-        patient_id == df$patient_id[i],
-        lab_collection_date >= df$lab_collection_date[i],
-        lab_collection_date <= df$lab_collection_date[i] + days,
-        (lab_result_symbol == df$lab_result_symbol[i] |
-           (is.na(lab_result_symbol) & is.na(df$lab_result_symbol[i]))),
-        lab_result_number == df$lab_result_number[i],
-        lab_specimen_source == df$lab_specimen_source[i],
-        dupe_id != df$dupe_id[i]
+        .data$patient_id == df$patient_id[i],
+        .data$lab_collection_date >= df$lab_collection_date[i],
+        .data$lab_collection_date <= df$lab_collection_date[i] + days,
+        (.data$lab_result_symbol == df$lab_result_symbol[i] |
+           (is.na(.data$lab_result_symbol) & is.na(df$lab_result_symbol[i]))),
+        .data$lab_result_number == df$lab_result_number[i],
+        .data$lab_specimen_source == df$lab_specimen_source[i],
+        .data$dupe_id != df$dupe_id[i]
       )
 
     if (nrow(tests) > 0) {

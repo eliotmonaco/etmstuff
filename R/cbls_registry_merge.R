@@ -13,6 +13,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 # @examples
 #'
@@ -24,7 +25,7 @@ cbls_registry_merge <- function(df_data, df_reg, type = c("address", "child")) {
     reg_id = "child_registry_id"
     reg_vars_id <- "patient_id"
   } else {
-    stop("`type` must be one of c(\"address\", \"child\")", call. = FALSE)
+    stop("`type` must be one of c(\"address\", \"child\")")
   }
 
   # All registry variables

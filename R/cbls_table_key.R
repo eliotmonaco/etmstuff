@@ -27,9 +27,9 @@ cbls_table_key <- function(df, action) {
   actions <- c("add", "change", "delete")
 
   if (length(action) != 1) {
-    stop("`action` must be a character vector of length == 1", call. = FALSE)
+    stop("`action` must be a character vector of length == 1")
   } else if (!action %in% actions) {
-    stop("`action` must be \"add\", \"change\", or \"delete\"", call. = FALSE)
+    stop("`action` must be \"add\", \"change\", or \"delete\"")
   }
 
   var_check(df, var = "lab_collection_date")
@@ -38,7 +38,7 @@ cbls_table_key <- function(df, action) {
   q <- get_quarter(df[["lab_collection_date"]])
 
   if (length(y) != 1 | length(q) != 1) {
-    stop("df has dates from > 1 year and/or quarter", call. = FALSE)
+    stop("df has dates from > 1 year and/or quarter")
   }
 
   data.frame(matrix(nrow = 1, ncol = 0)) %>%

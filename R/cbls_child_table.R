@@ -8,6 +8,7 @@
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 # @examples
 #'
@@ -24,17 +25,17 @@ cbls_child_table <- function(df, row_id, key) {
   ))
 
   if (!all(df$age < 6)) {
-    stop("`df$age` must be < 6 for all records", call. = FALSE)
+    stop("`df$age` must be < 6 for all records")
   }
 
   var_check(key, var = c("ACTION", "QTR", "RPT_YR", "PGMID"))
 
   df <- df %>%
-    dplyr::distinct(child_registry_id, .keep_all = TRUE)
+    dplyr::distinct(.data$child_registry_id, .keep_all = TRUE)
 
   # Add link variables, FILEID, and `key`
   df_chi <- df %>%
-    dplyr::select(tidyselect::all_of(row_id), patient_id) %>%
+    dplyr::select(tidyselect::all_of(row_id), "patient_id") %>%
     dplyr::mutate(FILEID = "CHI") %>%
     dplyr::bind_cols(key)
 

@@ -4,10 +4,12 @@
 \alias{count_conflicts}
 \title{Count dupesets with conflicting values}
 \usage{
-count_conflicts(df, ignore_empty = TRUE, silent = FALSE)
+count_conflicts(df, dupe_id = "dupe_id", ignore_empty = TRUE, silent = FALSE)
 }
 \arguments{
 \item{df}{A dataframe of dupesets returned by \code{\link[=undupe]{undupe()}}.}
+
+\item{dupe_id}{The variable name for the ID that groups all members of a duplicate set, created by \code{\link[=undupe]{undupe()}}. Defaults to \code{"dupe_id"}.}
 
 \item{ignore_empty}{Logical: omit blank strings and \code{NA}s when finding conflicts if \code{TRUE}.}
 
@@ -40,8 +42,8 @@ df <- data.frame(
   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
   z = sample(c("banana", "carrot", "pickle"), size = n_rows, replace = TRUE)
 )
-undupe <- undupe(df, visible_var = c("x", "y"))
-df_count <- count_conflicts(undupe[["df_dupesets"]])
+undp <- undupe(df, visible_var = c("x", "y"))
+df_count <- count_conflicts(undp[["df_dupesets"]])
 
 }
 \seealso{
