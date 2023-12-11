@@ -12,7 +12,6 @@ RoxygenNote: 7.2.3
 URL: https://github.com/eliotmonaco/etmstuff
 BugReports: https://github.com/eliotmonaco/etmstuff/issues
 Imports: 
-    assertive,
     digest,
     dplyr,
     future,

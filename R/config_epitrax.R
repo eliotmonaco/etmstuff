@@ -25,7 +25,7 @@
 # @examples
 #'
 config_epitrax <- function(df, var_dates = etmstuff::epitrax_lead_vars$date, var_order = etmstuff::epitrax_lead_vars$ordered) {
-  if (!assertive::is_data.frame(df)) stop("`df` must be a dataframe")
+  if (!is.data.frame(df)) stop("`df` must be a dataframe")
 
   var_check(df, var = var_order)
 
