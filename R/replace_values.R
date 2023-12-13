@@ -24,20 +24,20 @@ replace_values <- function(df, var, df_src, var_src = "replacement_text", row_id
   var_check(df, var = c(var, row_id))
   var_check(df_src, var = c(var_src, row_id))
 
-  if (anyDuplicated(df[[row_id]]) > 0 | anyDuplicated(df_src[[row_id]]) > 0) {
+  if (sum(duplicated(df[[row_id]])) > 0 | sum(duplicated(df_src[[row_id]])) > 0) {
     stop("`row_id` values are not all unique in `df` and/or `df_src`")
   }
 
   # Subset rows in `df` that match cleaned rows in `df_src`
-  df2 <- df %>%
+  df_x <- df %>%
     dplyr::semi_join(df_src, by = row_id)
 
-  # Remove rows in `df` that match cleaned rows in `df_src`
-  df <- df %>%
+  # Subtract rows in `df` that match cleaned rows in `df_src`
+  df_y <- df %>%
     dplyr::anti_join(df_src, by = row_id)
 
-  # Replace values in `df2$var` with replacement text in `df_src$var_src`
-  df2 <- df2 %>%
+  # Replace values in `df_x$var` with replacement text in `df_src$var_src`
+  df_x <- df_x %>%
     dplyr::select(-tidyselect::all_of(var)) %>%
     dplyr::left_join(
       df_src %>%
@@ -48,7 +48,12 @@ replace_values <- function(df, var, df_src, var_src = "replacement_text", row_id
     dplyr::rename({{ var }} := {{ var_src }}) %>%
     dplyr::select(tidyselect::all_of(colnames(df)))
 
-  # Join modified rows from `df2` back to `df`
+  # Join `df_x` and `df_y`
+  df_xy <- df_y %>%
+    dplyr::full_join(df_x, by = colnames(df))
+
+  # Restore `df` to original row order
   df %>%
-    dplyr::full_join(df2, by = colnames(df))
+    dplyr::select(tidyselect::all_of(row_id)) %>%
+    dplyr::left_join(df_xy, by = row_id)
 }
