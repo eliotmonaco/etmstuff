@@ -266,14 +266,13 @@ address_regex["symbol",] <- c(p, NA, NA, "")
 ## unit ####
 
 p <- paste0(
-  # "(?x) ",                       # Turn on free-spacing
-  "(?<=\\s)",                      # Preceded by a space
-  "(#|ap|apt|apartment|lot|",      # Unit designator
+  "(?<=\\s|,|-)",                                # Preceded by a space, comma, or hyphen
+  "(#|ap|apt|apartment|lot|",                    # Unit designator
   "no(?!rth)|num|number|rm|room|",
   "ste|suite|trlr|trailer|unit)",
-  "(?![:alpha:]{2,}$)",            # Not followed by 2+ letters then end of string
-  "(\\s|[:punct:])*",              # Spaces and/or punctuation marks
-  "[:alnum:]+$"                    # Unit identifier, adjacent to end of string
+  "(?![:alpha:]{2,})",                           # Not followed by 2+ letters
+  "(\\s|[:punct:])*",                            # Spaces and/or punctuation
+  "([:alnum:]+$|[:alnum:]+(-|/|\\s)[:alnum:]+$)" # Unit identifier, adjacent to end of string
 )
 
 address_regex["unit",] <- c(p, NA, NA, "")
