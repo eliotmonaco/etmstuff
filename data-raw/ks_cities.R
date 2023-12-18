@@ -32,4 +32,14 @@ load(file = "data/ks_cities.rda")
 
 ks_cities <- sort(unique(c(ks_cities, "Kingsdown", "Modoc")))
 
+
+
+## Modify 12/18/2023
+
+load(file = "data/ks_cities.rda")
+
+ks_cities <- sort(unique(c(ks_cities, "Kalvesta", "Bloom", "Houston", "Delavan", "Hiattville", "Coalvale", "Zimmerdale", "Westfall", "Medora", "Belvidere")))
+
+
+
 usethis::use_data(ks_cities, overwrite = T)
