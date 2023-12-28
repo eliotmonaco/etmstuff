@@ -89,11 +89,19 @@ cbls_investigation_table <- function(df, key) {
         TRUE ~ " "
       ),
       SOIL = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", .data$SOIL)), digits = 1), nsmall = 1, trim = TRUE),
+        format(round(as.numeric(
+          stringr::str_squish(
+            stringr::str_remove_all(.data$SOIL, regex("<|ppm", ignore_case = TRUE))
+          )
+        ), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"
       ),
       WATER = stringr::str_pad(
-        format(round(as.numeric(sub("<", "", .data$WATER)), digits = 1), nsmall = 1, trim = TRUE),
+        format(round(as.numeric(
+          stringr::str_squish(
+            stringr::str_remove_all(.data$WATER, regex("<|ppb", ignore_case = TRUE))
+          )
+        ), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"
       ),
       INDHAZ = substr(.data$INDHAZ, 1, 1),

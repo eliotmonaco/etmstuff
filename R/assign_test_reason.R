@@ -47,6 +47,9 @@ assign_test_reason <- function(df, max_interval = 92, df_past = NULL, silent = F
 
   # Prep `df_past`
   if (!is.null(df_past)) {
+    if (!"test_seq_alert" %in% colnames(df_past)) {
+      df_past$test_seq_alert <- NA
+    }
     var_check(df_past, var = c(vars, vars_new))
     df_past <- df_past %>%
       dplyr::select(tidyselect::all_of(c(vars, vars_new))) %>%
