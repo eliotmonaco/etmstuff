@@ -138,10 +138,10 @@ address_regex["nth",] <- c(p, NA, NA, "N")
 ## num_dir1 ####
 
 p <- paste0(
-  "(?x) ",              # Turn on free-spacing
-  "(?<=^\\d{1,1000}) ", # Preceded by initial digit(s)
-  "([NSEW]\\b) ",       # CG: a direction letter concatenated with previous character + word boundary
-  "(?=\\s\\1)"          # Followed by the same letter
+  "(?x) ",               # Turn on free-spacing
+  "(?<=^\\d{1,1000}) ",  # Preceded by initial digit(s)
+  "([NSEW][:punct:]*) ", # CG: a direction letter (punctuation optional)
+  "(?=\\s\\1\\s)"        # Followed by a space, the same letter, and a space
 )
 
 address_regex["num_dir1",] <- c(p, NA, NA, "")
@@ -153,13 +153,14 @@ address_regex["num_dir1",] <- c(p, NA, NA, "")
 p <- paste0(
   "(?x) ",              # Turn on free-spacing
   "(?<=^\\d{1,1000}) ", # Preceded by initial digit(s)
-  "[NSEW]\\b"           # Concatenated with a direction letter + word boundary
+  "[NSEW][:punct:]*",   # A direction letter (punctuation optional)
+  "(?=\\s\\w)"          # Followed by a space and a word character
 )
 
 p2 <- paste0(
-  "(?x) ",           # Turn on free-spacing
-  "(^\\d{1,1000}) ", # CG1: initial digit(s)
-  "([NSEW]\\b.*)"    # CG2: concatenated letter and everything else
+  "(?x) ",                  # Turn on free-spacing
+  "(^\\d{1,1000}) ",        # CG1: initial digit(s)
+  "([NSEW][:punct:]*\\s.*)" # CG2: concatenated letter and everything else
 )
 
 r <- "\\1 \\2"

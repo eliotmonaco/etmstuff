@@ -71,14 +71,32 @@ df <- clean_address(df_test, type = "embed_punct")
 
 
 
-df <- clean_address(df_addr, type = "num_dir1")
+# No punctuation
 
-df_addr <- replace_values(df_addr, var = "street", df_src = df)
+df_addr_test <- df_addr
 
-df <- clean_address(df_addr, type = "num_dir2")
+df_1a <- clean_address(df_addr_test, type = "num_dir1")
 
-df_addr <- replace_values(df_addr, var = "street", df_src = df)
+df_addr_test <- replace_values(df_addr_test, var = "street", df_src = df_1a)
 
+df_1b <- clean_address(df_addr_test, type = "num_dir2")
+
+df_addr_test <- replace_values(df_addr_test, var = "street", df_src = df_1b)
+
+# With punctuation
+
+df_addr_test <- df_addr
+
+df_2a <- clean_address(df_addr_test, type = "num_dir1")
+
+df_addr_test <- replace_values(df_addr_test, var = "street", df_src = df_2a)
+
+df_2b <- clean_address(df_addr_test, type = "num_dir2")
+
+df_addr_test <- replace_values(df_addr_test, var = "street", df_src = df_2b)
+
+all.equal(df_1a, df_2a)
+all.equal(df_1b, df_2b)
 
 
 # stop ####
