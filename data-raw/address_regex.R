@@ -1,4 +1,7 @@
-# Generates `address_regex` used in `clean_street_address()`
+# Generates `address_regex` used in `clean_address()`
+
+## CG = capturing group
+## NCG = non-capturing group
 
 
 
@@ -12,7 +15,8 @@ rows <- c(
   "nondigit",
   "nonres",
   "nth",
-  "num_dir",
+  "num_dir1",
+  "num_dir2",
   "num_only",
   "num_word",
   "numsign",
@@ -54,15 +58,15 @@ address_regex["digit_char",] <- c(p, NA, NA, "")
 
 p <- paste0(
   "(?x) ",          # Turn on free-spacing
-  "(?:^\\d+\\s+) ", # Non-capturing group: initial digit group and space
-  "([NSEW]+) ",     # Capturing group: direction
-  "(?:\\d)"         # Non-capturing group: concatenated digit
+  "(?:^\\d+\\s+) ", # NCG: initial digit group and space
+  "([NSEW]+) ",     # CG: direction letter(s)
+  "(?:\\d)"         # NCG: concatenated digit
 )
 
 p2 <- paste0(
   "(?x) ",               # Turn on free-spacing
-  "(^\\d+\\s+[NSEW]+) ", # Capturing group 1: initial digit group, space, and direction
-  "(\\d.*)"              # Capturing group 2: concatenated digit and everything else
+  "(^\\d+\\s+[NSEW]+) ", # CG1: initial digit group, space, and direction
+  "(\\d.*)"              # CG2: concatenated digit and everything else
 )
 
 r <- "\\1 \\2"
@@ -75,16 +79,16 @@ address_regex["dir_street",] <- c(p, 1, p2, r)
 
 p <- paste0(
   "(?x) ",                                  # Turn on free-spacing
-  "(?:(?<=1)/(?=2)) | ",                    # Non-capturing group: "1/2"
-  "((?<=[:alnum:])[:punct:]+(?=[:alnum:]))" # Capturing group
+  "(?:(?<=1)/(?=2)) | ",                    # NCG: "1/2"
+  "((?<=[:alnum:])[:punct:]+(?=[:alnum:]))" # CG: punctuation character(s) between alphanumeric characters
 )
 
 p2 <- paste0(
   "(?x) ",           # Turn on free-spacing
-  "(\\s1/2)\\s | ",  # Capturing group 1
-  "(?<=[:alnum:]) ", # Preceded by an alphanumeric
-  "[:punct:]+ ",     # One or more punctuation
-  "(?=[:alnum:])"    # Followed by an alphanumeric
+  "(\\s1/2)\\s | ",  # CG1: " 1/2 " or punctuation character(s) between alphanumeric characters
+  "(?<=[:alnum:]) ",
+  "[:punct:]+ ",
+  "(?=[:alnum:])"
 )
 
 r <- "\\1 "
@@ -131,15 +135,36 @@ address_regex["nth",] <- c(p, NA, NA, "N")
 
 
 
-## num_dir ####
+## num_dir1 ####
 
 p <- paste0(
-  "(?x) ",                # Turn on free-spacing
+  "(?x) ",              # Turn on free-spacing
   "(?<=^\\d{1,1000}) ", # Preceded by initial digit(s)
-  "[NSEW]\\b"            # Concatenated with a direction letter + word boundary
+  "([NSEW]\\b) ",       # CG: a direction letter concatenated with previous character + word boundary
+  "(?=\\s\\1)"          # Followed by the same letter
 )
 
-address_regex["num_dir",] <- c(p, NA, NA, "")
+address_regex["num_dir1",] <- c(p, NA, NA, "")
+
+
+
+## num_dir2 ####
+
+p <- paste0(
+  "(?x) ",              # Turn on free-spacing
+  "(?<=^\\d{1,1000}) ", # Preceded by initial digit(s)
+  "[NSEW]\\b"           # Concatenated with a direction letter + word boundary
+)
+
+p2 <- paste0(
+  "(?x) ",           # Turn on free-spacing
+  "(^\\d{1,1000}) ", # CG1: initial digit(s)
+  "([NSEW]\\b.*)"    # CG2: concatenated letter and everything else
+)
+
+r <- "\\1 \\2"
+
+address_regex["num_dir2",] <- c(p, NA, p2, r)
 
 
 
@@ -290,7 +315,5 @@ address_regex["unknown",] <- c(p, NA, NA, "")
 ## Save ####
 
 address_regex$n_cap_gps <- as.numeric(address_regex$n_cap_gps)
-
-# saveRDS(address_regex, "dev_aux/helpers/address_regex.rds")
 
 usethis::use_data(address_regex, overwrite = T)

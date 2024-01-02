@@ -10,9 +10,6 @@ devtools::load_all()
 # stop ####
 
 
-# stop ####
-
-
 
 
 
@@ -24,7 +21,7 @@ md_results_table(df_md)
 
 
 
-# clean_street_address ####
+# clean_address ####
 
 library(tidyverse)
 
@@ -71,6 +68,20 @@ df_test2 <- id_distinct_rows(df_test2, "street", "address_id")
 debugonce(clean_address)
 
 df <- clean_address(df_test, type = "embed_punct")
+
+
+
+df <- clean_address(df_addr, type = "num_dir1")
+
+df_addr <- replace_values(df_addr, var = "street", df_src = df)
+
+df <- clean_address(df_addr, type = "num_dir2")
+
+df_addr <- replace_values(df_addr, var = "street", df_src = df)
+
+
+
+# stop ####
 
 
 
