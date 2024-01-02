@@ -42,4 +42,12 @@ ks_cities <- sort(unique(c(ks_cities, "Kalvesta", "Bloom", "Houston", "Delavan",
 
 
 
+## Modify 1/2/2024
+
+load(file = "data/ks_cities.rda")
+
+ks_cities <- sort(unique(c(ks_cities, "Cadmus")))
+
+
+
 usethis::use_data(ks_cities, overwrite = T)
