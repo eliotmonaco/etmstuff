@@ -9,7 +9,7 @@ clean_address(df, type, var = "street", row_id = "address_id")
 \arguments{
 \item{df}{A dataframe of addresses.}
 
-\item{type}{The type of cleaning to perform. One of \code{c("digit_char", "dir_street", "embed_punct", "house_frac", "nondigit", "nonres", "nth", "num_dir", "num_only", "num_word", "numsign", "phone", "pobox", "rep_seg", "symbol", "unit", "unknown")}.}
+\item{type}{The type of cleaning to perform. One of \code{c("digit_char", "dir_street", "embed_punct", "house_frac", "nondigit", "nonres", "nth", "num_dir1", "num_dir2", "num_only", "num_word", "numsign", "phone", "pobox", "rep_seg", "sep_unit", "symbol", "unknown")}.}
 
 \item{var}{A variable in \code{df} containing the targeted address component. Defaults to \code{street}.}
 

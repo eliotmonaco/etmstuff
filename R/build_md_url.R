@@ -20,13 +20,7 @@
 #' @family address processing functions
 # @examples
 #'
-build_md_url <- function(df,
-                         row_id = "md_id",
-                         street = "street",
-                         unit = NULL,
-                         city = "city",
-                         state = "state",
-                         zip = "zip") {
+build_md_url <- function(df, row_id, street = "street", unit = NULL, city = "city", state = "state", zip = "zip") {
   var_check(df, var = c(row_id, street, unit, city, state, zip))
 
   # If `unit` is provided, unite `street` and `unit`

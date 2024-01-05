@@ -99,6 +99,60 @@ all.equal(df_1a, df_2a)
 all.equal(df_1b, df_2b)
 
 
+
+devtools::load_all()
+
+df_test <- df_addr
+
+df_test[1000, "street"] <- "w.w,w:w;w?w!w/w*w@w#w_w\"w[w]w{w}w(w)w"
+
+df <- clean_address(df_test, type = "embed_punct")
+
+
+
+devtools::load_all()
+
+df_test <- df_addr
+
+# df_orig <- clean_address(df_test, type = "unit")
+
+df <- clean_address(df_test, type = "unit")
+
+all.equal(df, df_orig)
+
+df_diff1 <- df_orig %>%
+  anti_join(df, by = "address_id")
+
+df_diff2 <- df %>%
+  anti_join(df_orig, by = "address_id")
+
+df <- df %>%
+  filter(address_id %in% c("078881", "027626", "070061", "100359", "021174", "046285", "021042", "051177"))
+
+
+
+devtools::load_all()
+
+df_test <- df_addr
+
+df <- clean_address(df_test, type = "sep_unit")
+
+df_diff1 <- df_orig %>%
+  anti_join(df, by = "address_id")
+
+df_diff2 <- df %>%
+  anti_join(df_orig, by = "address_id")
+
+
+
+
+all.equal(df, df_orig)
+
+
+
+
+
+
 # stop ####
 
 

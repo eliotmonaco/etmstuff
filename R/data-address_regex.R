@@ -8,7 +8,7 @@
 #'
 #' @format A dataframe.
 #'
-#' @source Created for address cleaning.
+#' @source Created for use in address cleaning functions.
 #'
 #' @keywords datasets
 "address_regex"

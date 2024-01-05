@@ -8,7 +8,7 @@
 A dataframe.
 }
 \source{
-Created for address cleaning.
+Created for use in address cleaning functions.
 }
 \usage{
 address_regex

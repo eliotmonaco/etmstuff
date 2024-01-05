@@ -6,7 +6,7 @@
 \usage{
 build_md_url(
   df,
-  row_id = "md_id",
+  row_id,
   street = "street",
   unit = NULL,
   city = "city",

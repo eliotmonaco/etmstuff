@@ -91,7 +91,7 @@ cbls_investigation_table <- function(df, key) {
       SOIL = stringr::str_pad(
         format(round(as.numeric(
           stringr::str_squish(
-            stringr::str_remove_all(.data$SOIL, regex("<|ppm", ignore_case = TRUE))
+            stringr::str_remove_all(.data$SOIL, stringr::regex("<|ppm", ignore_case = TRUE))
           )
         ), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"
@@ -99,7 +99,7 @@ cbls_investigation_table <- function(df, key) {
       WATER = stringr::str_pad(
         format(round(as.numeric(
           stringr::str_squish(
-            stringr::str_remove_all(.data$WATER, regex("<|ppb", ignore_case = TRUE))
+            stringr::str_remove_all(.data$WATER, stringr::regex("<|ppb", ignore_case = TRUE))
           )
         ), digits = 1), nsmall = 1, trim = TRUE),
         width = 8, side = "left", pad = "0"

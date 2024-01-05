@@ -1,7 +1,11 @@
-# Generates `address_regex` used in `clean_address()`
+# Generates `address_regex.rda` used in `clean_address()`
 
-## CG = capturing group
-## NCG = non-capturing group
+
+
+## Nomenclature ####
+
+## - CG = capturing group
+## - NCG = non-capturing group
 
 
 
@@ -23,8 +27,8 @@ rows <- c(
   "phone",
   "pobox",
   "rep_seg",
+  "sep_unit",
   "symbol",
-  "unit",
   "unknown"
 )
 
@@ -77,18 +81,18 @@ address_regex["dir_street",] <- c(p, 1, p2, r)
 
 ## embed_punct ####
 
+x <- "[ \\. , : ; \\? \\! / * @ \\# _ \" \\[ \\] \\{ \\} \\( \\) ]"
+
 p <- paste0(
-  "(?x) ",                                  # Turn on free-spacing
-  "(?:(?<=1)/(?=2)) | ",                    # NCG: "1/2"
-  "((?<=[:alnum:])[:punct:]+(?=[:alnum:]))" # CG: punctuation character(s) between alphanumeric characters
+  "(?x) ",                                # Turn on free-spacing
+  "(?:(?<=1)/(?=2)) | ",                  # NCG: "1/2"
+  "((?<=[:alnum:])", x, "+(?=[:alnum:]))" # CG: punctuation character(s) between alphanumeric characters
 )
 
 p2 <- paste0(
-  "(?x) ",           # Turn on free-spacing
-  "(\\s1/2)\\s | ",  # CG1: " 1/2 " or punctuation character(s) between alphanumeric characters
-  "(?<=[:alnum:]) ",
-  "[:punct:]+ ",
-  "(?=[:alnum:])"
+  "(?x) ",          # Turn on free-spacing
+  "(\\s1/2)\\s | ", # CG1: " 1/2 " or punctuation character(s) between alphanumeric characters
+  "(?<=[:alnum:])", x, "+(?=[:alnum:])"
 )
 
 r <- "\\1 "
@@ -281,27 +285,35 @@ address_regex["rep_seg",] <- c(p, 4, p2, r)
 
 
 
+## sep_unit ####
+
+# unit <- paste0("#|ap|apt|apartment|lot|no(?!rth)|num|number|rm|room|ste|suite|trlr|trailer|unit")
+unit <- paste0(
+  "apartment|lot|number|room|suite|trailer|unit|",
+  "apt|ap|num|no(?!rth)|rm|ste|trlr|",
+  "#"
+)
+
+sfx <- paste0(c(etmstuff::street_sfx$full, etmstuff::street_sfx$abbr), collapse = "|")
+
+p <- paste0(
+  "(?<=\\s|,|-)",                                # Preceded by a space, comma, or hyphen
+  "(", unit, ")",                                # Unit designator
+  "(?![:alpha:]{2,})",                           # Not followed by 2+ letters
+  "(?![[:alpha:]\\s]{1,}(", sfx, "))",           # Not followed by additional letters/spaces and a street suffix
+  "(\\s|[:punct:])*",                            # Spaces and/or punctuation
+  "([:alnum:]+$|[:alnum:]+(-|/|\\s)[:alnum:]+$)" # Unit identifier, adjacent to end of string
+)
+
+address_regex["sep_unit",] <- c(p, NA, NA, "")
+
+
+
 ## symbol ####
 
 p <- "[:symbol:]"
 
 address_regex["symbol",] <- c(p, NA, NA, "")
-
-
-
-## unit ####
-
-p <- paste0(
-  "(?<=\\s|,|-)",                                # Preceded by a space, comma, or hyphen
-  "(#|ap|apt|apartment|lot|",                    # Unit designator
-  "no(?!rth)|num|number|rm|room|",
-  "ste|suite|trlr|trailer|unit)",
-  "(?![:alpha:]{2,})",                           # Not followed by 2+ letters
-  "(\\s|[:punct:])*",                            # Spaces and/or punctuation
-  "([:alnum:]+$|[:alnum:]+(-|/|\\s)[:alnum:]+$)" # Unit identifier, adjacent to end of string
-)
-
-address_regex["unit",] <- c(p, NA, NA, "")
 
 
 
