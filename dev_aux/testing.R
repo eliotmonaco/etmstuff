@@ -7,20 +7,6 @@ devtools::load_all()
 
 
 
-# stop ####
-
-
-
-
-
-# md_results_table ####
-
-df_md <- readRDS("../bl_2023q3/data/addresses/df_md_response1.rds")
-
-md_results_table(df_md)
-
-
-
 # clean_address ####
 
 library(tidyverse)
@@ -153,7 +139,60 @@ all.equal(df, df_orig)
 
 
 
+df_addr <- readRDS("../df_addr.rds")
+
+devtools::load_all()
+
+df <- etmstuff::clean_address(df_addr, type = "digit_char")
+
+
+
+
+
+street <- c(
+  "500 NE 1st St.",
+  "500 NE 1st",
+  "500 1st St.",
+  "500 1st",
+
+  "500 NE 1s St.",
+  "500 NE 1s",
+  "500 1s St.",
+  "500 1s",
+
+  "500 NE 11th St.",
+  "500 NE 11th",
+  "500 11th St.",
+  "500 11th",
+
+  "500 NE 11s St.",
+  "500 NE 11s",
+  "500 11s St.",
+  "500 11s"
+)
+
+df_test <- data.frame(street)
+
+df_test$match <- stringr::str_match_all(df_test$street, p4)
+
+
+
+
 # stop ####
+
+
+
+# stop ####
+
+
+
+
+
+# md_results_table ####
+
+df_md <- readRDS("../bl_2023q3/data/addresses/df_md_response1.rds")
+
+md_results_table(df_md)
 
 
 
