@@ -30,6 +30,7 @@ rows <- c(
   "pobox",
   "rep_letter",
   "rep_segment",
+  "six_words",
   "symbol",
   "unknown"
 )
@@ -59,17 +60,15 @@ sfx <- c("11th", "12th", "13th", "1st", "2nd", "3rd", "[4-9]th", "0th")
 sfx <- paste0("\\d{0,5}", sfx, "\\b", collapse = "|")
 sfx <- paste0("(?!", sfx, "|\\d{1,5}\\b", ")")
 
-pat <- c(
-  "[:alpha:]+\\d+[:alpha:]+", # Digit(s) surrounded by letters
-  "\\d+[:alpha:]+\\d+",       # Letter(s) surrounded by digits
-  paste0("\\s", sfx, "\\d+")  # Space (not followed by a correctly formatted ordinal number) + digit(s)
+pat1 <- paste0(
+  "[:alpha:]+\\d+[:alpha:]+|", # Digit(s) surrounded by letters
+  "\\d+[:alpha:]+\\d+|",       # Letter(s) surrounded by digits
+  paste0("\\s", sfx, "\\d+")   # Space (not followed by a correctly formatted ordinal number) + digit(s)
 )
 
-pat1 <- paste(pat, collapse = "|")
+pat2 <- "(^.*$)" # Replace with original string
 
-pat2 <- paste(paste0("(", pat, ")"), collapse = "|")
-
-r <- "\\1\\2\\3" # Replace with original string
+r <- "\\1"
 
 address_regex["digit_letter",] <- c(pat1, NA, pat2, r)
 
@@ -78,16 +77,14 @@ address_regex["digit_letter",] <- c(pat1, NA, pat2, r)
 ### dir_street ####
 
 pat1 <- paste0(
-  "(?x) ",          # Turn on free-spacing
-  "(?:^\\d+\\s+) ", # NCG: initial digit group and space
-  "([NSEW]+) ",     # CG: direction letter(s)
-  "(?:\\d)"         # NCG: concatenated digit
+  "(?:^\\d+\\s+)", # NCG: initial digit group and space
+  "([NSEW]+)",     # CG: direction letter(s)
+  "(?:\\d)"        # NCG: concatenated digit
 )
 
 pat2 <- paste0(
-  "(?x) ",               # Turn on free-spacing
-  "(^\\d+\\s+[NSEW]+) ", # CG1: initial digit group, space, and direction
-  "(\\d.*)"              # CG2: concatenated digit and everything else
+  "(^\\d+\\s+[NSEW]+)", # CG1: initial digit group, space, and direction
+  "(\\d.*)"             # CG2: concatenated digit and everything else
 )
 
 r <- "\\1 \\2"
@@ -100,23 +97,19 @@ address_regex["dir_street",] <- c(pat1, 1, pat2, r)
 
 # Punctuation, except `-` and `'`
 x <- "[ \\. , : ; \\? \\! / * @ \\# _ \" \\[ \\] \\{ \\} \\( \\) ]"
-
-# Punctuation surrounded by alphanumeric characters
 x <- paste0("(?<=[:alnum:])", x, "+(?=[:alnum:])")
 
-pat <- c(
-  "(?:(?<=1)/(?=2))", # NCG: "1/2"
-  paste0("(", x, ")") # CG: `x`
+pat1 <- paste0(
+  "(?xx)",
+  "(?:(?<=1)/(?=2))|", # NCG: "1/2"
+  paste0("(", x, ")")  # CG: Punctuation surrounded by alphanumeric characters
 )
 
-pat1 <- paste0("(?xx)", paste0(pat, collapse = "|"))
-
-pat <- c(
-  "(\\s1/2)\\s", # CG1: " 1/2"
+pat2 <- paste0(
+  "(?xx)",
+  "(\\s1/2)\\s|", # CG1: " 1/2"
   x
 )
-
-pat2 <- paste0("(?xx)", paste0(pat, collapse = "|"))
 
 r <- "\\1 " # When " 1/2" is captured, replace with itself (?)
 
@@ -126,10 +119,9 @@ address_regex["emb_punct",] <- c(pat1, 1, pat2, r)
 
 ### extract_unit ####
 
-# unit <- paste0("#|ap|apt|apartment|lot|no(?!rth)|num|number|rm|room|ste|suite|trlr|trailer|unit")
 unit <- paste0(
-  "apartment|lot|number|room|suite|trailer|unit|",
-  "apt|ap|num|no(?!rth)|rm|ste|trlr|",
+  "apartment|basement|floor|lot|number|room|suite|trailer|unit|",
+  "apt|ap|bsmt|fl|num|no(?!rth)|rm|ste|trlr|",
   "#"
 )
 
@@ -151,11 +143,10 @@ address_regex["extract_unit",] <- c(pat, NA, NA, "")
 ### fractional ####
 
 pat <- paste0(
-  "(?x) ",             # Turn on free-spacing
-  "(?<=\\d) ",         # Preceded by a digit
-  "\\s+ (1|ONE|([:alpha:]*\\s*AND\\s+[:alpha:]*))* \\s*HALF\\s* ",
-  "(?=\\s[:alnum:]) ", # Followed by a space + alphanumeric
-  "(?!\\sfull)"        # Not followed by " Full" (as in the street name "Half Full")
+  "(?<=\\d)",         # Preceded by a digit
+  "\\s+(1|ONE|([:alpha:]*\\s*AND\\s+[:alpha:]*))*\\s*HALF\\s*",
+  "(?=\\s[:alnum:])", # Followed by a space + alphanumeric
+  "(?!\\sFULL)"       # Not followed by " FULL" (as in the street name "HALF FULL")
 )
 
 address_regex["fractional",] <- c(pat, NA, NA, " 1/2 ")
@@ -164,7 +155,7 @@ address_regex["fractional",] <- c(pat, NA, NA, " 1/2 ")
 
 ### no_letters ####
 
-pat <- "^[\\d\\s[:punct:]]+$" # Only
+pat <- "^[\\d\\s[:punct:]]+$"
 
 address_regex["no_letters",] <- c(pat, NA, NA, "")
 
@@ -233,14 +224,6 @@ address_regex["num_dir2",] <- c(pat1, NA, pat2, r)
 
 
 
-### num_only ####
-
-# pat <- "^\\d+$"
-#
-# address_regex["num_only",] <- c(pat, NA, NA, "")
-
-
-
 ### num_sign ####
 
 pat <- "#"
@@ -288,7 +271,7 @@ pbx1 <- paste0("((?<![:alnum:])", POBOX, x, NO, ")")
 pbx2 <- paste0("(", POBOX, x, NO, "$)")
 pbx3 <- paste0("(", POBOX, ")")
 pbx4 <- paste0("((?<![:alnum:])", "P", x, "O", x, "B(?![:alpha:])", x, NOx, ")")
-rbx5 <- paste0(
+rbx <- paste0(
   "((?<![:alnum:])",
   "(R", x, "R", x, NO, x, "BOX|",
   alt, "R", x, NO, x, "BOX|",
@@ -298,7 +281,7 @@ rbx5 <- paste0(
   "R", x, "R", x, NO, x, "BO[:alnum:])",
   x, NO, ")"
 )
-bx6 <- paste0(
+bx <- paste0(
   "((?<![:alnum:])",
   "(BOX|",
   "[:alnum:]OX|",
@@ -307,7 +290,7 @@ bx6 <- paste0(
   x, NO, ")"
 )
 
-pat <- paste(c(pbx1, pbx2, pbx3, pbx4, rbx5, bx6), collapse = "|")
+pat <- paste(c(pbx1, pbx2, pbx3, pbx4, rbx, bx), collapse = "|")
 
 address_regex["pobox",] <- c(pat, NA, NA, "")
 
@@ -315,9 +298,9 @@ address_regex["pobox",] <- c(pat, NA, NA, "")
 
 ### rep_letter ####
 
-pat <- "([:alpha:])\\1{2,}"
+pat <- "([:alpha:])\\1{2,}" # 3+ occurrences of the same letter
 
-r <- "\\1\\1"
+r <- "\\1\\1" # Replace with two occurrences
 
 address_regex["rep_letter",] <- c(pat, NA, NA, r)
 
@@ -347,6 +330,18 @@ pat2 <- paste0(
 r <- "\\1\\3\\5\\7"
 
 address_regex["rep_segment",] <- c(pat1, 4, pat2, r)
+
+
+
+### six_words ####
+
+pat1 <- "(?x) (\\S+\\s){5,} \\S+" # 6+ words
+
+pat2 <- "(^.*$)" # Replace with original string
+
+r <- "\\1"
+
+address_regex["six_words",] <- c(pat1, NA, pat2, r)
 
 
 

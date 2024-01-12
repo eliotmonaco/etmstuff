@@ -143,7 +143,7 @@ df_addr <- readRDS("../df_addr.rds")
 
 devtools::load_all()
 
-df <- etmstuff::clean_address(df_addr, type = "digit_char")
+df2 <- etmstuff::clean_address(df_addr, type = "digit_letter")
 
 
 
@@ -174,6 +174,15 @@ street <- c(
 df_test <- data.frame(street)
 
 df_test$match <- stringr::str_match_all(df_test$street, p4)
+
+
+
+df_addr <- readRDS("../df_addr.rds")
+
+devtools::load_all()
+
+df <- etmstuff::clean_address(df_addr, type = "six_words")
+
 
 
 
