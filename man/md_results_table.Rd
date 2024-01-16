@@ -9,13 +9,13 @@ md_results_table(df, var = "Results")
 \arguments{
 \item{df}{A dataframe of Melissa Data responses returned by \code{\link[=md_batch_request]{md_batch_request()}}.}
 
-\item{var}{The variable containing result codes. The default is \code{"Results"}.}
+\item{var}{The variable containing the result codes. The default is \code{"Results"}.}
 }
 \value{
-A dataframe tallying addresses by certain Melissa Data result codes.
+A dataframe.
 }
 \description{
-This function creates a table with counts of the result codes that are most relevant to the lead address validation and geocoding process. The following result codes or result code combinations are included: AS01, AS01 + AS23, AS01 + AS26, AS02, AS13, AE02, AE06, , , , , , ,
+This function creates a table with counts of the result codes present in \code{df$Results}.
 }
 \section{Address validation workflow}{
 

@@ -1,15 +1,15 @@
 #' Count result codes in the Melissa Data response
 #'
 #' @description
-#' This function creates a table with counts of the result codes that are most relevant to the lead address validation and geocoding process. The following result codes or result code combinations are included: AS01, AS01 + AS23, AS01 + AS26, AS02, AS13, AE02, AE06, , , , , , ,
+#' This function creates a table with counts of the result codes present in `df$Results`.
 #'
 #' @inheritSection pull_addresses Address validation workflow
 #' @inheritSection pull_addresses Melissa Data
 #'
 #' @param df A dataframe of Melissa Data responses returned by [md_batch_request()].
-#' @param var The variable containing result codes. The default is `"Results"`.
+#' @param var The variable containing the result codes. The default is `"Results"`.
 #'
-#' @return A dataframe tallying addresses by certain Melissa Data result codes.
+#' @return A dataframe.
 #' @export
 #'
 #' @importFrom magrittr %>%
@@ -20,29 +20,31 @@
 md_results_table <- function(df, var = "Results") {
   var_check(df, var = var)
 
-  df %>%
-    dplyr::reframe(
-      code = md_summarize$code,
-      description = md_summarize$description,
-      n = c(
-        sum(stringr::str_detect(.data$Results, md_summarize$pattern[1]), na.rm = T),
-        sum(stringr::str_detect(.data$Results, md_summarize$pattern[2]), na.rm = T),
-        sum(stringr::str_detect(.data$Results, md_summarize$pattern[3]), na.rm = T),
-        sum(stringr::str_detect(.data$Results, md_summarize$pattern[4]), na.rm = T),
-        sum(stringr::str_detect(.data$Results, md_summarize$pattern[5]), na.rm = T),
-        sum(stringr::str_detect(.data$Results, md_summarize$pattern[6]), na.rm = T),
-        sum(stringr::str_detect(.data$Results, md_summarize$pattern[7]), na.rm = T),
-        sum(stringr::str_detect(.data$Results, md_summarize$pattern[8]), na.rm = T),
-        sum(stringr::str_detect(.data$Results, md_summarize$pattern[9]), na.rm = T),
-        sum(stringr::str_detect(.data$Results, md_summarize$pattern[10]), na.rm = T),
-        sum(is.na(.data$Results))
-      )
-    ) %>%
-    dplyr::mutate(pct = etmstuff::pct(.data$n, nrow(df))) %>%
-    dplyr::rename(
-      "MD result code" = "code",
-      "Description" = "description",
-      "Addresses (n)" = "n",
-      "Addresses (pct)" = "pct"
-    )
+  # Unique MD result codes in dataframe
+  unq_codes <- sort(unique(unlist(strsplit(df$Results, ","))))
+
+  # Table of unique result codes
+  df_md_codes <- purrr::list_rbind(etmstuff::melissa_data_result_codes) %>%
+    dplyr::filter(.data$code %in% unq_codes)
+
+  # Add n occurrences
+  df_md_codes$n <- sapply(
+    df_md_codes$code,
+    function(x) sum(stringr::str_detect(df$Results, x)),
+    simplify = TRUE
+  )
+
+  # Add pct occurrences
+  df_md_codes$pct <- sapply(
+    df_md_codes$n,
+    function(x) etmstuff::pct(x, nrow(df)),
+    simplify = TRUE
+  )
+
+  colnames(df_md_codes) <- c(
+    "Result code", "Short description", "Long description",
+    "Occurrences (n)", "Occurrences (pct)"
+  )
+
+  df_md_codes
 }
