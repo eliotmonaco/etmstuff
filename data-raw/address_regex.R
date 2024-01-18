@@ -120,8 +120,8 @@ address_regex["emb_punct",] <- c(pat1, 1, pat2, r)
 ### extract_unit ####
 
 unit <- paste0(
-  "apartment|basement|floor|lot|number|room|suite|trailer|unit|",
-  "apt|ap|bsmt|fl|num|no(?!rth)|rm|ste|trlr|",
+  "apartment|basement|building|floor|lot|number|room|suite|trailer|unit|",
+  "apt|ap|bsmt|bldg|fl|num|no(?!rth)|rm|ste|trlr|",
   "#"
 )
 
