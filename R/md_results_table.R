@@ -30,21 +30,18 @@ md_results_table <- function(df, var = "Results") {
   # Add n occurrences
   df_md_codes$n <- sapply(
     df_md_codes$code,
-    function(x) sum(stringr::str_detect(df$Results, x)),
+    FUN = function(x) sum(stringr::str_detect(df$Results, x)),
     simplify = TRUE
   )
 
   # Add pct occurrences
   df_md_codes$pct <- sapply(
     df_md_codes$n,
-    function(x) etmstuff::pct(x, nrow(df)),
+    FUN = function(x) etmstuff::pct(x, nrow(df)),
     simplify = TRUE
   )
 
-  colnames(df_md_codes) <- c(
-    "Result code", "Short description", "Long description",
-    "Occurrences (n)", "Occurrences (pct)"
-  )
+  colnames(df_md_codes) <- c("Result code", "Short description", "Long description", "n", "%")
 
   df_md_codes
 }
