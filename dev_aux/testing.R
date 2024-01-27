@@ -4,6 +4,20 @@ library(etmstuff)
 
 devtools::load_all()
 
+df_test <- df_addr
+
+df_test <- id_distinct_rows(
+  df_test,
+  var = c("street", "unit", "city", "state", "zip"),
+  id_name = "address_id",
+  prefix = "AD"
+)
+
+
+
+
+
+
 
 
 

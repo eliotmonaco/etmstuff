@@ -5,6 +5,7 @@
 #' @param df A dataframe.
 #' @param var A vector of variable names that the new ID will be based on.
 #' @param id_name A name for the new ID variable.
+#' @param prefix An optional prefix to add to all IDs.
 #' @param seq_start An integer for the beginning of the ID sequence. Defaults to `1`.
 #' @param digits An integer for the number of digits in the ID (including leading zeros). Defaults to `nchar(nrow(df))`.
 #'
@@ -22,7 +23,7 @@
 #' )
 #' df_new <- id_distinct_rows(df, var = c("x", "y"), id_name = "new_id")
 #'
-id_distinct_rows <- function(df, var, id_name, seq_start = 1, digits = NULL) {
+id_distinct_rows <- function(df, var, id_name, prefix = NULL, seq_start = 1, digits = NULL) {
   var_check(df, var = var)
 
   if (id_name %in% colnames(df)) {
@@ -46,6 +47,10 @@ id_distinct_rows <- function(df, var, id_name, seq_start = 1, digits = NULL) {
       width = digits,
       flag = "0"
     ))
+
+  if (!is.null(prefix)) {
+    df_ids[[id_name]] <- paste0(prefix, df_ids[[id_name]])
+  }
 
   df %>%
     dplyr::left_join(df_ids, by = var)
