@@ -1,4 +1,4 @@
-## `ks_place_by_county` dataset
+## `ks_place_by_county` data set
 
 ### source: https://www.census.gov/library/reference/code-lists/ansi.html#place
 

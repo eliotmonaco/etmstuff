@@ -1,6 +1,6 @@
-#' Simulate addresses to test functions
+#' Simulate addresses
 #'
-#' Create a dataframe of simulated addresses. Street names are from `street_names`, which is based on a list of the most common street names in the US. Cities and zip codes are from `ks_cities` and `ks_zipcodes`, which are the reference lists used to check those components in [validate_address()]. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using `sample()`. By setting `dirty = TRUE`, the function will alter values in `street`, `city`, and `zip` for the purpose of testing [validate_address()] and [clean_address()].
+#' Create a dataframe of simulated addresses. Street names are from `street_names`, which is based on a list of the most common street names in the US. City, zip code, and county combinations are from `ks_city_zip`. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using `sample()`. By setting `dirty = TRUE`, the function will alter values in `street`, `city`, and `zip` for the purpose of testing [validate_address()] and [clean_address()].
 #'
 #' @param nrow An integer to set the number of rows in the output.
 #' @param dirty Logical: creates dirty data in `street`, `city`, and `zip` when set to `TRUE`.
@@ -21,12 +21,9 @@ sim_address <- function(nrow, dirty = FALSE) {
     state = "KS"
   )
 
-  ks_locations <- ks_locations %>%
-    dplyr::filter(!stringr::str_detect(.data$city, "Airport|University"))
-
   df <- df %>%
     dplyr::bind_cols(
-      ks_locations[sample(1:nrow(ks_locations), size = nrow, replace = TRUE),]
+      etmstuff::ks_city_zip[sample(1:nrow(etmstuff::ks_city_zip), size = nrow, replace = TRUE),]
     ) %>%
     dplyr::select("street", "unit", "city", "state", "zip", "county")
 
@@ -87,10 +84,10 @@ string_add <- function(s) {
 }
 
 sim_street <- function(n) {
-  dir <- c(directions$abbr, directions$full)
+  dir <- c(etmstuff::directions$abbr, etmstuff::directions$full)
   ldir <- length(dir)
 
-  suf <- c(street_suffixes$abbr, street_suffixes$full)
+  suf <- c(etmstuff::street_sfx$abbr, etmstuff::street_sfx$full)
   lsuf <- length(suf)
 
   stringr::str_squish(paste(

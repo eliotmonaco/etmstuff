@@ -1,4 +1,4 @@
-## `ks_places` dataset
+## `ks_places` data set
 
 ### source: https://www.census.gov/library/reference/code-lists/ansi.html#place
 

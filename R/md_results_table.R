@@ -24,7 +24,7 @@ md_results_table <- function(df, var = "Results") {
   unq_codes <- sort(unique(unlist(strsplit(df$Results, ","))))
 
   # Table of unique result codes
-  df_md_codes <- purrr::list_rbind(etmstuff::melissa_data_result_codes) %>%
+  df_md_codes <- purrr::list_rbind(etmstuff::melissa_data_codes) %>%
     dplyr::filter(.data$code %in% unq_codes)
 
   # Add n occurrences

@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim_address.R
 \name{sim_address}
 \alias{sim_address}
-\title{Simulate addresses to test functions}
+\title{Simulate addresses}
 \usage{
 sim_address(nrow, dirty = FALSE)
 }
@@ -15,7 +15,7 @@ sim_address(nrow, dirty = FALSE)
 A dataframe.
 }
 \description{
-Create a dataframe of simulated addresses. Street names are from \code{street_names}, which is based on a list of the most common street names in the US. Cities and zip codes are from \code{ks_cities} and \code{ks_zipcodes}, which are the reference lists used to check those components in \code{\link[=validate_address]{validate_address()}}. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using \code{sample()}. By setting \code{dirty = TRUE}, the function will alter values in \code{street}, \code{city}, and \code{zip} for the purpose of testing \code{\link[=validate_address]{validate_address()}} and \code{\link[=clean_address]{clean_address()}}.
+Create a dataframe of simulated addresses. Street names are from \code{street_names}, which is based on a list of the most common street names in the US. City, zip code, and county combinations are from \code{ks_city_zip}. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using \code{sample()}. By setting \code{dirty = TRUE}, the function will alter values in \code{street}, \code{city}, and \code{zip} for the purpose of testing \code{\link[=validate_address]{validate_address()}} and \code{\link[=clean_address]{clean_address()}}.
 }
 \examples{
 df <- sim_address(nrow = 1000, dirty = TRUE)
