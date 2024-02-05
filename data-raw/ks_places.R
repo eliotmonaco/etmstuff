@@ -1,6 +1,6 @@
-## `ks_places` data set
+# Generates `ks_places.rda`
 
-### source: https://www.census.gov/library/reference/code-lists/ansi.html#place
+## source: https://www.census.gov/library/reference/code-lists/ansi.html#place
 
 ks_places <- read.table(
   file = "data-raw/ks_2020_place_table.txt",

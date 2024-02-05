@@ -4,10 +4,11 @@
 Data
 - Major cleanup on 2024-02-01
 - ks_city_zip contains city/zip/county combos
+- ks_county_fips contains county/fips and some other not particularly useful data
 - various elements NOT in that table are saved to xcities, xzips, & xks_city_zip in dev_aux/helpers/
 - street_names is WIP under dev_aux/helpers/street_names.R
 - address regex examples is WIP under r_projects/address_regex_examples.R
-
+- unit_prefixes doesn't have documentation
 
 
 
