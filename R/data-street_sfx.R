@@ -8,7 +8,7 @@
 #'
 #' @format A dataframe.
 #'
-#' @source Created for use in address cleaning and address creation functions.
+#' @source Created for use in address cleaning and address simulation.
 #'
 #' @keywords datasets
 "street_sfx"

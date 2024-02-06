@@ -2,7 +2,7 @@
 
 library(tidyverse)
 
-
+## Street names from Washington Post article
 ## source: https://www.washingtonpost.com/blogs/govbeat/wp/2015/03/06/these-are-the-most-popular-street-names-in-every-state/
 
 df_wapo <- read.csv("data-raw/street_names_wapo.csv", col.names = "name")
@@ -16,12 +16,7 @@ street_names_wapo <- sort(unique(str_squish(na.omit(c(
 
 street_names_wapo <- street_names_wapo[which(!str_detect(street_names_wapo, "^N\\s|^S\\s"))]
 
-
-
-
-
-
-
+## Kansas street names from geographic.org
 ## source: https://geographic.org/streetview/usa/ks/index.html
 
 df_geo <- read.csv("data-raw/street_names_geo.csv")
@@ -31,49 +26,54 @@ df_geo <- df_geo %>%
 
 df_geo[df_geo == ""] <- NA
 
-streets <- c()
+street_names_geo <- c()
 
+### Combine separate columns into one
 for (i in 1:ncol(df_geo)) {
-  streets <- sort(unique(na.omit(c(df_geo[[i]], streets))))
+  street_names_geo <- sort(unique(na.omit(c(df_geo[[i]], street_names_geo))))
 }
 
-df_geo <- data.frame(full_name = streets)
+df_geo <- data.frame(full_street = street_names_geo)
 
-# Parse pre-directional
+### Parse predirectional
 pattern <- paste0("^", etmstuff::directions$abbr, "\\s", collapse = "|")
-df_geo$pre_dir <- str_squish(str_extract(df_geo$full_name, pattern))
-df_geo$street <- str_squish(str_remove(df_geo$full_name, pattern))
+df_geo$predir <- str_squish(str_extract(df_geo$full_street, pattern))
+df_geo$street <- str_squish(str_remove(df_geo$full_street, pattern))
 
-# Parse post-directional 2
+### Parse predirectional placed at end of string
 pattern <- paste0("(?i)", paste0(",\\s", etmstuff::directions$full, "$", collapse = "|"))
-df_geo$post_dir2 <- str_squish(str_remove(str_extract(df_geo$street, pattern), ","))
+df_geo$predir_post <- str_squish(str_remove(str_extract(df_geo$street, pattern), ","))
 df_geo$street <- str_squish(str_remove(df_geo$street, pattern))
 
-# Parse post-directional 1
+### Parse postdirectional
 pattern <- paste0("\\s", c("N", "S", "E", "W"), "$", collapse = "|")
-df_geo$post_dir1 <- str_squish(str_remove(str_extract(df_geo$street, pattern), ","))
+df_geo$postdir <- str_squish(str_remove(str_extract(df_geo$street, pattern), ","))
 df_geo$street <- str_squish(str_remove(df_geo$street, pattern))
 
-# # Parse street suffix
-pattern <- paste0("\\s", na.omit(c(etmstuff::street_sfx$full, etmstuff::street_sfx$abbr)), "$", collapse = "|")
-df_geo$suffix <- str_squish(str_extract(df_geo$street, pattern))
+### Parse suffix
+sfx <- na.omit(c(etmstuff::street_sfx$full, etmstuff::street_sfx$abbr))
+pattern <- paste0("(?i)", paste0("\\s", sfx, "$", collapse = "|"))
+df_geo$street <- str_squish(str_remove(df_geo$street, pattern))
 df_geo$street <- str_squish(str_remove(df_geo$street, pattern))
 
+### Deduplicate street names
 df_geo <- df_geo %>%
-  select(full_name, pre_dir, street, suffix, post_dir1, post_dir2)
+  distinct(street)
 
+### Filter out remaining streets that contain suffix elements
+pattern <- paste0("(?i)", paste0("\\b", sfx, "\\b", collapse = "|"))
+df_geo <- df_geo %>%
+  filter(!str_detect(street, pattern)) %>%
+  filter(!str_detect(street, "^\\d+$")) %>%
+  arrange(street)
+
+### Get street names from `street_names_wapo` that don't appear in `street_names_geo`
 street_names_geo <- sort(unique(df_geo$street))
-# suffix <- sort(unique(df_geo$suffix))
-
-
-
-
 pattern <- paste0(street_names_wapo, collapse = "|")
-street_names_wapo[which(!street_names_wapo %in% unique(str_extract(street_names_geo, pattern)))]
+wapo_in_geo <- unique(str_extract(street_names_geo, pattern))
+wapo_unq <- street_names_wapo[which(!street_names_wapo %in% wapo_in_geo)]
 
-
-
-
-
+### Combine both sets of street names
+street_names <- sort(unique(c(street_names_geo, street_names_wapo)))
 
 usethis::use_data(street_names, overwrite = T)
