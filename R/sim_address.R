@@ -1,6 +1,6 @@
 #' Simulate addresses
 #'
-#' Create a dataframe of simulated addresses. Street names are from `street_names`, which is based on a list of the most common street names in the US. City, zip code, and county combinations are from `ks_city_zip`. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using `sample()`. By setting `dirty = TRUE`, the function will alter values in `street`, `city`, and `zip` for the purpose of testing [validate_address()] and [clean_address()].
+#' Create a dataframe of simulated addresses. Street names are sampled from `street_names`. City, zip code, and county combinations are sampled from `ks_city_zip`. By setting `dirty = TRUE`, the function will alter values in `street`, `city`, and `zip` for the purpose of testing [validate_address()] and [clean_address()].
 #'
 #' @param nrow An integer to set the number of rows in the output.
 #' @param dirty Logical: creates dirty data in `street`, `city`, and `zip` when set to `TRUE`.
@@ -16,15 +16,16 @@
 #'
 sim_address <- function(nrow, dirty = FALSE) {
   df <- data.frame(
-    street = sim_street(nrow),
+    # street = sim_street(nrow),
+    street = etmstuff::street_names[sample(1:length(etmstuff::street_names), size = nrow, replace = TRUE)],
     unit = sim_unit(nrow),
     state = "KS"
   )
 
+  df2 <- etmstuff::ks_city_zip[sample(1:nrow(etmstuff::ks_city_zip), size = nrow, replace = TRUE),]
+
   df <- df %>%
-    dplyr::bind_cols(
-      etmstuff::ks_city_zip[sample(1:nrow(etmstuff::ks_city_zip), size = nrow, replace = TRUE),]
-    ) %>%
+    dplyr::bind_cols(df2) %>%
     dplyr::select("street", "unit", "city", "state", "zip", "county")
 
   # Add dirty data to `df`
@@ -58,12 +59,6 @@ sim_address <- function(nrow, dirty = FALSE) {
     n <- sample(1:nrow, n)
     df$zip[n] <- sample(10000:99999, length(n), replace = TRUE)
   }
-
-  # # Add `address_id`
-  # df <- id_distinct_rows(df, var = colnames(df), id_name = "address_id")
-  #
-  # df %>%
-  #   dplyr::relocate(address_id)
 
   df
 }

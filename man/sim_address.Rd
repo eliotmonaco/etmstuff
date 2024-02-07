@@ -15,7 +15,7 @@ sim_address(nrow, dirty = FALSE)
 A dataframe.
 }
 \description{
-Create a dataframe of simulated addresses. Street names are from \code{street_names}, which is based on a list of the most common street names in the US. City, zip code, and county combinations are from \code{ks_city_zip}. Other elements (e.g., house numbers, directions, street suffixes, and units) are generated pseudorandomly using \code{sample()}. By setting \code{dirty = TRUE}, the function will alter values in \code{street}, \code{city}, and \code{zip} for the purpose of testing \code{\link[=validate_address]{validate_address()}} and \code{\link[=clean_address]{clean_address()}}.
+Create a dataframe of simulated addresses. Street names are sampled from \code{street_names}. City, zip code, and county combinations are sampled from \code{ks_city_zip}. By setting \code{dirty = TRUE}, the function will alter values in \code{street}, \code{city}, and \code{zip} for the purpose of testing \code{\link[=validate_address]{validate_address()}} and \code{\link[=clean_address]{clean_address()}}.
 }
 \examples{
 df <- sim_address(nrow = 1000, dirty = TRUE)

@@ -20,12 +20,12 @@ A dataframe with 10 columns and 764 rows.
 }
 }
 \source{
-https://www.census.gov/library/reference/code-lists/ansi.html#place
+Downloaded from the US Census Bureau website (https://www.census.gov/library/reference/code-lists/ansi.html#place).
 }
 \usage{
 ks_place_by_county
 }
 \description{
-A list of Kansas incorporated and census designated places (CDPs) and their corresponding 2020 census codes. There is at least one row per place. If a place overlaps with multiple counties, there is a separate row for each county. Table downloaded from Census.gov.
+A list of Kansas incorporated and census designated places (CDPs) and their corresponding 2020 census codes. From the US Census Bureau website: "Contains at least one record for every place in the state/nation sorted by "STATEFP", then "COUNTYFP", and then "PLACEFP".  When the place extends into multiple counties, the table includes a separate record for each county."
 }
 \keyword{datasets}

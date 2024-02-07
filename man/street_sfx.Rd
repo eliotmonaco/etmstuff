@@ -8,7 +8,7 @@
 A dataframe.
 }
 \source{
-Created for use in address cleaning and address creation functions.
+Created for use in address cleaning and address simulation.
 }
 \usage{
 street_sfx
