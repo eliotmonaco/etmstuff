@@ -1,24 +1,26 @@
+Conventions:
+- When a function needs to know the name of a unique row ID in `df`, the argument name is `row_id`.
+- When a function needs the user to supply a name for a row ID variable that will be added to `df` by the function, the argument name is `id_name`.
+- When a function takes a vector of variables as an argument, the argument name is prefixed with "var_"
 
 
 
 Data
-- Major cleanup on 2024-02-01
+- Major data cleanup starting 2024-02-01
 - ks_city_zip contains city/zip/county combos
 - ks_county_fips contains county/fips and some other not particularly useful data
-- various elements NOT in that table are saved to xcities, xzips, & xks_city_zip in dev_aux/helpers/
-- street_names is WIP under dev_aux/helpers/street_names.R
 - address regex examples is WIP under r_projects/address_regex_examples.R
 - unit_prefixes doesn't have documentation
 
 
 
-
-# County Highway, County Road, Highway, Old Highway, State Highway, US Highway
-
-# What is the rule for a postdirectional - does the predirectional limit what it can be?
-
+sim_street
+- house numbers modeled but no bootstrapping
+- unit model/exploration WIP
 
 
+
+address_regex help/examples WIP
 
 
 

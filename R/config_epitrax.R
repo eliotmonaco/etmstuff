@@ -5,11 +5,11 @@
 #' * Adds a unique identifier (`record_id_src`) based on the values in the unmodified source file.
 #' * Adds a unique row identifier (`row_id_src`).
 #' * Formats all date variables as "YYYY-MM-DD".
-#' * Reorders the columns according to `etmstuff::epitrax_lead_vars$ordered`.
+#' * Reorders the columns according to `etmstuff::epitrax_vars$all`.
 #'
 #' @param df A dataframe.
 #' @param var_dates The EpiTrax date variables to format.
-#' @param var_order The order for EpiTrax variables in the returned dataframe.
+#' @param var_final The order for EpiTrax variables in the returned dataframe.
 #'
 #' @return
 #' A list containing two dataframes:
@@ -24,33 +24,33 @@
 #'
 # @examples
 #'
-config_epitrax <- function(df, var_dates = etmstuff::epitrax_lead_vars$date, var_order = etmstuff::epitrax_lead_vars$ordered) {
+config_epitrax <- function(df, var_dates = etmstuff::epitrax_vars$date, var_final = etmstuff::epitrax_vars$final) {
   if (!is.data.frame(df)) stop("`df` must be a dataframe")
 
-  var_check(df, var = var_order)
+  var_check(df, var = var_final)
 
-  vars_other <- colnames(df)[which(!colnames(df) %in% var_order)]
+  vars_other <- colnames(df)[which(!colnames(df) %in% var_final)]
 
   if (length(vars_other) > 0) {
     m <- paste(
       "Unexpected variable(s):",
       paste(vars_other, collapse = ", "),
-      "\nAdd to `var_order` argument."
+      "\nAdd to `var_final` argument."
     )
     stop(m)
   }
 
   # Reorder variables
   df <- df %>%
-    dplyr::select(tidyselect::all_of(var_order))
+    dplyr::select(tidyselect::all_of(var_final))
 
-  # Add `record_id_src`, a unique record identifier based on a hash function
-  df$record_id_src <- apply(
-    X = df,
-    MARGIN = 1,
-    FUN = digest::digest,
-    algo = "md5"
-  )
+  # # Add `record_id_src`, a unique record identifier based on a hash function
+  # df$record_id_src <- apply(
+  #   X = df,
+  #   MARGIN = 1,
+  #   FUN = digest::digest,
+  #   algo = "md5"
+  # )
 
   # Add `row_id_src`, a unique row identifier (sequential)
   df <- df %>%
@@ -59,7 +59,8 @@ config_epitrax <- function(df, var_dates = etmstuff::epitrax_lead_vars$date, var
       digits = 0,
       width = 6,
       flag = "0"
-    ))
+    )) %>%
+    dplyr::mutate(row_id_src = paste0("R", row_id_src))
 
   # Format dates
   df[, var_dates] <- lapply(
@@ -76,7 +77,8 @@ config_epitrax <- function(df, var_dates = etmstuff::epitrax_lead_vars$date, var
 
   message(
     "Configuration complete\n",
-    " * `row_id_src` and `record_id_src` added\n",
+    # " * `row_id_src` and `record_id_src` added\n",
+    " * `row_id_src` added\n",
     " * Date variables formatted\n",
     " * Columns reordered"
   )
@@ -84,7 +86,8 @@ config_epitrax <- function(df, var_dates = etmstuff::epitrax_lead_vars$date, var
   list(
     data = df, # Contains all variables, reordered
     keys = df %>% # Contains ID variables only
-      dplyr::select("row_id_src", "patient_id", "patient_record_number", "record_id_src") %>%
+      # dplyr::select("row_id_src", "patient_id", "patient_record_number", "record_id_src") %>%
+      dplyr::select("row_id_src", "patient_id", "patient_record_number") %>%
       dplyr::mutate(timestamp = Sys.time())
   )
 }

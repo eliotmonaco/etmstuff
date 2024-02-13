@@ -76,9 +76,5 @@ library(etmstuff)
 devtools::loaded_packages()
 
 
-# When a function needs to know the name of a unique row ID in `df`, the argument name is `row_id`.
-# When a function needs the user to supply a name for a row ID variable that will be added to `df` by the function, the argument name is `id_name`.
-
-
 
 

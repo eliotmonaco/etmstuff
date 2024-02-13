@@ -15,10 +15,12 @@
 #' df <- sim_address(nrow = 1000, dirty = TRUE)
 #'
 sim_address <- function(nrow, dirty = FALSE) {
+  v_street <- sim_street(nrow)
+  v_unit <- sim_unit(nrow)
+
   df <- data.frame(
-    # street = sim_street(nrow),
-    street = etmstuff::street_names[sample(1:length(etmstuff::street_names), size = nrow, replace = TRUE)],
-    unit = sim_unit(nrow),
+    street = v_street,
+    unit = v_unit,
     state = "KS"
   )
 
@@ -79,40 +81,17 @@ string_add <- function(s) {
 }
 
 sim_street <- function(n) {
-  dir <- c(etmstuff::directions$abbr, etmstuff::directions$full)
-  ldir <- length(dir)
+  streets <- etmstuff::street_names[sample(1:length(etmstuff::street_names), size = n, replace = TRUE)]
 
-  suf <- c(etmstuff::street_sfx$abbr, etmstuff::street_sfx$full)
-  lsuf <- length(suf)
+  samp <- model_house_num_dist(sample_size = 100 * n)
 
-  stringr::str_squish(paste(
-    # House number
-    sample(
-      c(1:9999),
-      size = n,
-      replace = TRUE
-    ),
-    # Direction
-    sample(
-      c(dir, ""),
-      size = n,
-      replace = TRUE,
-      prob = c(rep(.35 / ldir, length.out = ldir), .65)
-    ),
-    # Street
-    sample(
-      street_names,
-      size = n,
-      replace = TRUE
-    ),
-    # Street suffix
-    sample(
-      c(suf, ""),
-      size = n,
-      replace = TRUE,
-      prob = c(rep(.65 / lsuf, length.out = lsuf), .35)
-    )
-  ))
+  numbers <- sample(
+    samp,
+    size = n,
+    replace = TRUE
+  )
+
+  paste(numbers, streets)
 }
 
 sim_unit <- function(n) {
@@ -165,14 +144,36 @@ sim_unit <- function(n) {
   v
 }
 
+# Function to model the distribution of house numbers
+model_house_num_dist <- function(sample_size) {
+  # Create intervals of 100 for house numbers
+  hn_max <- 40000
+  int_size <- 100
+  n_int <- hn_max / int_size
+  int_seq1 <- 1:n_int
+  int_seq2 <- seq(0, hn_max, by = int_size)
 
+  # Create bin count for each house number interval
+  m <- 2.7
+  sd <- 1.2
+  p <- stats::dlnorm(int_seq1, meanlog = m, sdlog = sd)
+  samp <- sample(int_seq1, sample_size, replace = TRUE, prob = p)
+  bincounts <- tabulate(samp)
 
+  # Add zero counts for any missing bins at the end of `bincounts`
+  n_zeros <- 400 - length(bincounts)
+  bincounts <- c(bincounts, rep(0, times = n_zeros))
 
+  # Create distribution for each house number interval
+  dist <- list()
+  for (i in 1:(length(int_seq2) - 1)) {
+    min <- int_seq2[i]
+    max <- int_seq2[i + 1] - 1
+    m <- 2.6
+    sd <- 1.2
+    p <- stats::dlnorm(1:100, meanlog = m, sdlog = sd)
+    dist[[i]] <- sample(min:max, size = bincounts[i], replace = TRUE, prob = p)
+  }
 
-
-
-
-
-
-
-
+  unlist(dist)
+}
