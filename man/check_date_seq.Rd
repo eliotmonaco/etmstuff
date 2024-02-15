@@ -2,46 +2,38 @@
 % Please edit documentation in R/check_date_seq.R
 \name{check_date_seq}
 \alias{check_date_seq}
-\title{Check date sequences in a dataframe}
+\title{Check date sequences}
 \usage{
-check_date_seq(df, dates, row_id = NULL)
+check_date_seq(date1, date2, ...)
 }
 \arguments{
-\item{df}{A dataframe.}
+\item{date1, date2}{Vectors containing dates. Elements at the same index will be compared, i.e., \code{date1[1]} and \code{date2[1]}.}
 
-\item{dates}{A character vector containing the names of date variables in \code{df} listed in the expected sequence, i.e., early to late.}
-
-\item{row_id}{A unique row identifier variable in \code{df} (optional).}
+\item{...}{Additional date vectors to compare.}
 }
 \value{
-If any dates are out of sequence, a dataframe containing the affected rows is returned. Only the \code{row_id} and \code{dates} variables are returned from \code{df}.
+A logical vector of the same length as the arguments.
 }
 \description{
-This function checks the sequence of any dates added to the \code{dates} argument. Any number of date variables can be checked. Equivalent dates are evaluated as being in sequence.
+This function checks whether or not a sequence of dates is in order from earliest to latest. Any number of date vectors can be checked. The order in which arguments are evaluated is \code{date1}, \code{date2}, and then any additional arguments from left to right. Equivalent dates are evaluated as being in sequence. Sequences with \code{NA}s are evaluated with \code{NA}s removed.
 }
 \examples{
-rows <- 100
+dates <- seq.Date(
+  as.Date("2023-01-01", "\%Y-\%m-\%d"),
+  as.Date("2023-12-31", "\%Y-\%m-\%d"),
+  by = "day"
+)
+dates <- c(dates, rep(NA, times = 10))
+
+n_rows <- 500
 
 df <- data.frame(
-  id = 1:rows,
-  d1 = sample(
-    seq.Date(
-      from = as.Date("2020-01-01"),
-      to = as.Date("2022-12-31"),
-      by = "day"
-    ),
-    size = rows
-  ),
-  d2 = sample(
-    seq.Date(
-      from = as.Date("2020-01-01"),
-      to = as.Date("2022-12-31"),
-      by = "day"
-    ),
-    size = rows
-  )
+  d1 = sample(dates, n_rows, replace = TRUE),
+  d2 = sample(dates, n_rows, replace = TRUE),
+  d3 = sample(dates, n_rows, replace = TRUE),
+  d4 = sample(dates, n_rows, replace = TRUE)
 )
 
-df_check <- check_date_seq(df, dates = c("d1", "d2"), row_id = "id")
+df$ordered <- check_date_seq(df$d1, df$d2, df$d3, df$d4)
 
 }

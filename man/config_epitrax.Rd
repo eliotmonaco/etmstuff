@@ -20,8 +20,8 @@ config_epitrax(
 \value{
 A list containing two dataframes:
 \itemize{
-\item \code{data} contains all original variables, \code{row_id_src}, and \code{record_id_src}.
-\item \code{keys} contains \code{row_id_src}, \code{patient_id}, \code{patient_record_number}, and \code{record_id_src}.
+\item \code{data} contains variables provided in \code{var_final} plus \code{row_id}.
+\item \code{keys} contains \code{row_id}, \code{patient_id}, \code{patient_record_number}, and \code{timestamp}.
 }
 }
 \description{
@@ -29,9 +29,8 @@ This function configures the EpiTrax source file in preparation for data process
 }
 \details{
 \itemize{
-\item Adds a unique identifier (\code{record_id_src}) based on the values in the unmodified source file.
-\item Adds a unique row identifier (\code{row_id_src}).
-\item Formats all date variables as "YYYY-MM-DD".
+\item Adds a unique row identifier (\code{row_id}).
+\item Formats date variables as "YYYY-MM-DD".
 \item Reorders the columns according to \code{etmstuff::epitrax_vars$all}.
 }
 }

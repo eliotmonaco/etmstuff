@@ -2,9 +2,8 @@
 #'
 #' This function configures the EpiTrax source file in preparation for data processing. It does the following:
 #'
-#' * Adds a unique identifier (`record_id_src`) based on the values in the unmodified source file.
-#' * Adds a unique row identifier (`row_id_src`).
-#' * Formats all date variables as "YYYY-MM-DD".
+#' * Adds a unique row identifier (`row_id`).
+#' * Formats date variables as "YYYY-MM-DD".
 #' * Reorders the columns according to `etmstuff::epitrax_vars$all`.
 #'
 #' @param df A dataframe.
@@ -14,8 +13,8 @@
 #' @return
 #' A list containing two dataframes:
 #'
-#' * `data` contains all original variables, `row_id_src`, and `record_id_src`.
-#' * `keys` contains `row_id_src`, `patient_id`, `patient_record_number`, and `record_id_src`.
+#' * `data` contains variables provided in `var_final` plus `row_id`.
+#' * `keys` contains `row_id`, `patient_id`, `patient_record_number`, and `timestamp`.
 #'
 #' @export
 #'
@@ -52,16 +51,6 @@ config_epitrax <- function(df, var_dates = etmstuff::epitrax_vars$date, var_fina
   #   algo = "md5"
   # )
 
-  # Add `row_id_src`, a unique row identifier (sequential)
-  df <- df %>%
-    dplyr::mutate(row_id_src = formatC(
-      x = 1:nrow(.),
-      digits = 0,
-      width = 6,
-      flag = "0"
-    )) %>%
-    dplyr::mutate(row_id_src = paste0("R", row_id_src))
-
   # Format dates
   df[, var_dates] <- lapply(
     X = df[, var_dates],
@@ -70,24 +59,34 @@ config_epitrax <- function(df, var_dates = etmstuff::epitrax_vars$date, var_fina
     origin = "1970-01-01"
   )
 
-  # Sort by `lab_collection_date` & `lab_id`, and relocate `row_id_src`
+  # Sort by `lab_collection_date` & `lab_id`, and relocate `row_id`
   df <- df %>%
-    dplyr::arrange(.data$lab_collection_date, .data$lab_id) %>%
-    dplyr::relocate("row_id_src")
+    dplyr::arrange(.data$lab_collection_date, .data$lab_id)
 
-  message(
-    "Configuration complete\n",
-    # " * `row_id_src` and `record_id_src` added\n",
-    " * `row_id_src` added\n",
-    " * Date variables formatted\n",
-    " * Columns reordered"
-  )
+  # Add `row_id`, a unique row identifier (sequential)
+  df <- df %>%
+    dplyr::mutate(row_id = formatC(
+      x = 1:nrow(.),
+      digits = 0,
+      width = 6,
+      flag = "0"
+    )) %>%
+    dplyr::mutate(row_id = paste0("R", row_id)) %>%
+    dplyr::relocate("row_id")
+
+  # message(
+  #   "Configuration complete\n",
+  #   # " * `row_id` and `record_id_src` added\n",
+  #   " * `row_id` added\n",
+  #   " * Date variables formatted\n",
+  #   " * Columns reordered"
+  # )
 
   list(
     data = df, # Contains all variables, reordered
     keys = df %>% # Contains ID variables only
-      # dplyr::select("row_id_src", "patient_id", "patient_record_number", "record_id_src") %>%
-      dplyr::select("row_id_src", "patient_id", "patient_record_number") %>%
+      # dplyr::select("row_id", "patient_id", "patient_record_number", "record_id_src") %>%
+      dplyr::select("row_id", "patient_id", "patient_record_number") %>%
       dplyr::mutate(timestamp = Sys.time())
   )
 }
