@@ -1,18 +1,17 @@
-#' EpiTrax blood lead record variables
+#' EpiTrax variables
 #'
 #' @name epitrax_vars
 #'
-#' @description Variable names contained in the EpiTrax lead data export file. Used in [config_epitrax()]. The list contains three vectors:
+#' @description A list of EpiTrax variables used in lead record data processing. The list contains the following vectors:
 #'
 #' * `all`: All exported variables
-#' * `date`: Variables to format as date
 #' * `final`: Variables kept in the final data set
 #'
 #' @usage epitrax_vars
 #'
 #' @format A list.
 #'
-#' @source EpiTrax export file.
+#' @source EpiTrax lead data dictionary.
 #'
 #' @keywords datasets
 "epitrax_vars"

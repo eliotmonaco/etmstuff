@@ -3,21 +3,20 @@
 \docType{data}
 \name{epitrax_vars}
 \alias{epitrax_vars}
-\title{EpiTrax blood lead record variables}
+\title{EpiTrax variables}
 \format{
 A list.
 }
 \source{
-EpiTrax export file.
+EpiTrax lead data dictionary.
 }
 \usage{
 epitrax_vars
 }
 \description{
-Variable names contained in the EpiTrax lead data export file. Used in \code{\link[=config_epitrax]{config_epitrax()}}. The list contains three vectors:
+A list of EpiTrax variables used in lead record data processing. The list contains the following vectors:
 \itemize{
 \item \code{all}: All exported variables
-\item \code{date}: Variables to format as date
 \item \code{final}: Variables kept in the final data set
 }
 }
