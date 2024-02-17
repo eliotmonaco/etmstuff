@@ -2,36 +2,45 @@
 % Please edit documentation in R/id_distinct_rows.R
 \name{id_distinct_rows}
 \alias{id_distinct_rows}
-\title{Assign a sequential ID to distinct rows}
+\title{Assign a sequential ID number to distinct rows}
 \usage{
-id_distinct_rows(df, var, id_name, prefix = NULL, seq_start = 1, digits = NULL)
+id_distinct_rows(
+  df,
+  id_name,
+  prefix = NULL,
+  var = colnames(df),
+  seq_start = 1,
+  digits = NULL
+)
 }
 \arguments{
 \item{df}{A dataframe.}
 
-\item{var}{A vector of variable names that the new ID will be based on.}
-
 \item{id_name}{A name for the new ID variable.}
 
-\item{prefix}{An optional prefix to add to all IDs.}
+\item{prefix}{An optional prefix of characters to add to all ID values.}
+
+\item{var}{The variable names whose unique values the new ID will be based on. Defaults to \code{colnames(df)}.}
 
 \item{seq_start}{An integer for the beginning of the ID sequence. Defaults to \code{1}.}
 
-\item{digits}{An integer for the number of digits in the ID (including leading zeros). Defaults to \code{nchar(nrow(df))}.}
+\item{digits}{An integer for the number of digits in the ID (including leading zeros). Defaults to \code{nchar(nrow(df) + seq_start)}.}
 }
 \value{
 A dataframe.
 }
 \description{
-Assign a sequential ID number to distinct rows in \code{df} based on selected variables (\code{var}). The new ID is a string, with the number of characters equal to \code{nchar(nrow(df))} (if there are 100 rows, the new ID will have three characters).
+This function assigns a sequential ID number to distinct rows in a dataframe  based on selected variables (\code{var}). The new ID is a string, with the number of characters equal to \code{nchar(nrow(df))} (if there are 100 rows, the new ID will have three characters).
 }
 \examples{
-n_rows <- 20
+n_rows <- 50
+
 df <- data.frame(
   x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
-  y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
-  z = rep("ignore this", length.out = n_rows)
+  y = sample(month.name, size = n_rows, replace = TRUE),
+  z = seq(1, n_rows)
 )
-df_new <- id_distinct_rows(df, var = c("x", "y"), id_name = "new_id")
+
+df <- id_distinct_rows(df, id_name = "new_id", prefix = "A", var = c("x", "y"))
 
 }

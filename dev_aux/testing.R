@@ -7,6 +7,15 @@ devtools::load_all()
 
 
 
+n_rows <- 50
+
+df <- data.frame(
+  x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
+  y = sample(month.name, size = n_rows, replace = TRUE),
+  z = seq(1, n_rows)
+)
+
+df <- id_distinct_rows(df, id_name = "new_id", prefix = "A", var = c("x", "y"), digits = 1)
 
 
 

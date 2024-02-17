@@ -1,13 +1,13 @@
-#' Assign a sequential ID to distinct rows
+#' Assign a sequential ID number to distinct rows
 #'
-#' Assign a sequential ID number to distinct rows in `df` based on selected variables (`var`). The new ID is a string, with the number of characters equal to `nchar(nrow(df))` (if there are 100 rows, the new ID will have three characters).
+#' This function assigns a sequential ID number to distinct rows in a dataframe  based on selected variables (`var`). The new ID is a string, with the number of characters equal to `nchar(nrow(df))` (if there are 100 rows, the new ID will have three characters).
 #'
 #' @param df A dataframe.
-#' @param var A vector of variable names that the new ID will be based on.
 #' @param id_name A name for the new ID variable.
-#' @param prefix An optional prefix to add to all IDs.
+#' @param prefix An optional prefix of characters to add to all ID values.
+#' @param var The variable names whose unique values the new ID will be based on. Defaults to `colnames(df)`.
 #' @param seq_start An integer for the beginning of the ID sequence. Defaults to `1`.
-#' @param digits An integer for the number of digits in the ID (including leading zeros). Defaults to `nchar(nrow(df))`.
+#' @param digits An integer for the number of digits in the ID (including leading zeros). Defaults to `nchar(nrow(df) + seq_start)`.
 #'
 #' @return A dataframe.
 #' @export
@@ -15,15 +15,17 @@
 #' @importFrom magrittr %>%
 #'
 #' @examples
-#' n_rows <- 20
+#' n_rows <- 50
+#'
 #' df <- data.frame(
 #'   x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
-#'   y = sample(c(1, 10, 100, NA), size = n_rows, replace = TRUE),
-#'   z = rep("ignore this", length.out = n_rows)
+#'   y = sample(month.name, size = n_rows, replace = TRUE),
+#'   z = seq(1, n_rows)
 #' )
-#' df_new <- id_distinct_rows(df, var = c("x", "y"), id_name = "new_id")
 #'
-id_distinct_rows <- function(df, var, id_name, prefix = NULL, seq_start = 1, digits = NULL) {
+#' df <- id_distinct_rows(df, id_name = "new_id", prefix = "A", var = c("x", "y"))
+#'
+id_distinct_rows <- function(df, id_name, prefix = NULL, var = colnames(df), seq_start = 1, digits = NULL) {
   var_check(df, var = var)
 
   if (id_name %in% colnames(df)) {
@@ -31,15 +33,16 @@ id_distinct_rows <- function(df, var, id_name, prefix = NULL, seq_start = 1, dig
     stop(m)
   }
 
-  min_width <- nchar(nrow(df) + seq_start)
+  # Find the minimum number of digits for the ID value
+  digits_min <- nchar(nrow(df) + seq_start)
 
-  if (is.null(digits)) {
-    digits <- min_width
-  } else if (digits < min_width) {
-    digits <- min_width
+  # Use `digits_min` as the ID character length if `digits` is null or fewer than `digits_min`
+  if (is.null(digits) || digits < digits_min) {
+    digits <- digits_min
   }
 
-  df_ids <- df %>%
+  # Deduplicate rows by `var` and add sequential ID numbers to distinct rows
+  df_distinct <- df %>%
     dplyr::select(tidyselect::all_of(var)) %>%
     dplyr::distinct() %>%
     dplyr::mutate({{ id_name }} := formatC(
@@ -48,10 +51,12 @@ id_distinct_rows <- function(df, var, id_name, prefix = NULL, seq_start = 1, dig
       flag = "0"
     ))
 
+  # Add `prefix` to ID
   if (!is.null(prefix)) {
-    df_ids[[id_name]] <- paste0(prefix, df_ids[[id_name]])
+    df_distinct[[id_name]] <- paste0(prefix, df_distinct[[id_name]])
   }
 
+  # Join IDs back to full dataframe
   df %>%
-    dplyr::left_join(df_ids, by = var)
+    dplyr::left_join(df_distinct, by = var)
 }
