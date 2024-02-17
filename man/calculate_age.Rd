@@ -4,18 +4,18 @@
 \alias{calculate_age}
 \title{Calculate age}
 \usage{
-calculate_age(d1, d2)
+calculate_age(date1, date2)
 }
 \arguments{
-\item{d1}{A vector containing the birth or start date for the age calculation.}
+\item{date1}{A vector containing the birth or start date for the age calculation.}
 
-\item{d2}{A vector containing the end date for the age calculation.}
+\item{date2}{A vector containing the end date for the age calculation.}
 }
 \value{
 A numeric vector.
 }
 \description{
-Calculate age from two date vectors. The formula used is \code{(d2 - d1) / 365.25}.
+Calculate age from two date vectors. The formula used is \code{(date2 - date1) / 365.25}.
 }
 \examples{
 start <- sample(
@@ -36,6 +36,6 @@ end <- sample(
   size = 10
 )
 
-calculate_age(d1 = start, d2 = end)
+calculate_age(date1 = start, date2 = end)
 
 }
