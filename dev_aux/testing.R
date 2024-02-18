@@ -7,6 +7,32 @@ devtools::load_all()
 
 
 
+
+df <- check_lab_results(data, var = "lab_result_value")
+test_values <- sort(unique(df$lab_result_value))
+
+df_test <- clean_lab_results(df_test, var = "lab_result_value")
+
+df <- check_lab_results(df_test, var = "lab_result_clean")
+
+# debugonce(parse_lab_results)
+df_test <- parse_lab_results(df_test, var = "lab_result_clean")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 n_rows <- 50
 
 df <- data.frame(
