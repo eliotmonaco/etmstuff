@@ -7,47 +7,6 @@ devtools::load_all()
 
 
 
-
-df <- check_lab_results(data, var = "lab_result_value")
-test_values <- sort(unique(df$lab_result_value))
-
-df_test <- clean_lab_results(df_test, var = "lab_result_value")
-
-df <- check_lab_results(df_test, var = "lab_result_clean")
-
-# debugonce(parse_lab_results)
-df_test <- parse_lab_results(df_test, var = "lab_result_clean")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-n_rows <- 50
-
-df <- data.frame(
-  x = sample(c("cat", "horse", "howler monkey"), size = n_rows, replace = TRUE),
-  y = sample(month.name, size = n_rows, replace = TRUE),
-  z = seq(1, n_rows)
-)
-
-df <- id_distinct_rows(df, id_name = "new_id", prefix = "A", var = c("x", "y"), digits = 1)
-
-
-
-
-
-
 # clean_address ####
 
 library(tidyverse)
@@ -626,20 +585,6 @@ all.equal(undp1, undp2)
 
 
 
-# id_distinct_rows ####
-
-debugonce(id_distinct_rows)
-
-df <- id_distinct_rows(
-  df_addr_processed,
-  var = c("street", "unit", "city", "state", "zip"),
-  id_name = "address_registry_id",
-  seq_start = 10000001,
-  digits = 4
-)
-
-
-
 # classify_test_reason ####
 
 library(tidyverse)
@@ -781,20 +726,6 @@ df_lookup <- rbind(
 
 
 
-# format lab_collection_date with time ####
-
-as.Date(epitrax_raw$lab_collection_date[100000],
-        format = "%Y-%m-%d %H:%M:%S",
-        origin = "1970-01-01")
-
-as.POSIXct(epitrax_raw$lab_collection_date[100000],
-           origin = "1970-01-01")
-
-df <- epitrax_raw %>%
-  filter(patient_id == "2335363")
-
-
-
 # md_request functions ####
 
 library(tidyverse)
@@ -824,60 +755,6 @@ dfB <- send_md_request(df_test)
 # Causes:
 # Error in url(r[url], open = url_open_mode) :
 # URL scheme unsupported by this method
-
-
-
-# calculate_age ####
-
-# Import EpiTrax source file
-epitrax_raw <- readr::read_csv(
-  unz(
-    description = "dev_aux/test_data/2023-6-7 blood lead 2015 to 2023-3-31.zip",
-    filename = "2023-6-7 blood lead 2015 to 2023-3-31.csv"
-  ),
-  col_types = readr::cols(.default = "c"),
-  na = c("", "NA", "NULL")
-)
-
-epitrax_list <- config_epitrax(epitrax_raw)
-
-epitrax_data <- epitrax_list[["data"]]
-epitrax_keys <- epitrax_list[["keys"]]
-
-
-
-
-epitrax_data$age <- calculate_age(
-  d1 = epitrax_data$patient_birth_date,
-  d2 = epitrax_data$lab_collection_date
-)
-
-epitrax_data <- epitrax_data %>%
-  relocate(age, .after = patient_birth_date)
-
-
-
-epitrax_data$age <- calculate_age(
-  d1 = c("dog", "cat"),
-  d2 = epitrax_data$lab_collection_date
-)
-
-
-
-# lab_results functions ####
-
-devtools::load_all()
-
-df_test <- df_test_lrv
-
-df <- check_lab_results(df_test, var = "lab_result_value")
-
-df_test <- clean_lab_results(df_test, var = "lab_result_value")
-
-df <- check_lab_results(df_test, var = "lab_result_clean")
-
-# debugonce(parse_lab_results)
-df_test <- parse_lab_results(df_test, var = "lab_result_clean")
 
 
 

@@ -22,6 +22,8 @@ usethis::use_git()
 
 usethis::use_github()
 
+usethis::use_testthat(3)
+
 
 
 ## External packages/functions ####
@@ -36,7 +38,15 @@ usethis::use_import_from("", "")
 
 ## Test/build workflow ####
 
+usethis::use_r("check_date_seq")
+
+usethis::use_test("check_date_seq")
+
 devtools::load_all()
+
+testthat::test_file("tests/testthat/test-check_date_seq.R")
+
+devtools::test()
 
 devtools::document()
 
@@ -48,7 +58,7 @@ devtools::check()
 
 ## globals.R ####
 
-epitrax_variables <- readRDS("dev_aux/helpers/epitrax_variables.rds")
+epitrax_variables <- readRDS("dev-aux/helpers/epitrax_variables.rds")
 
 message(paste(paste0('"', epitrax_variables, '"'), collapse = ", "))
 
@@ -56,7 +66,7 @@ message(paste(paste0('"', epitrax_variables, '"'), collapse = ", "))
 
 ## .Rbuildignore ####
 
-usethis::use_build_ignore(c("dev_aux"))
+usethis::use_build_ignore(c("dev-aux"))
 
 usethis::use_data_raw()
 

@@ -7,8 +7,8 @@ epitrax_data <- readRDS("../bl_2023q2/data/final/data_core_2023q2.rds")
 
 # sim_person_name ####
 
-first_names <- readRDS("dev_aux/sim/first_names.rds")
-last_names <- readRDS("dev_aux/sim/last_names.rds")
+first_names <- readRDS("dev-aux/sim/first_names.rds")
+last_names <- readRDS("dev-aux/sim/last_names.rds")
 
 # `match` can be NULL, TRUE, or a variable name
 

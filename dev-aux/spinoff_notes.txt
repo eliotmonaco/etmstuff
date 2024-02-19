@@ -1,5 +1,5 @@
 etmstuff_objects_20231110 <- ls("package:etmstuff")
-saveRDS(etmstuff_objects_20231110, "dev_aux/etmstuff_objects_20231110.rds")
+saveRDS(etmstuff_objects_20231110, "dev-aux/etmstuff_objects_20231110.rds")
 
 
 

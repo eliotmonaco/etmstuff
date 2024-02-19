@@ -29,7 +29,7 @@ id_distinct_rows <- function(df, id_name, prefix = NULL, var = colnames(df), seq
   var_check(df, var = var)
 
   if (id_name %in% colnames(df)) {
-    m <- paste0("`df$", id_name, "` already exists. Choose a different `id_name`.")
+    m <- paste0("`", id_name, "` is already a column in `df`. Choose a different `id_name`.")
     stop(m)
   }
 

@@ -55,15 +55,15 @@ sample(
 ## Last names
 # https://www.census.gov/topics/population/genealogy/data/2010_surnames.html
 
-first_names <- openxlsx::read.xlsx("dev_aux/sim/names.xlsx", sheet = 1)
-last_names <- openxlsx::read.xlsx("dev_aux/sim/names.xlsx", sheet = 2)
+first_names <- openxlsx::read.xlsx("dev-aux/sim/names.xlsx", sheet = 1)
+last_names <- openxlsx::read.xlsx("dev-aux/sim/names.xlsx", sheet = 2)
 
 colnames(first_names) <- c("male", "female")
 colnames(last_names) <- "name"
 last_names$name <- str_to_title(last_names$name)
 
-saveRDS(first_names, "dev_aux/sim/first_names.rds")
-saveRDS(last_names, "dev_aux/sim/last_names.rds")
+saveRDS(first_names, "dev-aux/sim/first_names.rds")
+saveRDS(last_names, "dev-aux/sim/last_names.rds")
 
 
 
