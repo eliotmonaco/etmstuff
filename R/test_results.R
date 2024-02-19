@@ -1,14 +1,18 @@
 #' Check, clean, and parse test results
 #'
-#' * `check_results()` finds unexpected test result values and returns a logical vector where `TRUE` indicates a valid result.
+#' * `check_results()` finds results that don't match the expected pattern of a greater- or less-than sign and a number.
 #' * `clean_results()` cleans common errors and converts "Not/None detected" to `< 1.0`.
-#' * `parse_results()` separates the greater- or less-than sign (`>` or `<`) from the number in the result.
+#' * `parse_results()` separates the greater- or less-than sign from the number in the cleaned results.
+#' * `flag_results()` finds parsed results that require review.
 #'
 #' @param results A vector of test results.
+#' @param sign The `sign` vector returned by `parse_results()`
+#' @param number The `number` vector returned by `parse_results()`
 #'
-#' @return A vector the same length as `results`.
-#' * `check_results()` and `clean_results()` return a vector the same length as `results`.
-#' * `parse_results()` returns a list containing two vectors, `sign` and `number`, the same length as `results`.
+#' @return
+#' * `check_results()` and `flag_results()` return a logical vector the same length as the argument(s).
+#' * `clean_results()` returns a character vector the same length as the argument.
+#' * `parse_results()` returns a list containing `sign` (a character vector) and `number` (a numeric vector), each the same length as the argument.
 #'
 # @examples
 #'
@@ -17,7 +21,7 @@ NULL
 
 #' @export
 #' @rdname test_results
-#' @family lab result processing functions
+#' @family test result processing
 check_results <- function(results) {
   # Valid pattern (with spaces removed)
   pattern <- "^[<>]?(\\d+|\\d*\\.\\d+)$"
@@ -28,7 +32,7 @@ check_results <- function(results) {
 
 #' @export
 #' @rdname test_results
-#' @family lab result processing functions
+#' @family test result processing
 clean_results <- function(results) {
   # Replace "not/none detected" with "< 1.0"
   pattern <- "(?i)(not|none) detected"
@@ -56,7 +60,7 @@ clean_results <- function(results) {
 
 #' @export
 #' @rdname test_results
-#' @family lab result processing functions
+#' @family test result processing
 parse_results <- function(results) {
   # Extract "<" or ">"
   sign <- stringr::str_extract(results, "^[<>]")
@@ -64,10 +68,28 @@ parse_results <- function(results) {
   # Extract number
   number <- suppressWarnings(as.numeric(stringr::str_remove(results, "^[<>]")))
 
-  if (any(is.na(number))) warning("`lab_result_number` contains NAs")
-
   list(
     sign = sign,
     number = number
+  )
+}
+
+#' @export
+#' @rdname test_results
+#' @family test result processing
+flag_results <- function(sign, number) {
+  if (length(sign) != length(number)) {
+    stop("`sign` and `number` must be vectors of the same length")
+  }
+
+  dplyr::case_when(
+    number == 0 ~ TRUE,
+    number > 100 ~ TRUE,
+    is.na(number) ~ TRUE,
+    sign == ">" ~ TRUE,
+    sign == "<" &
+      (number != 1 & number != 2 &
+         number != 3 & number != 3.3) ~ TRUE,
+    TRUE ~ FALSE
   )
 }

@@ -22,3 +22,8 @@ test_that("parse_results() number output as expected", {
   df <- readRDS(test_path("data", "results.rds"))
   expect_equal(parse_results(df$clean)$number, df$result_number)
 })
+
+test_that("flag_results() number output as expected", {
+  df <- readRDS(test_path("data", "results.rds"))
+  expect_equal(flag_results(df$result_sign, df$result_number), df$flag_result)
+})

@@ -40,11 +40,11 @@ usethis::use_import_from("", "")
 
 usethis::use_r("check_date_seq")
 
-usethis::use_test("check_date_seq")
+usethis::use_test("test_results")
 
 devtools::load_all()
 
-testthat::test_file("tests/testthat/test-check_date_seq.R")
+testthat::test_file("tests/testthat/test-test_results.R")
 
 devtools::test()
 

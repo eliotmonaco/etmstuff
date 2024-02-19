@@ -5,6 +5,7 @@
 \alias{check_results}
 \alias{clean_results}
 \alias{parse_results}
+\alias{flag_results}
 \title{Check, clean, and parse test results}
 \usage{
 check_results(results)
@@ -12,22 +13,29 @@ check_results(results)
 clean_results(results)
 
 parse_results(results)
+
+flag_results(sign, number)
 }
 \arguments{
 \item{results}{A vector of test results.}
+
+\item{sign}{The \code{sign} vector returned by \code{parse_results()}}
+
+\item{number}{The \code{number} vector returned by \code{parse_results()}}
 }
 \value{
-A vector the same length as \code{results}.
 \itemize{
-\item \code{check_results()} and \code{clean_results()} return a vector the same length as \code{results}.
-\item \code{parse_results()} returns a list containing two vectors, \code{sign} and \code{number}, the same length as \code{results}.
+\item \code{check_results()} and \code{flag_results()} return a logical vector the same length as the argument(s).
+\item \code{clean_results()} returns a character vector the same length as the argument.
+\item \code{parse_results()} returns a list containing \code{sign} (a character vector) and \code{number} (a numeric vector), each the same length as the argument.
 }
 }
 \description{
 \itemize{
-\item \code{check_results()} finds unexpected test result values and returns a logical vector where \code{TRUE} indicates a valid result.
+\item \code{check_results()} finds results that don't match the expected pattern of a greater- or less-than sign and a number.
 \item \code{clean_results()} cleans common errors and converts "Not/None detected" to \verb{< 1.0}.
-\item \code{parse_results()} separates the greater- or less-than sign (\code{>} or \code{<}) from the number in the result.
+\item \code{parse_results()} separates the greater- or less-than sign from the number in the cleaned results.
+\item \code{flag_results()} finds parsed results that require review.
 }
 }
-\concept{lab result processing functions}
+\concept{test result processing}
