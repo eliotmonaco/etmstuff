@@ -1,4 +1,4 @@
-test_that("function output as expected", {
+test_that("output as expected", {
   df <- readRDS(test_path("data", "animals.rds"))
   expect_equal(
     id_distinct_rows(

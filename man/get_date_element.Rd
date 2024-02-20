@@ -6,12 +6,14 @@
 \alias{get_quarter}
 \title{Get year(s) or quarter(s) from a vector of dates}
 \usage{
-get_year(dates)
+get_year(dates, format = "\%Y-\%m-\%d")
 
-get_quarter(dates)
+get_quarter(dates, format = "\%Y-\%m-\%d")
 }
 \arguments{
-\item{dates}{A vector of dates, or a vector of strings that can be formatted as dates.}
+\item{dates}{A vector of dates or a vector of strings that can be formatted as dates.}
+
+\item{format}{The date format, passed to \code{\link[=as.Date]{as.Date()}}. Defaults to \code{"\%Y-\%m-\%d"}.}
 }
 \value{
 \itemize{
@@ -21,12 +23,18 @@ get_quarter(dates)
 }
 \description{
 \itemize{
-\item \code{get_year()} returns the unique year(s) represented in a vector of dates.
-\item \code{get_quarter()} returns the unique quarter(s) represented in a vector of dates.
+\item \code{get_year()} finds the unique year(s) represented in a vector of dates.
+\item \code{get_quarter()} finds the unique quarter(s) represented in a vector of dates.
 }
 }
 \examples{
-d <- seq.Date(from = as.Date("1980-10-01"), to = as.Date("1981-02-28"), by = "week")
+d <- seq.Date(
+  from = as.Date("1980-10-01"),
+  to = as.Date("1981-02-28"),
+  by = "week"
+)
+
 get_year(d)
 get_quarter(d)
+
 }

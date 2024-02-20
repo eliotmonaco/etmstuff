@@ -38,13 +38,13 @@ usethis::use_import_from("", "")
 
 ## Test/build workflow ####
 
-usethis::use_r("check_date_seq")
+usethis::use_r("get_date_element")
 
-usethis::use_test("test_results")
+usethis::use_test("subset_date_range")
 
 devtools::load_all()
 
-testthat::test_file("tests/testthat/test-test_results.R")
+testthat::test_file("tests/testthat/test-subset_date_range.R")
 
 devtools::test()
 

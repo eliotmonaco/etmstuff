@@ -11,7 +11,7 @@ subset_date_range(df, var, range)
 
 \item{var}{A variable name from \code{df} containing dates.}
 
-\item{range}{A character vector of length 1-2.}
+\item{range}{A character vector of length 1 or 2.}
 }
 \value{
 A dataframe.
@@ -35,6 +35,7 @@ df <- data.frame(
     size = 500
   )
 )
+
 df_new <- subset_date_range(df, var = "date", range = "2021q3")
 
 }

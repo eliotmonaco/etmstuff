@@ -7,7 +7,7 @@
 #'
 #' @param df A dataframe.
 #' @param var A variable name from `df` containing dates.
-#' @param range A character vector of length 1-2.
+#' @param range A character vector of length 1 or 2.
 #'
 #' @return A dataframe.
 #' @export
@@ -25,6 +25,7 @@
 #'     size = 500
 #'   )
 #' )
+#'
 #' df_new <- subset_date_range(df, var = "date", range = "2021q3")
 #'
 subset_date_range <- function(df, var, range) {
@@ -84,17 +85,17 @@ subset_date_range <- function(df, var, range) {
     ))
   }
 
-  if (nrow(df_subset) > 0) {
-    m <- paste(
-      "Subset data has range",
-      min(df_subset[[var]]),
-      "to", max(df_subset[[var]])
-    )
-  } else {
-    m <- "No data found in that range"
-  }
-
-  message(m)
+  # if (nrow(df_subset) > 0) {
+  #   m <- paste(
+  #     "Subset data has range",
+  #     min(df_subset[[var]]),
+  #     "to", max(df_subset[[var]])
+  #   )
+  # } else {
+  #   m <- "No data found in that range"
+  # }
+  #
+  # message(m)
 
   df_subset
 }
