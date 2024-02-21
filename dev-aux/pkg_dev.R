@@ -38,7 +38,7 @@ usethis::use_import_from("", "")
 
 ## Test/build workflow ####
 
-usethis::use_r("sim_address")
+usethis::use_r("fuzzy_compare")
 
 usethis::use_test("fuzzy_compare")
 

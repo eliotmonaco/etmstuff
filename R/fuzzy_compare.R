@@ -19,7 +19,7 @@
 #'
 #' @export
 #'
-#' @importFrom dplyr %>%
+#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #'
 #' @examples
