@@ -20,8 +20,11 @@ dates <- as.Date(c(
 
 numbers <- c(1:16)
 
-row_id <- c("X01", "X02", "X03", "X04", "X05", "X06", "X07", "X03", "X02", "X06", "X07", "X08", "X06", "X07", "X03", "X04")
+row_id <- c(
+  "X01", "X02", "X03", "X04", "X05", "X06", "X07", "X03",
+  "X02", "X06", "X07", "X08", "X06", "X07", "X03", "X04"
+)
 
-df_animals <- dplyr::tibble(animals, dates, numbers, row_id)
+df_animals <- tibble::tibble(animals, dates, numbers, row_id)
 
 saveRDS(df_animals, "tests/testthat/data/animals.rds")

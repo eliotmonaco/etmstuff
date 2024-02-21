@@ -2,36 +2,51 @@
 % Please edit documentation in R/fuzzy_compare.R
 \name{fuzzy_compare}
 \alias{fuzzy_compare}
-\title{Compare rows using a combination of fuzzy and exact methods}
+\title{Compare via both fuzzy and exact methods}
 \usage{
-fuzzy_compare(df1, df2, fuzzy_var, exact_var = NULL, ignore_case = TRUE)
+fuzzy_compare(
+  df1,
+  df2,
+  row_id,
+  fuzzy_var,
+  exact_var = NULL,
+  ignore_case = TRUE
+)
 }
 \arguments{
-\item{df1}{A dataframe with rows to be compared.}
+\item{df1, df2}{Dataframes to be compared.}
 
-\item{df2}{A dataframe to be compared against.}
+\item{row_id}{A unique row identifier variable in \code{df1} and \code{df2}.}
 
-\item{fuzzy_var}{Names of variables in \code{df1} and \code{df2} selected for fuzzy comparison.}
+\item{fuzzy_var}{Variables in \code{df1} and \code{df2} selected for fuzzy comparison.}
 
-\item{exact_var}{Names of variables in \code{df1} and \code{df2} selected for exact matching (optional).}
+\item{exact_var}{Variables in \code{df1} and \code{df2} selected for exact matching (optional).}
 
-\item{ignore_case}{Logical. Ignore case when comparing fuzzy and exact variables if \code{TRUE}.}
+\item{ignore_case}{Logical: ignore case when comparing fuzzy and exact variables if \code{TRUE}.}
 }
 \value{
-A dataframe of potential matches joined by the variables in \code{exact_var}, with the new variable \code{sim_score}.
+A dataframe of potential matches joined by the variables in \code{exact_var}. It contains:
+\itemize{
+\item \code{row_id}s from \code{df1} and \code{df2}
+\item \code{sim_score}: the string similarity score from comparing the values in \code{fuzzy_var} (see \code{\link[stringdist:stringsim]{stringdist::stringsim()}})
+\item \code{string_1} & \code{string_2}: the merged values from \code{fuzzy_var}
+\item all \code{exact_var} variables
+}
 }
 \description{
-This function compares rows in two dataframes, allowing some values to be matched exactly and other values to be scored based on their similarity. It was designed for comparing addresses, in which certain values such as the city, state, and zip code are more amenable to exact matching and other values such as the street and unit components are subject to a large degree of variation and may require a flexible or inexact method of comparison.
+This function compares variables in two dataframes, allowing some variables to be matched exactly and other variables to be compared using string similarity scoring. This was designed for comparing addresses since certain values, e.g., city, state, and zip code, are more amenable to exact matching, whereas other values, e.g., street and unit, are subject to variation and may require a flexible/inexact method of comparison.
 
-The variables being compared must have the same names in both dataframes. If addresses in \code{df1} are being compared, e.g., \code{df1$street}, \code{df1$city}, and \code{df1$state}, then \code{df2} must have the same variable names, \code{df2$street}, \code{df2$city}, and \code{df2$state}.
+The variables undergoing comparison must have the same names in both dataframes (see example). Variables in \code{exact_var} are matched first if provided. Only rows whose values in \code{exact_var} match exactly will be returned.
 }
 \examples{
 df1 <- sim_address(nrow = 10)
+df1$id <- 1:nrow(df1)
+
 df2 <- sim_address(nrow = 5000)
+df2$id <- 1:nrow(df2)
 
 df_match <- fuzzy_compare(
-  df1,
-  df2,
+  df1, df2, row_id = "id",
   fuzzy_var = c("street", "unit"),
   exact_var = c("city", "state", "zip")
 )

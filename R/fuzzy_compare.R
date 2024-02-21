@@ -1,105 +1,101 @@
-#' Compare rows using a combination of fuzzy and exact methods
+#' Compare via both fuzzy and exact methods
 #'
 #' @description
-#' This function compares rows in two dataframes, allowing some values to be matched exactly and other values to be scored based on their similarity. It was designed for comparing addresses, in which certain values such as the city, state, and zip code are more amenable to exact matching and other values such as the street and unit components are subject to a large degree of variation and may require a flexible or inexact method of comparison.
+#' This function compares variables in two dataframes, allowing some variables to be matched exactly and other variables to be compared using string similarity scoring. This was designed for comparing addresses since certain values, e.g., city, state, and zip code, are more amenable to exact matching, whereas other values, e.g., street and unit, are subject to variation and may require a flexible/inexact method of comparison.
 #'
-#' The variables being compared must have the same names in both dataframes. If addresses in `df1` are being compared, e.g., `df1$street`, `df1$city`, and `df1$state`, then `df2` must have the same variable names, `df2$street`, `df2$city`, and `df2$state`.
+#' The variables undergoing comparison must have the same names in both dataframes (see example). Variables in `exact_var` are matched first if provided. Only rows whose values in `exact_var` match exactly will be returned.
 #'
-#' @param df1 A dataframe with rows to be compared.
-#' @param df2 A dataframe to be compared against.
-#' @param fuzzy_var Names of variables in `df1` and `df2` selected for fuzzy comparison.
-#' @param exact_var Names of variables in `df1` and `df2` selected for exact matching (optional).
-#' @param ignore_case Logical. Ignore case when comparing fuzzy and exact variables if `TRUE`.
+#' @param df1,df2 Dataframes to be compared.
+#' @param row_id A unique row identifier variable in `df1` and `df2`.
+#' @param fuzzy_var Variables in `df1` and `df2` selected for fuzzy comparison.
+#' @param exact_var Variables in `df1` and `df2` selected for exact matching (optional).
+#' @param ignore_case Logical: ignore case when comparing fuzzy and exact variables if `TRUE`.
 #'
-#' @return A dataframe of potential matches joined by the variables in `exact_var`, with the new variable `sim_score`.
+#' @return A dataframe of potential matches joined by the variables in `exact_var`. It contains:
+#' * `row_id`s from `df1` and `df2`
+#' * `sim_score`: the string similarity score from comparing the values in `fuzzy_var` (see [stringdist::stringsim()])
+#' * `string_1` & `string_2`: the merged values from `fuzzy_var`
+#' * all `exact_var` variables
+#'
 #' @export
 #'
-#' @importFrom magrittr %>%
+#' @importFrom dplyr %>%
 #' @importFrom rlang .data
 #'
 #' @examples
 #' df1 <- sim_address(nrow = 10)
+#' df1$id <- 1:nrow(df1)
+#'
 #' df2 <- sim_address(nrow = 5000)
+#' df2$id <- 1:nrow(df2)
 #'
 #' df_match <- fuzzy_compare(
-#'   df1,
-#'   df2,
+#'   df1, df2, row_id = "id",
 #'   fuzzy_var = c("street", "unit"),
 #'   exact_var = c("city", "state", "zip")
 #' )
 #'
-fuzzy_compare <- function(df1, df2, fuzzy_var, exact_var = NULL, ignore_case = TRUE) {
-  var_check(df1, var = c(fuzzy_var, exact_var))
-  var_check(df2, var = c(fuzzy_var, exact_var))
+fuzzy_compare <- function(df1, df2, row_id, fuzzy_var, exact_var = NULL, ignore_case = TRUE) {
+  all_vars <- c(row_id, fuzzy_var, exact_var)
 
-  all_vars <- c(fuzzy_var, exact_var)
+  var_check(df1, var = all_vars)
+  var_check(df2, var = all_vars)
 
-  # Convert variables being compared to character, and optionally to upper case
+  # Convert variables being compared to strings, and optionally to upper case
   if (ignore_case) {
-    f <- function(x) {
-      toupper(as.character(x))
-    }
+    f <- function(x) toupper(as.character(x))
   } else {
-    f <- function(x) {
-      as.character(x)
-    }
+    f <- function(x) as.character(x)
   }
 
   df1 <- df1 %>%
-    dplyr::mutate(dplyr::across(tidyselect::all_of(all_vars), f))
+    dplyr::mutate(dplyr::across(tidyselect::all_of(c(fuzzy_var, exact_var)), f))
 
   df2 <- df2 %>%
-    dplyr::mutate(dplyr::across(tidyselect::all_of(all_vars), f))
+    dplyr::mutate(dplyr::across(tidyselect::all_of(c(fuzzy_var, exact_var)), f))
 
-  # Vector of names in `fuzzy_var` after inner_join(), to be used in unite()
-  fzy1 <- paste0(fuzzy_var, "_1")
-  fzy2 <- paste0(fuzzy_var, "_2")
+  # Variable names after inner_join()
+  fuzzy_vars1 <- paste0(fuzzy_var, "_1")
+  fuzzy_vars2 <- paste0(fuzzy_var, "_2")
+  id1 <- paste0(row_id, "_1")
+  id2 <- paste0(row_id, "_2")
 
   # List to hold dataframes created in loop
   match_list <- list()
 
   for (i in 1:nrow(df1)) {
-    # Inner join to match rows via `exact_var`
-    match_list[[i]] <- df1[i, ] %>%
+    # Match rows via inner join using `exact_var`
+    match_list[[i]] <- df1[i, all_vars] %>%
       dplyr::inner_join(
-        df2,
+        df2[, all_vars],
         by = exact_var,
         suffix = c("_1", "_2"),
         relationship = "one-to-many"
-      ) %>%
-      dplyr::relocate(
-        tidyselect::all_of(fzy1),
-        tidyselect::all_of(fzy2),
-        tidyselect::all_of(exact_var)
       )
 
-    # Merge values in `fzy1`
-    str1 <- match_list[[i]] %>%
-      tidyr::unite(
-        tidyselect::all_of(fzy1),
-        col = "c",
-        sep = " ",
-        na.rm = TRUE
-      ) %>%
-      dplyr::pull("c")
+    # Merge fuzzy values into single strings
+    str1 <- stringify(match_list[[i]], fuzzy_vars1)
+    str2 <- stringify(match_list[[i]], fuzzy_vars2)
 
-    # Merge values in `fzy2`
-    str2 <- match_list[[i]] %>%
-      tidyr::unite(
-        tidyselect::all_of(fzy2),
-        col = "c",
-        sep = " ",
-        na.rm = TRUE
-      ) %>%
-      dplyr::pull("c")
-
-    # Score similarity of strings in `str1` & `str2`
+    # Score similarity of merged fuzzy values
     match_list[[i]]$sim_score <- stringdist::stringsim(str1, str2)
 
-    match_list[[i]] <- match_list[[i]] %>%
-      dplyr::relocate("sim_score") %>%
-      dplyr::arrange(dplyr::desc(.data$sim_score))
+    match_list[[i]]$string_1 <- str1
+    match_list[[i]]$string_2 <- str2
   }
 
-  as.data.frame(do.call(rbind, match_list))
+  final_vars <- c(id1, id2, "sim_score", "string_1", "string_2", exact_var)
+
+  purrr::list_rbind(match_list) %>%
+    dplyr::select(tidyselect::all_of(final_vars)) %>%
+    dplyr::arrange(dplyr::desc(.data$sim_score))
+}
+
+stringify <- function(df, col) {
+  df %>%
+    tidyr::unite(
+      tidyselect::all_of(col),
+      col = "c", sep = " ", na.rm = TRUE
+    ) %>%
+    dplyr::pull("c")
 }

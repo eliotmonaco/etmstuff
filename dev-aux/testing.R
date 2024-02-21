@@ -8,9 +8,15 @@ devtools::load_all()
 
 
 
+
+
 debugonce()
 
-dplyr::tibble()
+tibble::tibble()
+tibble::tribble()
+
+
+
 
 
 
@@ -374,24 +380,6 @@ df <- sim_address(5000)
 
 debugonce(sim_unit)
 v <- sim_unit(100)
-
-
-
-# fuzzy_compare ####
-
-## flex_compare instead??
-
-df1 <- sim_address(nrow = 10)
-df2 <- sim_address(nrow = 5000)
-
-debugonce(fuzzy_compare)
-
-df_match <- fuzzy_compare(
-  df1,
-  df2,
-  fuzzy_var = c("street", "unit"),
-  exact_var = c("city", "state", "zip")
-)
 
 
 
