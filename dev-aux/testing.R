@@ -7,21 +7,6 @@ devtools::load_all()
 
 
 
-
-# debugonce(undupe)
-undp <- undupe(animals, var = c("name", "date"), prefix = "blarg")
-
-undp$df_distinct
-undp$df_dupesets
-undp$df_full
-
-undp <- undupe(animals, var = colnames(animals), prefix = "blarg")
-
-
-
-
-
-
 debugonce()
 
 tibble::tibble()

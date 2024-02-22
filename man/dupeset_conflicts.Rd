@@ -60,9 +60,7 @@ A deduplicated dataframe containing one row per dupe set in \code{df} and one co
 }
 }
 \description{
-These functions take the output of \code{\link[=undupe]{undupe()}} (\code{df_dupesets} and/or \code{df_full}) as the first argument.
-}
-\details{
+These functions take output from \code{\link[=undupe]{undupe()}} (\code{dupesets} and/or \code{full}) as the first argument.
 \subsection{Count conflicts}{
 
 \code{count_conflicts()} counts the occurrence of conflicting values within dupe sets for each variable in the dataframe. When a dupe set contains any conflicts within the values of a single variable (i.e., all values belonging to the members of that dupe set are not identical), the conflict count for that variable increases by one. The sum of all such conflicts across all dupe sets for each variable is returned, as well as the percentage of dupe sets containing conflicts for each variable.
@@ -75,7 +73,7 @@ These functions take the output of \code{\link[=undupe]{undupe()}} (\code{df_dup
 
 \subsection{Flatten conflicts}{
 
-\code{flatten_conflicts()} deduplicates a dataframe containing dupe sets (either \code{df_full} or \code{df_dupesets}). Within each dupe set, conflicting values are merged into one cell per dupe set for selected variables so that no data is lost as a result of deduplication. Only unique values are kept, omitting \code{NA}s and empty strings.
+\code{flatten_conflicts()} deduplicates a dataframe containing dupe sets (either \code{full} or \code{dupesets}). Within each dupe set, conflicting values are merged into one cell per dupe set for selected variables so that no data is lost as a result of deduplication. Only unique values are kept, omitting \code{NA}s and empty strings.
 }
 }
 \examples{
@@ -89,11 +87,11 @@ df <- data.frame(
 
 undp <- undupe(df, var = c("x", "y"))
 
-df_count <- count_conflicts(undp$df_dupesets)
+df_count <- count_conflicts(undp$dupesets)
 
-df_isolated <- isolate_conflicts(undp$df_dupesets, var = "z")
+df_isolated <- isolate_conflicts(undp$dupesets, var = "z")
 
-df_flat <- flatten_conflicts(undp$df_dupesets, var = "z")
+df_flat <- flatten_conflicts(undp$dupesets, var = "z")
 
 }
 \seealso{

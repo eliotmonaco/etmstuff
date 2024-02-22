@@ -16,9 +16,9 @@ undupe(df, var, prefix = "dupe")
 \value{
 A list containing three dataframes:
 \itemize{
-\item \code{df_distinct}: the deduplicated dataframe.
-\item \code{df_dupesets}: a dataframe of grouped duplicate sets.
-\item \code{df_full}: the original dataframe, \code{df}, with the duplicate ID and duplicate order variables added.
+\item \code{distinct}: the deduplicated dataframe.
+\item \code{dupesets}: a dataframe of grouped duplicate sets.
+\item \code{full}: the original dataframe, \code{df}, with the duplicate ID and duplicate order variables added.
 }
 }
 \description{

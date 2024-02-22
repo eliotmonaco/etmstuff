@@ -1,4 +1,4 @@
-# Test id_distinct_rows()
+# Test id_distinct_rows(), undupe(), dupeset_conflicts
 
 name <- c(
   "Castor canadensis", "Nomascus leucogenys", "Didelphis virginiana",
@@ -25,6 +25,18 @@ row_id <- c(
   "X02", "X06", "X07", "X08", "X06", "X07", "X03", "X04"
 )
 
-df_animals <- tibble::tibble(name, date, number, row_id)
+df <- tibble::tibble(name, date, number, row_id)
 
-saveRDS(df_animals, "tests/testthat/data/animals.rds")
+undp <- undupe(df, var = c("name", "date"), prefix = "anml")
+
+df_count <- count_conflicts(undp$dupesets, dupe_id = "anml_id")
+
+df_isolate <- isolate_conflicts(undp$dupesets, var = c("number", "row_id"), dupe_id = "anml_id")
+
+df_flat <- flatten_conflicts(undp$dupesets, dupe_id = "anml_id")
+
+saveRDS(df, "tests/testthat/data/animals.rds")
+saveRDS(undp, "tests/testthat/data/animals_undp.rds")
+saveRDS(df_count, "tests/testthat/data/animals_count.rds")
+saveRDS(df_isolate, "tests/testthat/data/animals_isolate.rds")
+saveRDS(df_flat, "tests/testthat/data/animals_flat.rds")

@@ -38,13 +38,13 @@ usethis::use_import_from("", "")
 
 # Test/build workflow ####
 
-usethis::use_r("fuzzy_compare")
+usethis::use_r("undupe")
 
-usethis::use_test("check_date_seq")
+usethis::use_test("dupeset_conflicts")
 
 devtools::load_all()
 
-testthat::test_file("tests/testthat/test-id_distinct_rows.R")
+testthat::test_file("tests/testthat/test-dupeset_conflicts.R")
 
 devtools::test()
 

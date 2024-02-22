@@ -14,9 +14,9 @@
 #'
 #' @return
 #' A list containing three dataframes:
-#' * `df_distinct`: the deduplicated dataframe.
-#' * `df_dupesets`: a dataframe of grouped duplicate sets.
-#' * `df_full`: the original dataframe, `df`, with the duplicate ID and duplicate order variables added.
+#' * `distinct`: the deduplicated dataframe.
+#' * `dupesets`: a dataframe of grouped duplicate sets.
+#' * `full`: the original dataframe, `df`, with the duplicate ID and duplicate order variables added.
 #'
 #' @export
 #'
@@ -87,5 +87,5 @@ undupe <- function(df, var, prefix = "dupe") {
     return(message("No duplicates were found"))
   }
 
-  list(df_distinct = df_distinct, df_dupesets = df_dupesets, df_full = df)
+  list(distinct = df_distinct, dupesets = df_dupesets, full = df)
 }

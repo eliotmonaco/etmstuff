@@ -1,6 +1,7 @@
 #' Handle conflicting values within dupe sets
 #'
-#' These functions take the output of [undupe()] (`df_dupesets` and/or `df_full`) as the first argument.
+#' @description
+#' These functions take output from [undupe()] (`dupesets` and/or `full`) as the first argument.
 #'
 #' ## Count conflicts
 #'
@@ -12,7 +13,7 @@
 #'
 #' ## Flatten conflicts
 #'
-#' `flatten_conflicts()` deduplicates a dataframe containing dupe sets (either `df_full` or `df_dupesets`). Within each dupe set, conflicting values are merged into one cell per dupe set for selected variables so that no data is lost as a result of deduplication. Only unique values are kept, omitting `NA`s and empty strings.
+#' `flatten_conflicts()` deduplicates a dataframe containing dupe sets (either `full` or `dupesets`). Within each dupe set, conflicting values are merged into one cell per dupe set for selected variables so that no data is lost as a result of deduplication. Only unique values are kept, omitting `NA`s and empty strings.
 #'
 #' @param df A dataframe containing dupe sets and the duplicate ID variable returned by [undupe()].
 #' @param var Variable names in `df`. SAY WHAT HAPPENS SPECIFICALLY IN ISOLATE AND FLATTEN....
@@ -53,11 +54,11 @@
 #'
 #' undp <- undupe(df, var = c("x", "y"))
 #'
-#' df_count <- count_conflicts(undp$df_dupesets)
+#' df_count <- count_conflicts(undp$dupesets)
 #'
-#' df_isolated <- isolate_conflicts(undp$df_dupesets, var = "z")
+#' df_isolated <- isolate_conflicts(undp$dupesets, var = "z")
 #'
-#' df_flat <- flatten_conflicts(undp$df_dupesets, var = "z")
+#' df_flat <- flatten_conflicts(undp$dupesets, var = "z")
 #'
 #' @name dupeset_conflicts
 NULL
