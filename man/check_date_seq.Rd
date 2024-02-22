@@ -4,18 +4,16 @@
 \alias{check_date_seq}
 \title{Check date sequences}
 \usage{
-check_date_seq(date1, date2, ...)
+check_date_seq(...)
 }
 \arguments{
-\item{date1, date2}{Vectors containing dates. Elements at the same index will be compared, i.e., \code{date1[1]} and \code{date2[1]}.}
-
-\item{...}{Additional date vectors to compare.}
+\item{...}{Vectors containing dates.}
 }
 \value{
 A logical vector of the same length as the arguments.
 }
 \description{
-This function checks whether or not a sequence of dates is in order from earliest to latest. Any number of date vectors can be checked. The order in which arguments are evaluated is \code{date1}, \code{date2}, and then any additional arguments from left to right. Equivalent dates are evaluated as being in sequence. Sequences with \code{NA}s are evaluated with \code{NA}s removed.
+This function checks whether or not a sequence of dates is in order from earliest to latest. Any number of date vectors can be checked. The function expects dates to progress through time in argument order from left to right. Elements at the same index will be compared, as in \code{date1[1] < date2[1]}, \code{date2[1] < date3[1]}, etc. Equivalent dates are evaluated as being in order. \code{NA}s are omitted during evaluation.
 }
 \examples{
 dates <- seq.Date(

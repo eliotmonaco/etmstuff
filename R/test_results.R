@@ -1,7 +1,7 @@
 #' Check, clean, and parse test results
 #'
 #' * `check_results()` finds results that don't match the expected pattern of a greater- or less-than sign and a number.
-#' * `clean_results()` cleans common errors and converts "Not/None detected" to `< 1.0`.
+#' * `clean_results()` cleans common errors and converts "Not/None detected" to `"< 1.0"`.
 #' * `parse_results()` separates the greater- or less-than sign from the number in the cleaned results.
 #' * `flag_results()` finds parsed results that require review.
 #'
@@ -21,7 +21,6 @@ NULL
 
 #' @export
 #' @rdname test_results
-#' @family test result processing
 check_results <- function(results) {
   # Valid pattern (with spaces removed)
   pattern <- "^[<>]?(\\d+|\\d*\\.\\d+)$"
@@ -32,7 +31,6 @@ check_results <- function(results) {
 
 #' @export
 #' @rdname test_results
-#' @family test result processing
 clean_results <- function(results) {
   # Replace "not/none detected" with "< 1.0"
   pattern <- "(?i)(not|none) detected"
@@ -60,7 +58,6 @@ clean_results <- function(results) {
 
 #' @export
 #' @rdname test_results
-#' @family test result processing
 parse_results <- function(results) {
   # Extract "<" or ">"
   sign <- stringr::str_extract(results, "^[<>]")
@@ -76,7 +73,6 @@ parse_results <- function(results) {
 
 #' @export
 #' @rdname test_results
-#' @family test result processing
 flag_results <- function(sign, number) {
   if (length(sign) != length(number)) {
     stop("`sign` and `number` must be vectors of the same length")

@@ -2,27 +2,24 @@
 % Please edit documentation in R/pct.R
 \name{pct}
 \alias{pct}
-\title{Calculate a percentage}
+\title{Calculate percentage}
 \usage{
-pct(n, total, dec = 1)
+pct(n, total, digits = 1)
 }
 \arguments{
-\item{n}{A number. The numerator of the fraction that will become a percentage.}
+\item{n, total}{Numeric vectors, or objects that can be coerced to numeric vectors. If the lengths are unequal, the shorter vector must have length of 1.}
 
-\item{total}{A number. The denominator of the fraction that will become a percentage.}
-
-\item{dec}{An integer. The number of decimal places to round the percentage to.}
+\item{digits}{An integer to determine the number of decimal places in the output.}
 }
 \value{
-A number.
+A numeric vector the same length as the longer of \code{n} or \code{total.}
 }
 \description{
-Calculate a percentage
+This function calculates a percentage using the formula \eqn{n * 100 / total}.
 }
 \examples{
-pct(5, 25)
-
 x <- sample(200:300, size = 10, replace = TRUE)
-pct(x, total = 300, dec = 2)
+
+pct(x, 300, digits = 2)
 
 }

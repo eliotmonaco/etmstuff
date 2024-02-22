@@ -33,9 +33,8 @@ flag_results(sign, number)
 \description{
 \itemize{
 \item \code{check_results()} finds results that don't match the expected pattern of a greater- or less-than sign and a number.
-\item \code{clean_results()} cleans common errors and converts "Not/None detected" to \verb{< 1.0}.
+\item \code{clean_results()} cleans common errors and converts "Not/None detected" to \code{"< 1.0"}.
 \item \code{parse_results()} separates the greater- or less-than sign from the number in the cleaned results.
 \item \code{flag_results()} finds parsed results that require review.
 }
 }
-\concept{test result processing}

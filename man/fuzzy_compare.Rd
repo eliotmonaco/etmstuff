@@ -29,8 +29,8 @@ A dataframe of potential matches joined by the variables in \code{exact_var}. It
 \itemize{
 \item \code{row_id}s from \code{df1} and \code{df2}
 \item \code{sim_score}: the string similarity score from comparing the values in \code{fuzzy_var} (see \code{\link[stringdist:stringsim]{stringdist::stringsim()}})
-\item \code{string_1} & \code{string_2}: the merged values from \code{fuzzy_var}
-\item all \code{exact_var} variables
+\item \code{string_1} & \code{string_2}: the merged values from \code{fuzzy_var} in \code{df1} and \code{df2}
+\item all \code{exact_var} variables (one set only because these values must match in \code{df1} and \code{df2} to be returned)
 }
 }
 \description{

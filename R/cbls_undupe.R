@@ -22,25 +22,22 @@ cbls_undupe <- function(df, row_id) {
   ))
 
   if (!all(df$age < 6)) {
-    stop("`df$age` must be < 6 for all records")
+    stop("`age` must be < 6 for all records")
   }
 
   # Find duplicates based on `patient_id` and sample date
-  df_dupesets <- undupe(
-    df,
-    visible_var = c("patient_id", "lab_collection_date"),
-    prefix = "cbls_dupe"
-  )[["df_dupesets"]]
+  vars <- c("patient_id", "lab_collection_date")
+  df_dupesets <- undupe(df, var = vars, prefix = "cbls_dupe")$df_dupesets
 
-  dupe_ids <- data.frame(id = unique(df_dupesets$cbls_dupe_id))
+  dupe_ids <- unique(df_dupesets$cbls_dupe_id)
 
   # Empty dataframe to hold duplicates that will be kept for the submission
   df_keep <- df[0, ]
 
   # Algorithm to resolve duplicate tests
-  for (i in 1:nrow(dupe_ids)) {
+  for (i in 1:length(dupe_ids)) {
     df2 <- df_dupesets %>%
-      dplyr::filter(.data$cbls_dupe_id == dupe_ids$id[i])
+      dplyr::filter(.data$cbls_dupe_id == dupe_ids[i])
     if (any(df2$lab_specimen_source == "Blood - venous")) {
       # If samples are all venous, take the highest test result
       # If samples are mixed capillary and venous, take the (highest) venous

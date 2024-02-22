@@ -14,8 +14,8 @@
 #' @return A dataframe of potential matches joined by the variables in `exact_var`. It contains:
 #' * `row_id`s from `df1` and `df2`
 #' * `sim_score`: the string similarity score from comparing the values in `fuzzy_var` (see [stringdist::stringsim()])
-#' * `string_1` & `string_2`: the merged values from `fuzzy_var`
-#' * all `exact_var` variables
+#' * `string_1` & `string_2`: the merged values from `fuzzy_var` in `df1` and `df2`
+#' * all `exact_var` variables (one set only because these values must match in `df1` and `df2` to be returned)
 #'
 #' @export
 #'

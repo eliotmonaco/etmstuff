@@ -1,9 +1,8 @@
 #' Check date sequences
 #'
-#' This function checks whether or not a sequence of dates is in order from earliest to latest. Any number of date vectors can be checked. The order in which arguments are evaluated is `date1`, `date2`, and then any additional arguments from left to right. Equivalent dates are evaluated as being in sequence. Sequences with `NA`s are evaluated with `NA`s removed.
+#' This function checks whether or not a sequence of dates is in order from earliest to latest. Any number of date vectors can be checked. The function expects dates to progress through time in argument order from left to right. Elements at the same index will be compared, as in `date1[1] < date2[1]`, `date2[1] < date3[1]`, etc. Equivalent dates are evaluated as being in order. `NA`s are omitted during evaluation.
 #'
-#' @param date1,date2 Vectors containing dates. Elements at the same index will be compared, i.e., `date1[1]` and `date2[1]`.
-#' @param ... Additional date vectors to compare.
+#' @param ... Vectors containing dates.
 #'
 #' @return A logical vector of the same length as the arguments.
 #' @export
@@ -27,8 +26,8 @@
 #'
 #' df$ordered <- check_date_seq(df$d1, df$d2, df$d3, df$d4)
 #'
-check_date_seq <- function(date1, date2, ...) {
-  df <- cbind(date1, date2, ...)
+check_date_seq <- function(...) {
+  df <- cbind(...)
 
   f <- function(dates) {
     # Convert a vector of dates to the underlying numeric values, removing NAs

@@ -1,14 +1,14 @@
-## Pre-setup ####
+# Pre-setup ####
 
-# Helpful links:
-# - R Packages (https://r-pkgs.org/)
-# - Happy Git and GitHub for the useR (https://happygitwithr.com/index.html)
+## Helpful links:
+## - R Packages (https://r-pkgs.org/)
+## - Happy Git and GitHub for the useR (https://happygitwithr.com/index.html)
 
-# Create GitHub token with scope that allows package writing. Store in password manager (e.g., LastPass).
+## Create GitHub token with scope that allows package writing. Store in password manager (e.g., LastPass).
 
 
 
-## Setup ####
+# Setup ####
 
 install.packages("devtools")
 install.packages(c("devtools", "roxygen2", "testthat", "knitr"))
@@ -26,25 +26,25 @@ usethis::use_testthat(3)
 
 
 
-## External packages/functions ####
+# External packages/functions ####
 
-# Add package to DESCRIPTION (for any package that includes a function called within etmstuff)
+## Add package to DESCRIPTION (for any package that includes a function called within etmstuff)
 usethis::use_package("")
 
-# Adds package and function to NAMESPACE (for any package & function explicitly imported using @importFrom)
+## Adds package and function to NAMESPACE (for any package & function explicitly imported using @importFrom)
 usethis::use_import_from("", "")
 
 
 
-## Test/build workflow ####
+# Test/build workflow ####
 
 usethis::use_r("fuzzy_compare")
 
-usethis::use_test("fuzzy_compare")
+usethis::use_test("check_date_seq")
 
 devtools::load_all()
 
-testthat::test_file("tests/testthat/test-fuzzy_compare.R")
+testthat::test_file("tests/testthat/test-id_distinct_rows.R")
 
 devtools::test()
 
@@ -52,19 +52,11 @@ devtools::document()
 
 devtools::check()
 
-# Build: CTRL+SHIFT+B
+## Build: CTRL + SHIFT + B
 
 
 
-## globals.R ####
-
-epitrax_variables <- readRDS("dev-aux/helpers/epitrax_variables.rds")
-
-message(paste(paste0('"', epitrax_variables, '"'), collapse = ", "))
-
-
-
-## .Rbuildignore ####
+# .Rbuildignore ####
 
 usethis::use_build_ignore(c("dev-aux"))
 
@@ -72,9 +64,9 @@ usethis::use_data_raw()
 
 
 
-## Extra ####
+# Extra ####
 
-# Remove package from Imports in DESCRIPTION file
+## Remove package from Imports in DESCRIPTION file
 desc::desc_del_dep("")
 
 remove.packages("etmstuff")
