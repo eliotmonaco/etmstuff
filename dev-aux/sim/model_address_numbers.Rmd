@@ -1,0 +1,301 @@
+---
+title: "Modeling address number distributions"
+output:
+  html_notebook: 
+    css: C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Documents/r_projects/styles.css
+    number_sections: true
+    toc: true
+    toc_float: true
+---
+
+# Purpose
+
+Explore and model the distribution of house numbers and unit numbers in addresses. Use addresses in lead records from 2015-2022 submitted to Melissa Data for validation.
+
+# Setup
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+# Histogram plot function
+hist <- function(x_values, title, x_axis_title = "Unit numbers") {
+  plotly::plot_ly(
+    x = x_values,
+    type = "histogram",
+    xbins = list(size = 1)
+  ) %>%
+    plotly::layout(
+      title = title,
+      xaxis = list(
+        title = x_axis_title
+      ),
+      yaxis = list(
+        title = "Frequency"
+      )
+    )
+}
+
+# Get counts of values within each interval of 100
+get_bincounts <- function(values, interval_size, bin_max) {
+  bin_ticks <- seq(0, bin_max, by = interval_size)
+  bin_ticks[1] <- 1
+
+  bincounts <- list()
+
+  for (i in 1:(length(bin_ticks) - 1)) {
+    min <- bin_ticks[i]
+    max <- bin_ticks[i + 1]
+    bin <- values[which(min <= values & values < max)]
+    bincounts[i] <- length(bin)
+  }
+
+  unlist(bincounts)
+}
+```
+
+# Import & prep data
+
+```{r}
+# Import addresses
+df_md1 <- readRDS("~/r_projects/bl_2015-2022/data/addresses/df_md_val1_2015-2019.rds")
+df_md2 <- readRDS("~/r_projects/bl_2015-2022/data/addresses/df_md_val1_2020-2022.rds")
+```
+
+```{r}
+df_md <- df_md1 %>%
+  bind_rows(df_md2) %>%
+  as_tibble()
+
+rm(df_md1, df_md2)
+```
+
+```{r}
+# Deduplicate addresses
+df_md <- df_md %>%
+  distinct(pick(AddressDeliveryInstallation:Suite), .keep_all = T)
+```
+
+# House numbers
+
+```{r}
+# Pull house numbers
+house_numbers <- sort(as.numeric(stringr::str_extract(df_md$AddressLine1, "^\\d+")))
+```
+
+```{r}
+# Plot house numbers
+title <- "Distribution of house numbers (actual)"
+hist(house_numbers, title)
+```
+
+```{r}
+# Find outliers
+sum(nchar(house_numbers) == 6)
+sum(house_numbers >= 40000)
+```
+
+```{r}
+# Plot house numbers 1-40000
+house_numbers <- house_numbers[which(0 < house_numbers & house_numbers < 40000)]
+x <- house_numbers
+title <- paste("Distribution of house numbers", min(x), "to", max(x), "(actual)")
+hist(house_numbers, title)
+```
+
+```{r}
+# Zoom in on distributions within intervals of 100
+min <- 300
+max <- min + 100
+x <- house_numbers[min <= house_numbers & house_numbers < max]
+title <- paste("Distribution of house numbers", min(x), "to", max(x), "(actual)")
+hist(x, title)
+```
+
+```{r}
+# Model the distribution of house numbers within intervals of 100
+min <- 300
+max <- min + 100
+x <- house_numbers[min <= house_numbers & house_numbers < max]
+
+p <- dlnorm(1:100, meanlog = 2.7, sdlog = 1.2)
+samp <- sample(min:(max - 1), size = length(x), replace = TRUE, prob = p)
+
+title <- paste("Distribution of house numbers", min(samp), "to", max(samp), "(modeled)")
+hist(samp, title)
+```
+
+```{r}
+# Get counts of house numbers within each interval of 100
+bincounts_actual <- get_bincounts(house_numbers, interval_size = 100, bin_max = 40000)
+
+plot(bincounts_actual, main = "Counts of house numbers within each interval of 100 (actual)")
+```
+
+```{r}
+# Model bin counts
+p <- dlnorm(1:400, meanlog = 2.6, sdlog = 1.2)
+samp <- sample(1:400, size = length(house_numbers), replace = TRUE, prob = p)
+
+bincounts_modeled <- tabulate(samp)
+
+plot(bincounts_modeled, main = "Counts of house numbers within each interval of 100 (modeled)")
+```
+
+```{r}
+# Model house numbers
+samp <- etmstuff:::model_distribution(
+  sample_size = length(house_numbers), max_value = 40000, bin_width = 100,
+  m_full = 2.7, sd_full = 1.2, m_bin = 2.6, sd_bin = 1.2
+)
+
+title <- paste("Distribution of house numbers", min(samp), "to", max(samp), "(modeled)")
+hist(samp, title)
+```
+
+# Unit numbers
+
+```{r}
+# Percentage of addresses with unit information present
+n_with_unit <- nrow(df_md[which(!is.na(df_md$Suite)),])
+etmstuff::pct(n_with_unit, nrow(df_md))
+```
+
+```{r}
+# Pull units
+df_units <- df_md %>%
+  select(Suite) %>%
+  drop_na() %>%
+  arrange(Suite)
+```
+
+```{r}
+# Parse unit prefix and number
+df_units$prefix <- str_extract(df_units$Suite, "^[:alpha:]+")
+df_units$location <- str_squish(str_remove(df_units$Suite, "^[:alpha:]+"))
+```
+
+```{r}
+# Remove spaces and punctuation from `location`
+df_units <- df_units %>%
+  mutate(location = str_remove_all(location, "\\s|[:punct:]"))
+```
+
+```{r}
+# Summarize prefixes
+df_summarize_prefix <- df_units %>%
+  group_by(prefix) %>%
+  count() %>%
+  mutate(pct = etmstuff::pct(n, nrow(df_units)))
+```
+
+```{r}
+# Group `location` types
+df_units <- df_units %>%
+  mutate(location_type = case_when(
+    str_detect(location, "^\\d+$") ~ "number", # Digits only
+    str_detect(location, "^[:alpha:]$") ~ "letter", # One letter only
+    str_detect(location, "^[:alpha:]\\d+$|^\\d+[:alpha:]$") ~ "both", # One letter + any digits
+    TRUE ~ "other"
+  ))
+```
+
+```{r}
+# Summarize number types
+df_units %>%
+  group_by(location_type) %>%
+  count() %>%
+  mutate(pct = etmstuff::pct(n, nrow(df_units)))
+```
+
+```{r}
+df <- df_units %>%
+  filter(location_type == "other")
+```
+
+```{r}
+# Remove `location_type` "other"
+df_units <- df_units %>%
+  filter(location_type != "other")
+```
+
+```{r}
+# Parse number and letter components in `location`
+df_units$loc_number <- as.numeric(str_extract(df_units$location, "\\d+"))
+df_units$loc_letter <- str_extract(df_units$location, "[:alpha:]")
+```
+
+```{r}
+df_units %>%
+  group_by(nchar(loc_number)) %>%
+  count()
+```
+
+```{r}
+df_summarize_location_letter <- df_units %>%
+  group_by(loc_letter) %>%
+  count() %>%
+  mutate(pct = etmstuff::pct(n, nrow(df_units), digits = 2)) %>%
+  print(n = nrow(.))
+```
+
+```{r}
+df_summarize_location_letter$pct / 100
+```
+
+```{r}
+# Plot actual unit numbers
+unit_numbers <- df_units %>%
+  filter(loc_number > 0, loc_number < 10000) %>%
+  pull(loc_number)
+
+title <- paste("Distribution of unit numbers", min(unit_numbers), "to", max(unit_numbers), "(actual)")
+hist(unit_numbers, title)
+```
+
+```{r}
+# One bin interval only
+x <- unit_numbers[which(unit_numbers < 100)]
+x_total <- length(x)
+
+title <- paste("Distribution of unit numbers", min(x), "to", max(x), "(actual)")
+hist(x, title)
+```
+
+```{r}
+# Plot modeled unit numbers
+p <- dlnorm(1:100, meanlog = 1.5, sdlog = 1)
+samp <- sample(1:100, size = x_total, replace = TRUE, prob = p)
+
+title <- paste("Distribution of unit numbers", min(x), "to", max(x), "(modeled)")
+hist(samp, title)
+```
+
+```{r}
+# Get counts of unit numbers within each interval of 100
+bincounts_actual <- get_bincounts(unit_numbers, interval_size = 100, bin_max = 10000)
+
+plot(bincounts_actual, main = "Counts of unit numbers within each interval of 100 (actual)")
+```
+
+```{r}
+# Model bin counts
+p <- dlnorm(1:100, meanlog = 0, sdlog = 1)
+samp <- sample(1:100, size = length(unit_numbers), replace = TRUE, prob = p)
+
+bincounts_modeled <- tabulate(samp)
+
+plot(bincounts_modeled, main = "Counts of house numbers within each interval of 100 (modeled)")
+```
+
+```{r}
+# Model and plot distribution of unit numbers
+samp <- etmstuff:::model_distribution(
+  sample_size = length(unit_numbers), max_value = 10000, bin_width = 100,
+  m_full = 0, sd_full = 1, m_bin = 1.5, sd_bin = 1
+)
+
+title <- paste("Distribution of unit numbers", min(samp), "to", max(samp), "(modeled)")
+hist(samp, title)
+```
