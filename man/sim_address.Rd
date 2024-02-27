@@ -4,10 +4,10 @@
 \alias{sim_address}
 \title{Simulate addresses}
 \usage{
-sim_address(nrow, dirty = FALSE)
+sim_address(n, dirty = FALSE)
 }
 \arguments{
-\item{nrow}{An integer to set the number of rows in the output.}
+\item{n}{An integer to set the number of rows in the output.}
 
 \item{dirty}{Logical: creates dirty data in \code{street}, \code{city}, and \code{zip} when set to \code{TRUE}.}
 }
@@ -18,6 +18,6 @@ A dataframe.
 Create a dataframe of simulated addresses. Street names are sampled from \code{street_names}. City, zip code, and county combinations are sampled from \code{ks_city_zip}. By setting \code{dirty = TRUE}, the function will alter values in \code{street}, \code{city}, and \code{zip} for the purpose of testing \code{\link[=validate_address]{validate_address()}} and \code{\link[=clean_address]{clean_address()}}.
 }
 \examples{
-df <- sim_address(nrow = 1000, dirty = TRUE)
+df <- sim_address(n = 1000)
 
 }

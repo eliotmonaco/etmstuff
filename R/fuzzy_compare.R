@@ -23,10 +23,10 @@
 #' @importFrom rlang .data
 #'
 #' @examples
-#' df1 <- sim_address(nrow = 10)
+#' df1 <- sim_address(n = 10)
 #' df1$id <- 1:nrow(df1)
 #'
-#' df2 <- sim_address(nrow = 5000)
+#' df2 <- sim_address(n = 5000)
 #' df2$id <- 1:nrow(df2)
 #'
 #' df_match <- fuzzy_compare(

@@ -39,10 +39,10 @@ This function compares variables in two dataframes, allowing some variables to b
 The variables undergoing comparison must have the same names in both dataframes (see example). Variables in \code{exact_var} are matched first if provided. Only rows whose values in \code{exact_var} match exactly will be returned.
 }
 \examples{
-df1 <- sim_address(nrow = 10)
+df1 <- sim_address(n = 10)
 df1$id <- 1:nrow(df1)
 
-df2 <- sim_address(nrow = 5000)
+df2 <- sim_address(n = 5000)
 df2$id <- 1:nrow(df2)
 
 df_match <- fuzzy_compare(

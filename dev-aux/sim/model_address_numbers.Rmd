@@ -14,26 +14,28 @@ Explore and model the distribution of house numbers and unit numbers in addresse
 
 # Setup
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 library(tidyverse)
+library(etmstuff)
 ```
 
 ```{r}
 # Histogram plot function
-hist <- function(x_values, title, x_axis_title = "Unit numbers") {
+my_hist <- function(x, title, x_title = "Unit numbers", bin_size = 1) {
   plotly::plot_ly(
-    x = x_values,
+    x = x,
     type = "histogram",
-    xbins = list(size = 1)
+    xbins = list(size = bin_size)
   ) %>%
     plotly::layout(
       title = title,
       xaxis = list(
-        title = x_axis_title
+        title = x_title
       ),
       yaxis = list(
         title = "Frequency"
-      )
+      ),
+      margin = list(t = 100, b = 70)
     )
 }
 
@@ -84,10 +86,10 @@ df_md <- df_md %>%
 house_numbers <- sort(as.numeric(stringr::str_extract(df_md$AddressLine1, "^\\d+")))
 ```
 
-```{r}
+```{r fig.width=11.53}
 # Plot house numbers
 title <- "Distribution of house numbers (actual)"
-hist(house_numbers, title)
+my_hist(house_numbers, title)
 ```
 
 ```{r}
@@ -96,24 +98,24 @@ sum(nchar(house_numbers) == 6)
 sum(house_numbers >= 40000)
 ```
 
-```{r}
+```{r fig.width=11.53}
 # Plot house numbers 1-40000
 house_numbers <- house_numbers[which(0 < house_numbers & house_numbers < 40000)]
 x <- house_numbers
 title <- paste("Distribution of house numbers", min(x), "to", max(x), "(actual)")
-hist(house_numbers, title)
+my_hist(house_numbers, title)
 ```
 
-```{r}
+```{r fig.width=11.53}
 # Zoom in on distributions within intervals of 100
 min <- 300
 max <- min + 100
 x <- house_numbers[min <= house_numbers & house_numbers < max]
 title <- paste("Distribution of house numbers", min(x), "to", max(x), "(actual)")
-hist(x, title)
+my_hist(x, title)
 ```
 
-```{r}
+```{r fig.width=11.53}
 # Model the distribution of house numbers within intervals of 100
 min <- 300
 max <- min + 100
@@ -123,7 +125,7 @@ p <- dlnorm(1:100, meanlog = 2.7, sdlog = 1.2)
 samp <- sample(min:(max - 1), size = length(x), replace = TRUE, prob = p)
 
 title <- paste("Distribution of house numbers", min(samp), "to", max(samp), "(modeled)")
-hist(samp, title)
+my_hist(samp, title)
 ```
 
 ```{r}
@@ -143,15 +145,15 @@ bincounts_modeled <- tabulate(samp)
 plot(bincounts_modeled, main = "Counts of house numbers within each interval of 100 (modeled)")
 ```
 
-```{r}
+```{r fig.width=11.53}
 # Model house numbers
-samp <- etmstuff:::model_distribution(
+samp <- etmstuff:::sim_distribution(
   sample_size = length(house_numbers), max_value = 40000, bin_width = 100,
   m_full = 2.7, sd_full = 1.2, m_bin = 2.6, sd_bin = 1.2
 )
 
 title <- paste("Distribution of house numbers", min(samp), "to", max(samp), "(modeled)")
-hist(samp, title)
+my_hist(samp, title)
 ```
 
 # Unit numbers
@@ -187,7 +189,8 @@ df_units <- df_units %>%
 df_summarize_prefix <- df_units %>%
   group_by(prefix) %>%
   count() %>%
-  mutate(pct = etmstuff::pct(n, nrow(df_units)))
+  mutate(pct = etmstuff::pct(n, nrow(df_units))) %>%
+  print(n = nrow(.))
 ```
 
 ```{r}
@@ -202,14 +205,16 @@ df_units <- df_units %>%
 ```
 
 ```{r}
-# Summarize number types
-df_units %>%
+# Summarize `location` types
+df_summarize_location_type <- df_units %>%
   group_by(location_type) %>%
   count() %>%
-  mutate(pct = etmstuff::pct(n, nrow(df_units)))
+  mutate(pct = etmstuff::pct(n, nrow(df_units))) %>%
+  print(n = nrow(.))
 ```
 
 ```{r}
+# View `location_type` "other"
 df <- df_units %>%
   filter(location_type == "other")
 ```
@@ -221,22 +226,35 @@ df_units <- df_units %>%
 ```
 
 ```{r}
+# Summarize `location` types
+df_summarize_location_type <- df_units %>%
+  group_by(location_type) %>%
+  count() %>%
+  mutate(pct = etmstuff::pct(n, nrow(df_units))) %>%
+  print(n = nrow(.))
+```
+
+```{r}
 # Parse number and letter components in `location`
 df_units$loc_number <- as.numeric(str_extract(df_units$location, "\\d+"))
 df_units$loc_letter <- str_extract(df_units$location, "[:alpha:]")
 ```
 
 ```{r}
-df_units %>%
+df_summarize_location_number <- df_units %>%
   group_by(nchar(loc_number)) %>%
-  count()
+  count() %>%
+  mutate(pct = etmstuff::pct(n, nrow(df_units))) %>%
+  print(n = nrow(.))
 ```
 
 ```{r}
 df_summarize_location_letter <- df_units %>%
+  filter(location_type != "number")
+df_summarize_location_letter <- df_summarize_location_letter %>%
   group_by(loc_letter) %>%
   count() %>%
-  mutate(pct = etmstuff::pct(n, nrow(df_units), digits = 2)) %>%
+  mutate(pct = etmstuff::pct(n, nrow(df_summarize_location_letter))) %>%
   print(n = nrow(.))
 ```
 
@@ -244,32 +262,32 @@ df_summarize_location_letter <- df_units %>%
 df_summarize_location_letter$pct / 100
 ```
 
-```{r}
+```{r fig.width=11.53}
 # Plot actual unit numbers
 unit_numbers <- df_units %>%
   filter(loc_number > 0, loc_number < 10000) %>%
   pull(loc_number)
 
 title <- paste("Distribution of unit numbers", min(unit_numbers), "to", max(unit_numbers), "(actual)")
-hist(unit_numbers, title)
+my_hist(unit_numbers, title)
 ```
 
-```{r}
+```{r fig.width=11.53}
 # One bin interval only
 x <- unit_numbers[which(unit_numbers < 100)]
 x_total <- length(x)
 
 title <- paste("Distribution of unit numbers", min(x), "to", max(x), "(actual)")
-hist(x, title)
+my_hist(x, title)
 ```
 
-```{r}
+```{r fig.width=11.53}
 # Plot modeled unit numbers
 p <- dlnorm(1:100, meanlog = 1.5, sdlog = 1)
 samp <- sample(1:100, size = x_total, replace = TRUE, prob = p)
 
 title <- paste("Distribution of unit numbers", min(x), "to", max(x), "(modeled)")
-hist(samp, title)
+my_hist(samp, title)
 ```
 
 ```{r}
@@ -289,13 +307,13 @@ bincounts_modeled <- tabulate(samp)
 plot(bincounts_modeled, main = "Counts of house numbers within each interval of 100 (modeled)")
 ```
 
-```{r}
+```{r fig.width=11.53}
 # Model and plot distribution of unit numbers
-samp <- etmstuff:::model_distribution(
+samp <- etmstuff:::sim_distribution(
   sample_size = length(unit_numbers), max_value = 10000, bin_width = 100,
   m_full = 0, sd_full = 1, m_bin = 1.5, sd_bin = 1
 )
 
 title <- paste("Distribution of unit numbers", min(samp), "to", max(samp), "(modeled)")
-hist(samp, title)
+my_hist(samp, title)
 ```

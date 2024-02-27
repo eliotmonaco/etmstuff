@@ -4,6 +4,8 @@ library(etmstuff)
 
 devtools::load_all()
 
+# debugonce(sim_address)
+df <- sim_address(1000)
 
 
 
@@ -11,7 +13,6 @@ debugonce()
 
 tibble::tibble()
 tibble::tribble()
-
 
 
 

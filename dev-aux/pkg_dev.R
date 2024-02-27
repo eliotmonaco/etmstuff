@@ -38,9 +38,9 @@ usethis::use_import_from("", "")
 
 # Test/build workflow ####
 
-usethis::use_r("undupe")
+usethis::use_r("fuzzy_compare")
 
-usethis::use_test("dupeset_conflicts")
+usethis::use_test("sim_address")
 
 devtools::load_all()
 
