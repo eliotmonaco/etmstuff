@@ -8,11 +8,11 @@
 #'
 #' @param df A dataframe of addresses.
 #' ```{r echo=FALSE}
-#' types <- rownames(etmstuff::address_regex)
-#' types <- paste0('"', paste(types, collapse = '", "'), '"')
-#' types <- paste0("c(", types, ")")
+#' all_types <- etmstuff::address_regex$types
+#' all_types <- paste0('"', paste(all_types, collapse = '", "'), '"')
+#' all_types <- paste0("c(", all_types, ")")
 #' ```
-#' @param type The type of cleaning to perform. One of ``r types``.
+#' @param type The type of cleaning to perform. One of ``r all_types``.
 #' @param var A variable in `df` containing the targeted address component. Defaults to `street`.
 #' @param row_id A unique row identifier variable in `df`. Defaults to `address_id`.
 #'
@@ -31,12 +31,18 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
   # Stop if `row_id` values are not unique
   if (any(duplicated(df[row_id]))) stop("`row_id` is not a unique row identifier")
 
+  all_types <- etmstuff::address_regex$types
+
   # Load `ref` based on the selected `type`
-  if (type %in% rownames(etmstuff::address_regex)) {
-    ref <- etmstuff::address_regex[which(rownames(etmstuff::address_regex) == type), ]
+  if (type %in% etmstuff::address_regex$types) {
+    ref <- etmstuff::address_regex %>%
+      dplyr::filter(type == type)
   } else {
-    types <- rownames(etmstuff::address_regex)
-    m <- paste0("`type` must be one of c(", paste0('"', paste(types, collapse = '", "'), '"'), ")")
+    m <- paste0(
+      "`type` must be one of c(",
+      paste0('"', paste(all_types, collapse = '", "'), '"')
+      , ")"
+    )
     stop(m)
   }
 
@@ -47,7 +53,7 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
   # Pull pattern matches
   extracted <- stringr::str_match_all(
     string = df[[var]],
-    pattern = stringr::regex(ref$pattern, ignore_case = TRUE)
+    pattern = stringr::regex(ref$search_pattern, ignore_case = TRUE)
   )
 
   # If all list elements have length of 0, no matches have been found
@@ -55,7 +61,7 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
     return(message("No matching values found"))
   }
 
-  # If the number of capturing groups from `address_regex$pattern` is specified, get those matches only, otherwise get full match only
+  # If the number of capturing groups from `address_regex$search_pattern` is specified, get those matches only, as determined by `address_regex$n_cap_gps`, otherwise get full match only
   if (!is.na(ref$n_cap_gps)) {
     n <- ref$n_cap_gps + 1
     extracted <- lapply(extracted, "[", , 2:n)
@@ -75,10 +81,10 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
   df$removed_text <- stringr::str_squish(extracted)
 
   # Set find and replace patterns
-  if (!is.na(ref$pattern_replace)) {
-    p <- stats::setNames(ref$replacement, ref$pattern_replace)
+  if (!is.na(ref$replace_pattern)) {
+    p <- stats::setNames(ref$replacement, ref$replace_pattern)
   } else {
-    p <- stats::setNames(ref$replacement, ref$pattern)
+    p <- stats::setNames(ref$replacement, ref$search_pattern)
   }
 
   # Create replacement suggestion

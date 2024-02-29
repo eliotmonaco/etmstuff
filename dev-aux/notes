@@ -10,7 +10,6 @@ Data
 - ks_city_zip contains city/zip/county combos
 - ks_county_fips contains county/fips and some other not particularly useful data
 - address regex examples is WIP under r_projects/address_regex_examples.R
-- unit_prefixes doesn't have documentation
 
 
 

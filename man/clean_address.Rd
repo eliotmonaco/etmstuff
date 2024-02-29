@@ -7,9 +7,12 @@
 clean_address(df, type, var = "street", row_id = "address_id")
 }
 \arguments{
-\item{df}{A dataframe of addresses.}
+\item{df}{A dataframe of addresses.
 
-\item{type}{The type of cleaning to perform. One of \code{c("digit_letter", "dir_street", "emb_punct", "extract_unit", "fractional", "no_letters", "no_spaces", "nondigit", "nonres", "nth", "num_dir1", "num_dir2", "num_sign", "num_word", "phone", "pobox", "rep_letter", "rep_segment", "six_words", "symbol", "unknown")}.}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> Warning: Unknown or uninitialised column: `types`.
+}\if{html}{\out{</div>}}}
+
+\item{type}{The type of cleaning to perform. One of \code{c("")}.}
 
 \item{var}{A variable in \code{df} containing the targeted address component. Defaults to \code{street}.}
 
