@@ -7,15 +7,17 @@ epitrax_vars <- readxl::read_xlsx("C:/Users/eliot.monaco/OneDrive - State of Kan
 epitrax_vars <- epitrax_vars[1:3]
 colnames(epitrax_vars) <- c("group", "export_name", "epht_name")
 
-epitrax_vars <- epitrax_vars[c(1:27, 31:53, 28:30),]
-epitrax_vars[51:53, "group"] <- NA
+# epitrax_vars <- epitrax_vars[c(1:27, 31:53, 28:30),]
+# epitrax_vars[51:53, "group"] <- NA
 
 epitrax_vars <- epitrax_vars |>
+  dplyr::filter(group != "Removed" | is.na(group)) |>
   dplyr::mutate(
     epht_name = dplyr::if_else(is.na(epht_name), export_name, epht_name),
     final = dplyr::if_else(!is.na(group), TRUE, FALSE)
   )
 
+usethis::use_data(epitrax_vars, overwrite = T)
 
 # epitrax_vars <- list()
 #
@@ -77,6 +79,3 @@ epitrax_vars <- epitrax_vars |>
 #   "current_address_street", "current_address_unit_number", "current_address_city",
 #   "current_address_state", "current_address_zip", "current_address_county"
 # )
-
-
-usethis::use_data(epitrax_vars, overwrite = T)
