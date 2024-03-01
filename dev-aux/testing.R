@@ -4,6 +4,28 @@ library(etmstuff)
 
 devtools::load_all()
 
+
+
+address_examples <- readxl::read_xlsx("data-raw/address_examples.xlsx")
+
+address_examples <- address_examples |>
+  dplyr::filter(!is.na(type)) |>
+  id_distinct_rows(
+    id_name = "address_id", prefix = "AD",
+    var = c("street", "unit", "city", "state", "zip", "county")
+  ) |>
+  dplyr::relocate(address_id)
+
+# debugonce(clean_address)
+df <- clean_address(address_examples, "pobox")
+
+
+
+
+
+
+
+
 # debugonce(sim_address)
 df <- sim_address(1000)
 

@@ -38,13 +38,13 @@ usethis::use_import_from("", "")
 
 # Test/build workflow ####
 
-usethis::use_r("clean_address")
+usethis::use_r("")
 
-usethis::use_test("sim_address")
+usethis::use_test("")
 
 devtools::load_all()
 
-testthat::test_file("tests/testthat/test-dupeset_conflicts.R")
+testthat::test_file("tests/testthat/test-.R")
 
 devtools::test()
 

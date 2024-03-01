@@ -8,7 +8,7 @@
 #'
 #' @param df A dataframe of addresses.
 #' ```{r echo=FALSE}
-#' all_types <- etmstuff::address_regex$types
+#' all_types <- address_regex$type
 #' all_types <- paste0('"', paste(all_types, collapse = '", "'), '"')
 #' all_types <- paste0("c(", all_types, ")")
 #' ```
@@ -31,12 +31,11 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
   # Stop if `row_id` values are not unique
   if (any(duplicated(df[row_id]))) stop("`row_id` is not a unique row identifier")
 
-  all_types <- etmstuff::address_regex$types
+  all_types <- address_regex$type
 
   # Load `ref` based on the selected `type`
-  if (type %in% etmstuff::address_regex$types) {
-    ref <- etmstuff::address_regex %>%
-      dplyr::filter(type == type)
+  if (type %in% all_types) {
+    ref <- address_regex[which(address_regex$type == type),]
   } else {
     m <- paste0(
       "`type` must be one of c(",
