@@ -1,4 +1,4 @@
-#' Count result codes in the Melissa Data response
+#' Tabulate result codes in the Melissa Data response
 #'
 #' @description
 #' This function creates a table with counts of the result codes present in `df$Results`.
@@ -6,7 +6,7 @@
 #' @inheritSection pull_addresses Address validation workflow
 #' @inheritSection pull_addresses Melissa Data
 #'
-#' @param df A dataframe of Melissa Data responses returned by [md_batch_request()].
+#' @param df A dataframe of Melissa Data responses returned by [send_md_request()].
 #' @param var The variable containing the result codes. The default is `"Results"`.
 #'
 #' @return A dataframe.
@@ -15,6 +15,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #'
+#' @family address processing functions
 # @examples
 #'
 md_results_table <- function(df, var = "Results") {

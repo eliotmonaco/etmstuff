@@ -2,41 +2,24 @@
 % Please edit documentation in R/build_md_url.R
 \name{build_md_url}
 \alias{build_md_url}
-\title{Build a Melissa Data Personator request URL}
+\title{Build a Melissa Data Personator REST request URL}
 \usage{
-build_md_url(
-  df,
-  row_id,
-  street = "street",
-  unit = NULL,
-  city = "city",
-  state = "state",
-  zip = "zip"
-)
+build_md_url(df, row_id)
 }
 \arguments{
 \item{df}{A dataframe of cleaned addresses.}
 
 \item{row_id}{A unique row identifier variable in \code{df}.}
-
-\item{street}{The name of the variable containing the street address. Unit information should be included if the \code{unit} argument is left \code{NULL}.}
-
-\item{unit}{The name of the variable containing the unit component of the street address (if the unit is not already included in \code{street}).}
-
-\item{city}{The name of the variable containing the city.}
-
-\item{state}{The name of the variable containing the state.}
-
-\item{zip}{The name of the variable containing the zip code.}
 }
 \value{
 A vector of URLs.
 }
 \description{
-Build a URL to query the Melissa Data Personator Consumer Web Service API. The URL is a request for a response from the Personator service in JSON format.
+This function builds a URL to query the Melissa Data Personator Consumer Web Service API. It assumes that the dataframe contains variables named \code{street}, \code{unit}, \code{city}, \code{state}, and \code{zip} which contain the corresponding address components.
 }
 \section{Address validation workflow}{
 
+The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service.
 \enumerate{
 \item Prepare addresses
 \itemize{
@@ -51,7 +34,7 @@ Build a URL to query the Melissa Data Personator Consumer Web Service API. The U
 \item Validate/geocode addresses
 \itemize{
 \item \code{\link[=build_md_url]{build_md_url()}}
-\item \code{\link[=md_batch_request]{md_batch_request()}}
+\item \code{\link[=send_md_request]{send_md_request()}}
 }
 \item Review results
 \itemize{
@@ -62,21 +45,22 @@ Build a URL to query the Melissa Data Personator Consumer Web Service API. The U
 
 \section{Melissa Data}{
 
-The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for requests are either of these value combinations:
+To check addresses, one of the follow combinations of address fields must be provided at a minimum:
 \itemize{
 \item \code{street}, \code{city}, and \code{state}
 \item \code{street} and \code{zip}
 }
 
-More information is at \url{https://wiki.melissadata.com/index.php?title=Personator_Consumer}.
+For more information on constructing the request, see the \href{https://www.melissa.com/quickstart-guides/personator-consumer}{Personator Consumer Quick Start Guide} and the \href{https://wiki.melissadata.com/index.php?title=Personator_Consumer:Request}{Personator Consumer Request wiki page}. Additional information can be found at the \href{https://wiki.melissadata.com/index.php?title=Personator_Consumer}{Melissa Data wiki}.
 }
 
 \seealso{
 Other address processing functions: 
 \code{\link{clean_address}()},
-\code{\link{md_request}()},
+\code{\link{md_results_table}()},
 \code{\link{pull_addresses}()},
 \code{\link{replace_values}()},
+\code{\link{send_md_request}()},
 \code{\link{validate_address}()}
 }
 \concept{address processing functions}

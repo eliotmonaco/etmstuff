@@ -5,10 +5,11 @@
 #' `my_xl_table()` is built on functions from the [openxlsx] package.
 #'
 #' @param df A dataframe.
-#' @param file A file path. ".xlsx" will be added if not present.
+#' @param file A file path. `".xlsx"` will be appended if not present.
 #' @param style_cols A vector of variable names in `df` to highlight.
 #' @param as_table Logical: format data as a table if `TRUE`.
 #' @param sheet A name for the worksheet.
+#' @param overwrite Logical: overwrite existing file if `TRUE`.
 #'
 #' @return An Excel workbook.
 #' @export
@@ -18,7 +19,7 @@
 #' my_xl_table(mtcars, file = "mtcars_workbook", style_cols = c("mpg", "cyl"))
 #' }
 #'
-my_xl_table <- function(df, file, style_cols = NULL, as_table = TRUE, sheet = "Sheet1") {
+my_xl_table <- function(df, file, style_cols = NULL, as_table = TRUE, sheet = "Sheet1", overwrite = TRUE) {
   # Check data type of `df`
   if (is.data.frame(df)) {
     if (nrow(df) == 0) return(invisible(df))
@@ -65,5 +66,5 @@ my_xl_table <- function(df, file, style_cols = NULL, as_table = TRUE, sheet = "S
     )
   }
 
-  openxlsx::saveWorkbook(wb = wb, file = file, overwrite = TRUE)
+  openxlsx::saveWorkbook(wb = wb, file = file, overwrite = overwrite)
 }

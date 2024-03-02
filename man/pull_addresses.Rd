@@ -19,6 +19,7 @@ Subset the complete address at lab collection from EpiTrax data. Addresses with 
 }
 \section{Address validation workflow}{
 
+The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service.
 \enumerate{
 \item Prepare addresses
 \itemize{
@@ -33,7 +34,7 @@ Subset the complete address at lab collection from EpiTrax data. Addresses with 
 \item Validate/geocode addresses
 \itemize{
 \item \code{\link[=build_md_url]{build_md_url()}}
-\item \code{\link[=md_batch_request]{md_batch_request()}}
+\item \code{\link[=send_md_request]{send_md_request()}}
 }
 \item Review results
 \itemize{
@@ -44,21 +45,22 @@ Subset the complete address at lab collection from EpiTrax data. Addresses with 
 
 \section{Melissa Data}{
 
-The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for requests are either of these value combinations:
+To check addresses, one of the follow combinations of address fields must be provided at a minimum:
 \itemize{
 \item \code{street}, \code{city}, and \code{state}
 \item \code{street} and \code{zip}
 }
 
-More information is at \url{https://wiki.melissadata.com/index.php?title=Personator_Consumer}.
+For more information on constructing the request, see the \href{https://www.melissa.com/quickstart-guides/personator-consumer}{Personator Consumer Quick Start Guide} and the \href{https://wiki.melissadata.com/index.php?title=Personator_Consumer:Request}{Personator Consumer Request wiki page}. Additional information can be found at the \href{https://wiki.melissadata.com/index.php?title=Personator_Consumer}{Melissa Data wiki}.
 }
 
 \seealso{
 Other address processing functions: 
 \code{\link{build_md_url}()},
 \code{\link{clean_address}()},
-\code{\link{md_request}()},
+\code{\link{md_results_table}()},
 \code{\link{replace_values}()},
+\code{\link{send_md_request}()},
 \code{\link{validate_address}()}
 }
 \concept{address processing functions}

@@ -4,6 +4,7 @@
 #' Subset the complete address at lab collection from EpiTrax data. Addresses with insufficient data for validation via Melissa Data are omitted.
 #'
 #' @section Address validation workflow:
+#' The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service.
 #'
 #' 1. Prepare addresses
 #'     - [pull_addresses()]
@@ -13,17 +14,17 @@
 #'     - [replace_values()]
 #' 3. Validate/geocode addresses
 #'     - [build_md_url()]
-#'     - [md_batch_request()]
+#'     - [send_md_request()]
 #' 4. Review results
 #'     - [md_results_table()]
 #'
 #' @section Melissa Data:
-#' The address validation workflow prepares addresses for validation by the Melissa Data Personator Consumer Web Service. Minimum data requirements for requests are either of these value combinations:
+#' To check addresses, one of the follow combinations of address fields must be provided at a minimum:
 #'
 #' * `street`, `city`, and `state`
 #' * `street` and `zip`
 #'
-#' More information is at <https://wiki.melissadata.com/index.php?title=Personator_Consumer>.
+#' For more information on constructing the request, see the [Personator Consumer Quick Start Guide](https://www.melissa.com/quickstart-guides/personator-consumer) and the [Personator Consumer Request wiki page](https://wiki.melissadata.com/index.php?title=Personator_Consumer:Request). Additional information can be found at the [Melissa Data wiki](https://wiki.melissadata.com/index.php?title=Personator_Consumer).
 #'
 #' @param df A dataframe of records from EpiTrax.
 #' @param row_id A unique row identifier variable in `df`.

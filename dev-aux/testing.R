@@ -6,6 +6,25 @@ devtools::load_all()
 
 
 
+
+
+
+
+df <- test_addresses
+
+df$md_url <- build_md_url(test_addresses, "address_id")
+
+df$unit[2] <- "# 427"
+
+df_md <- send_md_request(df$md_url)
+
+
+
+
+
+
+
+
 address_examples <- readxl::read_xlsx("data-raw/address_examples.xlsx")
 
 address_examples <- address_examples |>
@@ -23,14 +42,6 @@ df <- clean_address(address_examples, "pobox")
 
 
 
-
-
-
-# debugonce(sim_address)
-df <- sim_address(1000)
-
-
-
 debugonce()
 
 tibble::tibble()
@@ -39,38 +50,7 @@ tibble::tribble()
 
 
 
-# Compare `patient_id` from surveillance export to `person_id` from manual export
 
-library(tidyverse)
-
-filepath <- paste0("../bl_2023q4/data/epitrax/", "2024-2-16 blood lead without person facility.csv")
-data1 <- readr::read_csv(
-  file = filepath,
-  col_types = list(.default = readr::col_character()),
-  na = c("", "NA", "NULL")
-)
-
-filepath <- "../export_7679_022724084726.csv"
-data2 <- readr::read_csv(
-  file = filepath,
-  col_types = list(.default = readr::col_character()),
-  na = c("", "NA", "NULL")
-)
-
-data1 <- data1 %>%
-  select(patient_id, patient_record_number) %>%
-  distinct() %>%
-  arrange(patient_id)
-
-data2 <- data2 %>%
-  select(person_id, patient_record_number) %>%
-  distinct() %>%
-  arrange(person_id)
-
-data_joined <- data1 %>%
-  inner_join(data2, by = "patient_record_number")
-
-identical(data_joined$person_id, data_joined$patient_id)
 
 
 

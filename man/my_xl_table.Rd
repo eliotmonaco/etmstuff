@@ -4,18 +4,27 @@
 \alias{my_xl_table}
 \title{Save a dataframe to an Excel workbook with custom formatting}
 \usage{
-my_xl_table(df, file, style_cols = NULL, as_table = TRUE, sheet = "Sheet1")
+my_xl_table(
+  df,
+  file,
+  style_cols = NULL,
+  as_table = TRUE,
+  sheet = "Sheet1",
+  overwrite = TRUE
+)
 }
 \arguments{
 \item{df}{A dataframe.}
 
-\item{file}{A file path. ".xlsx" will be added if not present.}
+\item{file}{A file path. \code{".xlsx"} will be appended if not present.}
 
 \item{style_cols}{A vector of variable names in \code{df} to highlight.}
 
 \item{as_table}{Logical: format data as a table if \code{TRUE}.}
 
 \item{sheet}{A name for the worksheet.}
+
+\item{overwrite}{Logical: overwrite existing file if \code{TRUE}.}
 }
 \value{
 An Excel workbook.
