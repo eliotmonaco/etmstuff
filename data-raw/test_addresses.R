@@ -1,6 +1,5 @@
 # Generates `test_addresses.rda`
 
-
 test_addresses <- tibble::tribble(
   ~name, ~street, ~unit, ~city, ~state, ~zip,
   "Curtis Bldg.", "1000 SW Jackson St", "Ste 130", "Topeka", "KS", "66612",

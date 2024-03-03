@@ -9,4 +9,6 @@ ks_place_by_county <- read.table(
   colClasses = "character"
 )
 
+ks_place_by_county <- tibble::as_tibble(ks_place_by_county)
+
 usethis::use_data(ks_place_by_county, overwrite = T)

@@ -38,7 +38,7 @@ usethis::use_import_from("", "")
 
 # Test/build workflow ####
 
-usethis::use_r("build_md_url")
+usethis::use_r("id_distinct_rows")
 
 usethis::use_test("")
 

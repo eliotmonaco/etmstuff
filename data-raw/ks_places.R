@@ -9,4 +9,6 @@ ks_places <- read.table(
   colClasses = "character"
 )
 
+ks_places <- tibble::as_tibble(ks_places)
+
 usethis::use_data(ks_places, overwrite = T)
