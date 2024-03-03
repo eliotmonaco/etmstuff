@@ -16,9 +16,13 @@
 #'   y = c("eleven", "twelve", "thirteen"),
 #'   z = c("twenty-one", "twenty-two", "twenty-three")
 #' )
-#' pattern_check_df(df, "^one$")
 #'
-pattern_check_df <- function(df, pattern, ignore_case = FALSE, silent = FALSE) {
+#' check_df_pattern(df, "^one$")
+#'
+check_df_pattern <- function(df, pattern, ignore_case = FALSE, silent = FALSE) {
+  if (!is.data.frame(df)) stop("`df` must be a dataframe")
+  if (length(pattern) != 1) stop("`pattern` must have length of 1")
+
   # Empty vector to hold names of variables in which `pattern` is found
   var <- c()
 

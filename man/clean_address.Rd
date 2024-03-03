@@ -11,15 +11,18 @@ clean_address(df, type, var = "street", row_id = "address_id")
 
 \item{type}{The type of cleaning to perform. One of \code{c("digit_letter", "dir_street", "emb_punct", "extract_unit", "fractional", "no_letters", "no_spaces", "nondigit", "nonres", "nth", "num_dir1", "num_dir2", "num_sign", "num_word", "phone", "pobox", "rep_letter", "rep_segment", "six_words", "symbol", "unknown")}.}
 
-\item{var}{A variable in \code{df} containing the targeted address component. Defaults to \code{street}.}
+\item{var}{The variable to target for cleaning. Defaults to \code{street}.}
 
 \item{row_id}{A unique row identifier variable in \code{df}. Defaults to \code{address_id}.}
 }
 \value{
-A dataframe containing values that match the selected error pattern and the suggested replacements.
+A dataframe consisting of rows where matches were found in \code{var}.
 }
 \description{
-This function cleans addresses by using regular expressions to match common error patterns. Each \code{type} option corresponds to a pattern in \code{etmstuff::address_regex} that targets certain text for removal and provides a suggestion for replacement. The function returns a dataframe with two new variables, \code{removed_text} and \code{replacement_text}, adjacent to the variable targeted for cleaning. Only rows containing values that match the error pattern are returned. The user should examine the returned dataframe to confirm, reject, or modify the suggested replacements. \code{\link[=replace_values]{replace_values()}} can be used to apply the corrections to the original dataframe.
+This function cleans address strings by using regular expressions to match common error patterns.
+}
+\details{
+Each \code{type} option corresponds to a row in \code{etmstuff::address_regex} with patterns to clean a specific type of error found in address strings. The function returns a dataframe with two new variables, \code{REMOVED_TEXT} (the part of the string matching the error pattern) and \code{REPLACEMENT_TEXT} (a replacement suggestion for the entire string). These new columns are placed to the right of \code{var}. Only rows in which a pattern match is found will be returned. The user should examine the returned dataframe to confirm, reject, or modify the suggested replacements. \code{\link[=replace_values]{replace_values()}} can then be used to replace the values with errors in the original dataframe.
 }
 \section{Address validation workflow}{
 
@@ -49,7 +52,7 @@ The address validation workflow prepares addresses for validation by the Melissa
 
 \section{Melissa Data}{
 
-To check addresses, one of the follow combinations of address fields must be provided at a minimum:
+To use the Check action to validate and correct addresses, Melissa Data requires, at minimum, one of the follow combinations of address fields:
 \itemize{
 \item \code{street}, \code{city}, and \code{state}
 \item \code{street} and \code{zip}

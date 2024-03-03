@@ -19,6 +19,9 @@
 # @examples
 #'
 md_results_table <- function(df, var = "Results") {
+  if (!is.data.frame(df)) stop("`df` must be a dataframe")
+  if (length(var) != 1) stop("`var` must have length of 1")
+
   var_check(df, var = var)
 
   # Unique MD result codes in dataframe

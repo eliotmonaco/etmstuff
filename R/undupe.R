@@ -36,6 +36,9 @@
 #' undp <- undupe(df, var = c("x", "y"))
 #'
 undupe <- function(df, var, prefix = "dupe") {
+  if (!is.data.frame(df)) stop("`df` must be a dataframe")
+  if (length(prefix) != 1) stop("`prefix` must have length of 1")
+
   var_check(df, var = var)
 
   dupe_id <- paste0(prefix, "_id")

@@ -43,7 +43,7 @@ The address validation workflow prepares addresses for validation by the Melissa
 
 \section{Melissa Data}{
 
-To check addresses, one of the follow combinations of address fields must be provided at a minimum:
+To use the Check action to validate and correct addresses, Melissa Data requires, at minimum, one of the follow combinations of address fields:
 \itemize{
 \item \code{street}, \code{city}, and \code{state}
 \item \code{street} and \code{zip}

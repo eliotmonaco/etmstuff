@@ -21,6 +21,13 @@
 # @examples
 #'
 replace_values <- function(df, var, df_src, var_src = "replacement_text", row_id = "address_id") {
+  if (!is.data.frame(df) | !is.data.frame(df_src)) {
+    stop("`df` and `df_src` must be dataframes")
+  }
+  if (length(var) != 1 | length(var_src) != 1 | length(row_id) != 1) {
+    stop("`var`, `var_src`, and `row_id` must have length of 1")
+  }
+
   var_check(df, var = c(var, row_id))
   var_check(df_src, var = c(var_src, row_id))
 

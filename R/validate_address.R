@@ -20,6 +20,9 @@
 # @examples
 #'
 validate_address <- function(df, var, type = var, max_dist = 0.1) {
+  if (!is.data.frame(df)) stop("`df` must be a dataframe")
+  if (length(var) != 1) stop("`var` must have length of 1")
+
   var_check(df, var = var)
 
   # Load `ref` based on `type`
@@ -28,8 +31,7 @@ validate_address <- function(df, var, type = var, max_dist = 0.1) {
   } else if (type == "zip") {
     ref <- etmstuff::ks_city_zip$zip
   } else {
-    m <- '`type` must be one of c("city", "zip")'
-    stop(m)
+    stop('`type` must be one of c("city", "zip")')
   }
 
   # Filter values in `var` not found in `ref` (ignoring case)

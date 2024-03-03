@@ -4,18 +4,20 @@
 \alias{build_md_url}
 \title{Build a Melissa Data Personator REST request URL}
 \usage{
-build_md_url(df, row_id)
+build_md_url(df, row_id, var = c("street", "unit", "city", "state", "zip"))
 }
 \arguments{
-\item{df}{A dataframe of cleaned addresses.}
+\item{df}{A dataframe of addresses.}
 
 \item{row_id}{A unique row identifier variable in \code{df}.}
+
+\item{var}{A vector of variable names for the following address components in this order: 1) house number and street, 2) unit number, 3) city, 4) state, and 5) zip code. Defaults to \code{c("street", "unit", "city", "state", "zip")}.}
 }
 \value{
 A vector of URLs.
 }
 \description{
-This function builds a URL to query the Melissa Data Personator Consumer Web Service API. It assumes that the dataframe contains variables named \code{street}, \code{unit}, \code{city}, \code{state}, and \code{zip} which contain the corresponding address components.
+This function builds a URL to query the Melissa Data Personator Consumer Web Service API.
 }
 \section{Address validation workflow}{
 
@@ -45,7 +47,7 @@ The address validation workflow prepares addresses for validation by the Melissa
 
 \section{Melissa Data}{
 
-To check addresses, one of the follow combinations of address fields must be provided at a minimum:
+To use the Check action to validate and correct addresses, Melissa Data requires, at minimum, one of the follow combinations of address fields:
 \itemize{
 \item \code{street}, \code{city}, and \code{state}
 \item \code{street} and \code{zip}
@@ -54,6 +56,12 @@ To check addresses, one of the follow combinations of address fields must be pro
 For more information on constructing the request, see the \href{https://www.melissa.com/quickstart-guides/personator-consumer}{Personator Consumer Quick Start Guide} and the \href{https://wiki.melissadata.com/index.php?title=Personator_Consumer:Request}{Personator Consumer Request wiki page}. Additional information can be found at the \href{https://wiki.melissadata.com/index.php?title=Personator_Consumer}{Melissa Data wiki}.
 }
 
+\examples{
+df <- etmstuff::test_addresses
+
+df$md_url <- build_md_url(df, "address_id")
+
+}
 \seealso{
 Other address processing functions: 
 \code{\link{clean_address}()},

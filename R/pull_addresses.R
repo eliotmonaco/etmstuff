@@ -19,7 +19,7 @@
 #'     - [md_results_table()]
 #'
 #' @section Melissa Data:
-#' To check addresses, one of the follow combinations of address fields must be provided at a minimum:
+#' To use the Check action to validate and correct addresses, Melissa Data requires, at minimum, one of the follow combinations of address fields:
 #'
 #' * `street`, `city`, and `state`
 #' * `street` and `zip`
@@ -28,8 +28,9 @@
 #'
 #' @param df A dataframe of records from EpiTrax.
 #' @param row_id A unique row identifier variable in `df`.
+#' @param var A vector of variable names for the following address components in this order: 1) house number and street, 2) unit number, 3) city, 4) state, 5) zip code, and 6) county. Defaults to `c("coll_add_street", "coll_add_unit", "coll_add_city", "coll_add_state", "coll_add_zip", "coll_add_county")`.
 #'
-#' @return A dataframe of addresses. Columns are renamed to their generic address components. `street_src` is an additional street variable intended to preserve the street address from the source data for comparison to the cleaned and parsed street addresses (created later).
+#' @return A dataframe of addresses. Columns are renamed to their generic address components. `street_src` is a copy of `street`, which preserves the original string for comparison during cleaning.
 #' @export
 #'
 #' @importFrom magrittr %>%
@@ -38,26 +39,24 @@
 #' @family address processing functions
 # @examples
 #'
-pull_addresses <- function(df, row_id) {
-  var_check(df, var = c(
-    row_id,
-    "lab_collection_street", "lab_collection_unit_number", "lab_collection_city",
-    "lab_collection_state", "lab_collection_postal_code", "lab_collection_county"
-  ))
+pull_addresses <- function(df, row_id, var = c("coll_add_street", "coll_add_unit", "coll_add_city", "coll_add_state", "coll_add_zip", "coll_add_county")) {
+  if (!is.data.frame(df)) stop("`df` must be a dataframe")
+  if (length(row_id) != 1) stop("`row_id` must have length of 1")
+
+  var_check(df, var = c(row_id, var))
 
   df %>%
     dplyr::mutate(
-      street = stringr::str_squish(.data$lab_collection_street),
-      unit = stringr::str_squish(.data$lab_collection_unit_number),
-      city = stringr::str_squish(.data$lab_collection_city),
-      state = stringr::str_squish(.data$lab_collection_state),
-      zip = stringr::str_squish(.data$lab_collection_postal_code),
-      county = stringr::str_squish(.data$lab_collection_county)
+      street = stringr::str_squish(.data[[var[1]]]),
+      unit = stringr::str_squish(.data[[var[2]]]),
+      city = stringr::str_squish(.data[[var[3]]]),
+      state = stringr::str_squish(.data[[var[4]]]),
+      zip = stringr::str_squish(.data[[var[5]]]),
+      county = stringr::str_squish(.data[[var[6]]])
     ) %>%
     dplyr::mutate(street_src = .data$street) %>%
     dplyr::select(
-      tidyselect::all_of(row_id),
-      "street_src",
+      tidyselect::all_of(row_id), "street_src",
       "street", "unit", "city", "state", "zip", "county"
     ) %>%
     # Remove insufficient addresses

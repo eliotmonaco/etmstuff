@@ -4,15 +4,22 @@
 \alias{pull_addresses}
 \title{Pull addresses from EpiTrax data}
 \usage{
-pull_addresses(df, row_id)
+pull_addresses(
+  df,
+  row_id,
+  var = c("coll_add_street", "coll_add_unit", "coll_add_city", "coll_add_state",
+    "coll_add_zip", "coll_add_county")
+)
 }
 \arguments{
 \item{df}{A dataframe of records from EpiTrax.}
 
 \item{row_id}{A unique row identifier variable in \code{df}.}
+
+\item{var}{A vector of variable names for the following address components in this order: 1) house number and street, 2) unit number, 3) city, 4) state, 5) zip code, and 6) county. Defaults to \code{c("coll_add_street", "coll_add_unit", "coll_add_city", "coll_add_state", "coll_add_zip", "coll_add_county")}.}
 }
 \value{
-A dataframe of addresses. Columns are renamed to their generic address components. \code{street_src} is an additional street variable intended to preserve the street address from the source data for comparison to the cleaned and parsed street addresses (created later).
+A dataframe of addresses. Columns are renamed to their generic address components. \code{street_src} is a copy of \code{street}, which preserves the original string for comparison during cleaning.
 }
 \description{
 Subset the complete address at lab collection from EpiTrax data. Addresses with insufficient data for validation via Melissa Data are omitted.
@@ -45,7 +52,7 @@ The address validation workflow prepares addresses for validation by the Melissa
 
 \section{Melissa Data}{
 
-To check addresses, one of the follow combinations of address fields must be provided at a minimum:
+To use the Check action to validate and correct addresses, Melissa Data requires, at minimum, one of the follow combinations of address fields:
 \itemize{
 \item \code{street}, \code{city}, and \code{state}
 \item \code{street} and \code{zip}

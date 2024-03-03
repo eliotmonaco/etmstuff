@@ -2,43 +2,33 @@
 % Please edit documentation in R/usps_lookup.R
 \name{usps_lookup}
 \alias{usps_lookup}
-\title{Look up addresses at USPS.com}
+\title{Validate addresses at USPS.com}
 \usage{
 usps_lookup(
   df,
-  street = "street",
-  unit = "unit",
-  city = "city",
-  state = "state",
-  zip = "zip",
-  row_id = NULL
+  row_id = NULL,
+  var = c("street", "unit", "city", "state", "zip")
 )
 }
 \arguments{
-\item{df}{A dataframe of addresses with the variables \code{street}, \code{unit}, \code{city}, \code{state}, and \code{zip}.}
+\item{df}{A dataframe of addresses.}
 
-\item{street}{The street component of the address.}
+\item{row_id}{A unique row identifier variable in \code{df}.}
 
-\item{unit}{The unit component of the address.}
-
-\item{city}{The city component of the address.}
-
-\item{state}{The state component of the address.}
-
-\item{zip}{The zip code component of the address.}
-
-\item{row_id}{A unique row identifier variable in \code{df} (optional).}
+\item{var}{A vector of variable names for the following address components in this order: 1) house number and street, 2) unit number, 3) city, 4) state, and 5) zip code. Defaults to \code{c("street", "unit", "city", "state", "zip")}.}
 }
 \value{
 A dataframe of results from USPS.com.
 }
 \description{
-This function submits a table of addresses to the ZIP Code by Address lookup tool at USPS.com and returns the lookup results. The variables \code{street}, \code{unit}, \code{city}, \code{state}, and \code{zip} are required in \code{df}. \code{row_id} is optional but recommended. The variables \code{n_row_src} and \code{n_result} are added to enable matching the results to the submitted addresses.
+This function submits a table of addresses to the ZIP Code by Address lookup tool at USPS.com for validation.
 }
 \details{
+The \code{row_id} argument is optional but recommended to easily match the results to the submitted addresses. In the returned dataframe, \code{n_row_src} corresponds to the row number of the input dataframe, and \code{n_result} indicates if multiple addresses were returned for any submitted address.
+
 Resources
 \itemize{
-\item \href{https://tools.usps.com/zip-code-lookup.htm?byaddress}{ZIP Code by Address}
+\item \href{https://tools.usps.com/zip-code-lookup.htm?byaddress}{ZIP Code by Address} lookup tool
 \item \href{https://www.accuzip.com/webhelp/Appendix/DPV_Codes_and_Information.htm}{Information about Delivery Point Validation (DPV)}
 }
 }

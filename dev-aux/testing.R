@@ -6,39 +6,71 @@ devtools::load_all()
 
 
 
+# df <- etmstuff::test_addresses[1:3,]
+
+# debugonce(usps_lookup)
+# df_usps1 <- usps_lookup(df, row_id = "address_id")
+# df_usps3 <- usps_lookup(df)
+df_usps3 <- usps_lookup(df, row_id = "address_id")
+# df_usps3 <- usps_lookup(df)
+# df_usps3 <- usps_lookup(df, row_id = c("id1", "id2"))
+
+all.equal(df_usps3, df_usps2)
+
+
+
+# row_id <- "id"
+# df_x <- data.frame(matrix(nrow = 0, ncol = 9))
+# colnames(df_x) <- c(
+#   "n_row_src", "n_result",
+#   "street", "city", "state",
+#   "zip5", "zip4", "county", "DPV"
+# )
+# if (!is.null(row_id)) {
+#   df_y <- data.frame(matrix(nrow = 0, ncol = 1))
+#   colnames(df_y) <- row_id
+#   df_x <- cbind(df_y, df_x)
+# }
 
 
 
 
-df <- test_addresses
-
-df$md_url <- build_md_url(test_addresses, "address_id")
-
-df$unit[2] <- "# 427"
-
-df_md <- send_md_request(df$md_url)
-
-
-
-
-
+# url1 <- build_md_url(df, "address_id")
+# url2 <- build_md_url(df, "address_id")
+#
+# identical(url1, url2)
+#
+# df$md_url <- build_md_url(df, "address_id")
+#
+# df$unit[2] <- "# 427"
+#
+# df_md <- send_md_request(df$md_url)
 
 
 
-address_examples <- readxl::read_xlsx("data-raw/address_examples.xlsx")
 
-address_examples <- address_examples |>
-  dplyr::filter(!is.na(type)) |>
-  id_distinct_rows(
-    id_name = "address_id", prefix = "AD",
-    var = c("street", "unit", "city", "state", "zip", "county")
-  ) |>
-  dplyr::relocate(address_id)
+# address_examples <- readxl::read_xlsx("data-raw/address_examples.xlsx")
+#
+# address_examples <- address_examples |>
+#   dplyr::filter(!is.na(type)) |>
+#   id_distinct_rows(
+#     id_name = "address_id", prefix = "AD",
+#     var = c("street", "unit", "city", "state", "zip", "county")
+#   ) |>
+#   dplyr::relocate(address_id)
+
+
+
+# address_examples2 <- address_examples |>
+#   dplyr::filter(type != "pobox")
+
+
 
 # debugonce(clean_address)
-df <- clean_address(address_examples, "pobox")
-
-
+# df3 <- clean_address(address_examples, var = c("street", "unit"), "pobox")
+# df4 <- clean_address(address_examples2, "pobox")
+#
+# all.equal(df, df3)
 
 
 
