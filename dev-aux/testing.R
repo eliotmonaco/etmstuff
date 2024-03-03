@@ -6,6 +6,36 @@ devtools::load_all()
 
 
 
+dates <- seq.Date(as.Date("2020-01-01"), as.Date("2022-12-31"), by = "day")
+
+df <- data.frame(
+  date = dates,
+  number = as.numeric(dates),
+  character = as.character(dates)
+)
+
+# debugonce(subset_dates)
+dfx <- subset_dates(df, var = "date", range1 = "2021")
+dfx <- subset_dates(dfy, var = "number", range1 = "2021")
+dfx <- subset_dates(df, var = "character", range1 = "2021")
+dfx <- subset_dates(df, var = "date", range1 = "2021", range2 = "2025")
+dfx <- subset_dates(df, var = "date", range1 = "2022q3")
+dfx <- subset_dates(df, var = "date", range1 = "2021q4", range2 = "2022q1")
+dfx <- subset_dates(df, var = "date", range1 = "2020q4", range2 = "2021q4")
+dfx <- subset_dates(df, var = "date", range1 = "2021", range2 = "2021q3")
+dfx <- subset_dates(df, var = "date", range1 = "2022-09-12")
+dfx <- subset_dates(df, var = "date", range1 = "2022-01-17", range2 = "2022-10-25")
+dfz <- subset_dates(dfx, var = "date", range1 = "2022-12-31", range2 = "2022-12-01")
+dfx <- subset_dates(df, var = "date", range1 = "2022-12-31", range2 = "2022-12-01", silent = T)
+
+
+
+
+
+
+
+
+
 # df <- etmstuff::test_addresses[1:3,]
 
 # debugonce(usps_lookup)
@@ -392,7 +422,7 @@ my_xlsx(mtcars, "cars", sheetName = "bigfastcars")
 
 # pick_max_cfm_test ####
 
-data <- subset_date_range(data_core_2015_2022, "lab_collection_date", "2022")
+data <- subset_dates(data_core_2015_2022, "lab_collection_date", "2022")
 
 data %>%
   summarize(max_age = max(age))
@@ -596,7 +626,7 @@ data %>%
   dplyr::count() %>%
   print(n = nrow(.))
 
-data_2023q1 <- subset_date_range(data, var = "lab_collection_date", range = "2023q1")
+data_2023q1 <- subset_dates(data, var = "lab_collection_date", range = "2023q1")
 
 key <- cbls_table_key(data_2023q1, action = "add")
 
@@ -615,7 +645,7 @@ df <- cbls_check_table(cbls_tbls_list[["df_2018q3_add"]])
 library(tidyverse)
 library(etmstuff)
 
-data_core_tr_2015 <- subset_date_range(
+data_core_tr_2015 <- subset_dates(
   data_core,
   var = "lab_collection_date",
   range = "2015"

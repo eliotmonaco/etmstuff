@@ -38,13 +38,13 @@ usethis::use_import_from("", "")
 
 # Test/build workflow ####
 
-usethis::use_r("id_distinct_rows")
+usethis::use_r("")
 
 usethis::use_test("")
 
 devtools::load_all()
 
-testthat::test_file("tests/testthat/test-.R")
+testthat::test_file("tests/testthat/test-subset_dates.R")
 
 devtools::test()
 
