@@ -38,7 +38,7 @@ my_kable <- function(df, caption = NULL, row_names = FALSE, bootstrap_opts = NUL
   css_class <- "class='my-kable'"
 
   # Compose table
-  tbl <- df %>%
+  df %>%
     kableExtra::kbl(
       row.names = row_names,
       table.attr = css_class,

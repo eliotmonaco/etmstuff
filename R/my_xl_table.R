@@ -78,5 +78,12 @@ my_xl_table <- function(data, file, style_cols = NULL, sheet = "Sheet1", as_tabl
     file <- paste0(file, ".xlsx")
   }
 
-  openxlsx::saveWorkbook(wb = wb, file = file, overwrite = overwrite)
+  tryCatch(
+    {
+      openxlsx::saveWorkbook(wb = wb, file = file, overwrite = overwrite)
+    },
+    error = function(e) {
+      invisible(data)
+    }
+  )
 }
