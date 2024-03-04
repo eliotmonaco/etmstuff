@@ -1,17 +1,19 @@
-#' Save a dataframe to an Excel workbook with custom formatting
+#' Write data to an Excel workbook
 #'
-#' This function produces an Excel workbook with the dataframe `df` formatted as a table. Variable names passed to `style_cols` will be highlighted in red. If `nrow(df) == 0`, `df` will be returned invisibly without producing an Excel workbook.
+#' @description
+#' This function produces an Excel workbook using the [openxlsx] package.
 #'
-#' `my_xl_table()` is built on functions from the [openxlsx] package.
+#' @details
+#' If `data` is a list of dataframes, each will be written to a separate sheet in a single workbook. Dataframes with 0 rows will be skipped.
 #'
-#' @param df A dataframe.
+#' @param data A dataframe (or list of dataframes).
 #' @param file A file path. `".xlsx"` will be appended if not present.
-#' @param style_cols A vector of variable names in `df` to highlight.
+#' @param style_cols A character vector (or list of vectors) of variable names in `data` to highlight.
+#' @param sheet A name (or list of names) for the worksheet(s).
 #' @param as_table Logical: format data as a table if `TRUE`.
-#' @param sheet A name for the worksheet.
 #' @param overwrite Logical: overwrite existing file if `TRUE`.
 #'
-#' @return An Excel workbook.
+#' @return None.
 #' @export
 #'
 #' @examples
@@ -19,51 +21,61 @@
 #' my_xl_table(mtcars, file = "mtcars_workbook", style_cols = c("mpg", "cyl"))
 #' }
 #'
-my_xl_table <- function(df, file, style_cols = NULL, as_table = TRUE, sheet = "Sheet1", overwrite = TRUE) {
-  # Check data type of `df`
-  if (is.data.frame(df)) {
-    if (nrow(df) == 0) return(invisible(df))
+my_xl_table <- function(data, file, style_cols = NULL, sheet = "Sheet1", as_table = TRUE, overwrite = TRUE) {
+  if (is.data.frame(data)) {
+    if (nrow(data) == 0) return(invisible(data))
+    sheets <- 1
+  } else if (all(unlist(lapply(data, is.data.frame)))) {
+    sheets <- length(data)
   } else {
-    stop("`df` must be a dataframe")
-  }
-
-  # Add ".xlsx" if not included in the file name
-  if (!stringr::str_detect(file, stringr::regex(".xlsx$", ignore_case = TRUE))) {
-    file <- paste0(file, ".xlsx")
-  }
-
-  if (!is.null(style_cols)) {
-    var_check(df, var = style_cols)
-
-    # Get column number(s) from `style_cols`
-    cols <- which(colnames(df) %in% style_cols)
+    stop("`data` must be a dataframe or list")
   }
 
   wb <- openxlsx::createWorkbook()
 
-  openxlsx::addWorksheet(wb = wb, sheetName = sheet)
+  for (i in 1:sheets) {
+    if (!is.data.frame(data)) {
+      tbl <- data[[i]]
+      col_name <- style_cols[[i]]
+    } else {
+      tbl <- data
+      col_name <- style_cols
+    }
 
-  if (as_table) {
-    openxlsx::writeDataTable(
-      wb = wb, sheet = sheet, x = df,
-      tableStyle = "TableStyleMedium2"
-    )
-    openxlsx::freezePane(wb = wb, sheet = sheet, firstRow = TRUE)
-  } else {
-    openxlsx::writeData(wb = wb, sheet = sheet, x = df)
+    if (nrow(tbl) == 0) next
+
+    openxlsx::addWorksheet(wb = wb, sheetName = sheet[i])
+
+    if (as_table) {
+      openxlsx::writeDataTable(
+        wb = wb, sheet = sheet[i], x = tbl,
+        tableStyle = "TableStyleMedium2"
+      )
+      openxlsx::freezePane(wb = wb, sheet = sheet[i], firstRow = TRUE)
+    } else {
+      openxlsx::writeData(wb = wb, sheet = sheet[i], x = tbl)
+    }
+
+    # Format columns in `style_cols`
+    if (!is.null(col_name)) {
+      # Get column number(s) from `style_cols`
+      col_num <- which(colnames(tbl) %in% col_name)
+
+      style_fill <- openxlsx::createStyle(fgFill = "#ffd0d0")
+
+      openxlsx::addStyle(
+        wb = wb, sheet = sheet[i],
+        style = style_fill,
+        rows = 2:(nrow(tbl) + 1),
+        cols = col_num,
+        gridExpand = TRUE
+      )
+    }
   }
 
-  # Format columns in `style_cols`
-  if (!is.null(style_cols)) {
-    style_fill <- openxlsx::createStyle(fgFill = "#ffd0d0")
-
-    openxlsx::addStyle(
-      wb = wb, sheet = sheet,
-      style = style_fill,
-      rows = 2:(nrow(df) + 1),
-      cols = cols,
-      gridExpand = TRUE
-    )
+  # Add ".xlsx" if not included in the file name
+  if (!stringr::str_detect(file, "(?i)\\.xlsx$")) {
+    file <- paste0(file, ".xlsx")
   }
 
   openxlsx::saveWorkbook(wb = wb, file = file, overwrite = overwrite)

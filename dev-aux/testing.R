@@ -6,33 +6,8 @@ devtools::load_all()
 
 
 
-dates <- seq.Date(as.Date("2020-01-01"), as.Date("2022-12-31"), by = "day")
 
-df <- data.frame(
-  date = dates,
-  number = as.numeric(dates),
-  character = as.character(dates)
-)
-
-# debugonce(subset_dates)
-dfx <- subset_dates(df, var = "date", range1 = "2021")
-dfx <- subset_dates(dfy, var = "number", range1 = "2021")
-dfx <- subset_dates(df, var = "character", range1 = "2021")
-dfx <- subset_dates(df, var = "date", range1 = "2021", range2 = "2025")
-dfx <- subset_dates(df, var = "date", range1 = "2022q3")
-dfx <- subset_dates(df, var = "date", range1 = "2021q4", range2 = "2022q1")
-dfx <- subset_dates(df, var = "date", range1 = "2020q4", range2 = "2021q4")
-dfx <- subset_dates(df, var = "date", range1 = "2021", range2 = "2021q3")
-dfx <- subset_dates(df, var = "date", range1 = "2022-09-12")
-dfx <- subset_dates(df, var = "date", range1 = "2022-01-17", range2 = "2022-10-25")
-dfz <- subset_dates(dfx, var = "date", range1 = "2022-12-31", range2 = "2022-12-01")
-dfx <- subset_dates(df, var = "date", range1 = "2022-12-31", range2 = "2022-12-01", silent = T)
-
-
-
-
-
-
+my_kable(mtcars, bootstrap_opts = c("striped", "bordered"))
 
 
 

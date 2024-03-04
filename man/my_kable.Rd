@@ -2,48 +2,31 @@
 % Please edit documentation in R/my_kable.R
 \name{my_kable}
 \alias{my_kable}
-\title{Create custom table using \code{kable()}}
+\title{Create a table using \code{kableExtra} formatting}
 \usage{
-my_kable(
-  df,
-  row_names = FALSE,
-  alt_row_bg = FALSE,
-  caption = NULL,
-  bootstrap_opts = NULL
-)
+my_kable(df, caption = NULL, row_names = FALSE, bootstrap_opts = NULL)
 }
 \arguments{
 \item{df}{A dataframe.}
 
-\item{row_names}{Logical: use \code{rownames(df)} if \code{TRUE}.}
+\item{caption}{A table caption.}
 
-\item{alt_row_bg}{Logical: alternate row background color if \code{TRUE}.}
+\item{row_names}{Logical: row names will be \code{rownames(df)} if \code{TRUE}.}
 
-\item{caption}{A table caption (optional).}
-
-\item{bootstrap_opts}{Bootstrap options to pass to \code{\link[kableExtra:kable_styling]{kableExtra::kable_styling()}}.}
+\item{bootstrap_opts}{A character vector of bootstrap options to pass to \code{\link[kableExtra:kable_styling]{kableExtra::kable_styling()}}. Options are \code{basic}, \code{striped}, \code{bordered}, \code{hover}, \code{condensed}, \code{responsive}, and \code{none},}
 }
 \value{
-A table formatted using functions in the \link{kableExtra} package.
+None.
 }
 \description{
-This function returns a table formatted using functions in the \link{kableExtra} package. Additional formatting can be added to the returned table, as in the example. The following colors are used:
-\itemize{
-\item Normal text: "#EFECE4"
-\item Emphasized text: "#FF801E"
-\item Header row background: "#0B1433"
-\item Body row background: "#434E77"
-\item Alternate row background: "#1D274F"
-}
+This function returns a table formatted using the \link{kableExtra} package.
 }
 \examples{
 df <- mtcars[1:10,]
 
-tbl <- my_kable(
-  df,
-  row_names = TRUE,
-  alt_row_bg = TRUE,
+tbl <- my_kable(df,
   caption = "Check out my sweeeeeet table!",
+  row_names = TRUE,
   bootstrap_opts = "bordered"
 )
 

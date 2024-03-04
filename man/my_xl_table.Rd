@@ -2,38 +2,38 @@
 % Please edit documentation in R/my_xl_table.R
 \name{my_xl_table}
 \alias{my_xl_table}
-\title{Save a dataframe to an Excel workbook with custom formatting}
+\title{Write data to an Excel workbook}
 \usage{
 my_xl_table(
-  df,
+  data,
   file,
   style_cols = NULL,
-  as_table = TRUE,
   sheet = "Sheet1",
+  as_table = TRUE,
   overwrite = TRUE
 )
 }
 \arguments{
-\item{df}{A dataframe.}
+\item{data}{A dataframe (or list of dataframes).}
 
 \item{file}{A file path. \code{".xlsx"} will be appended if not present.}
 
-\item{style_cols}{A vector of variable names in \code{df} to highlight.}
+\item{style_cols}{A character vector (or list of vectors) of variable names in \code{data} to highlight.}
+
+\item{sheet}{A name (or list of names) for the worksheet(s).}
 
 \item{as_table}{Logical: format data as a table if \code{TRUE}.}
-
-\item{sheet}{A name for the worksheet.}
 
 \item{overwrite}{Logical: overwrite existing file if \code{TRUE}.}
 }
 \value{
-An Excel workbook.
+None.
 }
 \description{
-This function produces an Excel workbook with the dataframe \code{df} formatted as a table. Variable names passed to \code{style_cols} will be highlighted in red. If \code{nrow(df) == 0}, \code{df} will be returned invisibly without producing an Excel workbook.
+This function produces an Excel workbook using the \link{openxlsx} package.
 }
 \details{
-\code{my_xl_table()} is built on functions from the \link{openxlsx} package.
+If \code{data} is a list of dataframes, each will be written to a separate sheet in a single workbook. Dataframes with 0 rows will be skipped.
 }
 \examples{
 \dontrun{
