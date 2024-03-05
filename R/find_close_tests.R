@@ -15,14 +15,16 @@
 # @examples
 #'
 find_close_tests <- function(df, days, silent = FALSE) {
+  if (!is.data.frame(df)) stop("`df` must be a dataframe")
+  if (length(days) != 1 | days != round(days)) stop("`days` must be an integer")
+
   vars <- c(
-    "dupe_id", "patient_id", "patient_record_number", "lab_collection_date",
-    "lab_result_symbol", "lab_result_number", "lab_specimen_source"
+    "dupe_id", "person_id", "patient_record_number", "collection_date",
+    "result_sign", "result_number", "specimen_source"
   )
 
   var_check(df, var = vars)
 
-  if (days != round(days)) stop("`days` must be an integer")
 
   df <- df %>%
     dplyr::select(tidyselect::all_of(vars))
@@ -36,13 +38,13 @@ find_close_tests <- function(df, days, silent = FALSE) {
   for (i in 1:nrow(df)) {
     tests <- df %>%
       dplyr::filter(
-        .data$patient_id == df$patient_id[i],
-        .data$lab_collection_date >= df$lab_collection_date[i],
-        .data$lab_collection_date <= df$lab_collection_date[i] + days,
-        (.data$lab_result_symbol == df$lab_result_symbol[i] |
-           (is.na(.data$lab_result_symbol) & is.na(df$lab_result_symbol[i]))),
-        .data$lab_result_number == df$lab_result_number[i],
-        .data$lab_specimen_source == df$lab_specimen_source[i],
+        .data$person_id == df$person_id[i],
+        .data$collection_date >= df$collection_date[i],
+        .data$collection_date <= df$collection_date[i] + days,
+        (.data$result_sign == df$result_sign[i] |
+           (is.na(.data$result_sign) & is.na(df$result_sign[i]))),
+        .data$result_number == df$result_number[i],
+        .data$specimen_source == df$specimen_source[i],
         .data$dupe_id != df$dupe_id[i]
       )
 

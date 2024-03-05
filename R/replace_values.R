@@ -31,8 +31,8 @@ replace_values <- function(df, var, df_src, var_src = "replacement_text", row_id
   var_check(df, var = c(var, row_id))
   var_check(df_src, var = c(var_src, row_id))
 
-  if (sum(duplicated(df[[row_id]])) > 0 | sum(duplicated(df_src[[row_id]])) > 0) {
-    stop("`row_id` values are not all unique in `df` and/or `df_src`")
+  if (any(duplicated(df[[row_id]])) | any(duplicated(df_src[[row_id]]))) {
+    stop("`row_id` is not a unique row identifier in `df` and/or `df_src`")
   }
 
   # Subset rows in `df` that match cleaned rows in `df_src`

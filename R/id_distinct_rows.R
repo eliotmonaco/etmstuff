@@ -26,6 +26,8 @@
 #' df <- id_distinct_rows(df, id_name = "new_id", prefix = "A", var = c("x", "y"))
 #'
 id_distinct_rows <- function(df, id_name, prefix = NULL, var = colnames(df), seq_start = 1, digits = NULL) {
+  if (!is.data.frame(df)) stop("`df` must be a dataframe")
+
   var_check(df, var = var)
 
   if (id_name %in% colnames(df)) {

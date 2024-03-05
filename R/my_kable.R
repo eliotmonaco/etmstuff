@@ -7,6 +7,7 @@
 #' @param caption A table caption.
 #' @param row_names Logical: row names will be `rownames(df)` if `TRUE`.
 #' @param bootstrap_opts A character vector of bootstrap options to pass to [kableExtra::kable_styling()]. Options are `basic`, `striped`, `bordered`, `hover`, `condensed`, `responsive`, and `none`,
+#' @param format A value passed to the `format` argument in [kableExtra::kbl()] (see that function's documentation for options). Default is `"html"`.
 #'
 #' @return None.
 #' @export
@@ -31,7 +32,8 @@
 #'   )
 #' }
 #'
-my_kable <- function(df, caption = NULL, row_names = FALSE, bootstrap_opts = NULL) {
+my_kable <- function(df, caption = NULL, bootstrap_opts = NULL, row_names = FALSE, format = "html") {
+  if (!is.data.frame(df)) stop("`df` must be a dataframe")
   if (nrow(df) == 0) return(message("The dataframe has 0 rows"))
 
   # Table class name for CSS
@@ -40,14 +42,15 @@ my_kable <- function(df, caption = NULL, row_names = FALSE, bootstrap_opts = NUL
   # Compose table
   df %>%
     kableExtra::kbl(
+      format = format,
+      # digits = 3,
       row.names = row_names,
-      table.attr = css_class,
-      digits = 3,
+      caption = caption,
       format.args = list(
         big.mark = ",",
         scientific = FALSE
       ),
-      caption = caption
+      table.attr = css_class
     ) %>%
     kableExtra::kable_styling(
       bootstrap_options = bootstrap_opts,

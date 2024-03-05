@@ -4,16 +4,24 @@
 \alias{my_kable}
 \title{Create a table using \code{kableExtra} formatting}
 \usage{
-my_kable(df, caption = NULL, row_names = FALSE, bootstrap_opts = NULL)
+my_kable(
+  df,
+  caption = NULL,
+  bootstrap_opts = NULL,
+  row_names = FALSE,
+  format = "html"
+)
 }
 \arguments{
 \item{df}{A dataframe.}
 
 \item{caption}{A table caption.}
 
+\item{bootstrap_opts}{A character vector of bootstrap options to pass to \code{\link[kableExtra:kable_styling]{kableExtra::kable_styling()}}. Options are \code{basic}, \code{striped}, \code{bordered}, \code{hover}, \code{condensed}, \code{responsive}, and \code{none},}
+
 \item{row_names}{Logical: row names will be \code{rownames(df)} if \code{TRUE}.}
 
-\item{bootstrap_opts}{A character vector of bootstrap options to pass to \code{\link[kableExtra:kable_styling]{kableExtra::kable_styling()}}. Options are \code{basic}, \code{striped}, \code{bordered}, \code{hover}, \code{condensed}, \code{responsive}, and \code{none},}
+\item{format}{A value passed to the \code{format} argument in \code{\link[kableExtra:kbl]{kableExtra::kbl()}} (see that function's documentation for options). Default is \code{"html"}.}
 }
 \value{
 None.

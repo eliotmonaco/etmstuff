@@ -23,6 +23,7 @@ Imports:
     lubridate,
     magrittr,
     openxlsx,
+    plotly,
     purrr,
     rlang,
     shiny,

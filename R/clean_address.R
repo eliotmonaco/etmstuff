@@ -30,12 +30,12 @@
 #'
 clean_address <- function(df, type, var = "street", row_id = "address_id") {
   if (!is.data.frame(df)) stop("`df` must be a dataframe")
-  if (length(var) != 1) stop("`var` must have length of 1")
+  if (length(var) != 1 | length(row_id) != 1) stop("`var` and `row_id` must have length of 1")
 
   var_check(df, var = c(var, row_id))
 
   # Stop if `row_id` values are not unique
-  if (any(duplicated(df[row_id]))) stop("`row_id` is not a unique row identifier")
+  if (any(duplicated(df[[row_id]]))) stop("`row_id` is not a unique row identifier")
 
   # Load `ref` based on the selected `type`
   all_types <- etmstuff::address_regex$type
@@ -44,8 +44,7 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
   } else {
     stop(paste0(
       "`type` must be one of c(",
-      paste0('"', paste(all_types, collapse = '", "'), '"'),
-      ")"
+      paste0('"', paste(all_types, collapse = '", "'), '"'), ")"
     ))
   }
 
