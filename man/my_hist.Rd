@@ -4,7 +4,7 @@
 \alias{my_hist}
 \title{Plot a histogram with \code{plotly}}
 \usage{
-my_hist(x, bin_size = 1, x_label = NULL, title = NULL)
+my_hist(x, bin_size = 1, x_label = NULL, title = NULL, bar_gap = NULL)
 }
 \arguments{
 \item{x}{A vector of numeric values.}
@@ -14,6 +14,8 @@ my_hist(x, bin_size = 1, x_label = NULL, title = NULL)
 \item{x_label}{The x-axis label.}
 
 \item{title}{The plot title.}
+
+\item{bar_gap}{A number from 0 to 1. The gap between bars as a fraction of the plot.}
 }
 \value{
 None.

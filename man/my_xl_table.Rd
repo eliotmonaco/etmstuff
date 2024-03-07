@@ -20,7 +20,7 @@ my_xl_table(
 
 \item{style_cols}{A character vector (or list of vectors) of variable names in \code{data} to highlight.}
 
-\item{sheet}{A name (or list of names) for the worksheet(s).}
+\item{sheet}{A name (or vector of names) for the worksheet(s).}
 
 \item{as_table}{Logical: format data as a table if \code{TRUE}.}
 

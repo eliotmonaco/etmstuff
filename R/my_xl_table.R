@@ -9,7 +9,7 @@
 #' @param data A dataframe (or list of dataframes).
 #' @param file A file path. `".xlsx"` will be appended if not present.
 #' @param style_cols A character vector (or list of vectors) of variable names in `data` to highlight.
-#' @param sheet A name (or list of names) for the worksheet(s).
+#' @param sheet A name (or vector of names) for the worksheet(s).
 #' @param as_table Logical: format data as a table if `TRUE`.
 #' @param overwrite Logical: overwrite existing file if `TRUE`.
 #'

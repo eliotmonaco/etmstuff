@@ -6,7 +6,8 @@
 #' @param df A dataframe.
 #' @param caption A table caption.
 #' @param row_names Logical: row names will be `rownames(df)` if `TRUE`.
-#' @param bootstrap_opts A character vector of bootstrap options to pass to [kableExtra::kable_styling()]. Options are `basic`, `striped`, `bordered`, `hover`, `condensed`, `responsive`, and `none`,
+#' @param bootstrap_opts A character vector of bootstrap options to pass to [kableExtra::kable_styling()]. Options are `basic`, `striped`, `bordered`, `hover`, `condensed`, `responsive`, and `none`.
+#' @param scroll_box_ht A string for the number of pixels to use as the height of a scroll box containing the output table (e.g., `"600px"`.
 #' @param format A value passed to the `format` argument in [kableExtra::kbl()] (see that function's documentation for options). Default is `"html"`.
 #'
 #' @return None.
@@ -32,7 +33,7 @@
 #'   )
 #' }
 #'
-my_kable <- function(df, caption = NULL, bootstrap_opts = NULL, row_names = FALSE, format = "html") {
+my_kable <- function(df, caption = NULL, bootstrap_opts = NULL, row_names = FALSE, scroll_box_ht = NULL, format = "html") {
   if (!is.data.frame(df)) stop("`df` must be a dataframe")
   if (nrow(df) == 0) return(message("The dataframe has 0 rows"))
 
@@ -55,5 +56,6 @@ my_kable <- function(df, caption = NULL, bootstrap_opts = NULL, row_names = FALS
     kableExtra::kable_styling(
       bootstrap_options = bootstrap_opts,
       full_width = FALSE
-    )
+    ) %>%
+    kableExtra::scroll_box(height = scroll_box_ht)
 }

@@ -18,8 +18,8 @@ assign_confirmed_status(
 
 \item{rule}{A string indicating which rule to follow in assigning confirmed status to capillary tests. A capillary test is confirmed if it occurs within \emph{n} days of a prior capillary test.
 \itemize{
-\item \code{"cdc"}: \emph{n} = 84
-\item \code{"tracking"}: \emph{n} = 90
+\item \code{cdc}: \emph{n} = 84
+\item \code{tracking}: \emph{n} = 90
 }}
 
 \item{silent}{Logical: silence progress indicator if \code{TRUE}.}
@@ -28,8 +28,8 @@ assign_confirmed_status(
 The input dataframe with new variables.
 }
 \description{
-This function determines the confirmed status (\code{"confirmed"}, \code{"unconfirmed"}, \code{"cap_after_venous"}, or \code{"unknown"}) for each test in df. Tests are subset into sequences for each person in the data set and sorted by 1) collection date, 2) specimen source (capillary tests before venous tests), and 3) result value (in descending order).
+This function determines the confirmed status (\code{confirmed}, \code{unconfirmed}, \code{cap_after_venous}, or \code{unknown}) for each test in df. Tests are subset into sequences for each person in the data set and sorted by 1) collection date, 2) specimen source (capillary tests before venous tests), and 3) result value (in descending order).
 }
 \details{
-Within a test sequence for a single individual, status is \code{"confirmed"} if 1) the test is venous, or if 2) the test is capillary and the next prior test within \emph{n} days (as determined by \code{rule}) is also capillary. Status is \code{"unconfirmed"} if the test is capillary and there is no prior test within \emph{n} days. Status is \code{"cap_after_venous"} if the test is capillary and the next prior test within \emph{n} days is venous. If a test meets none of the above criteria, its status is \code{"unknown"}.
+Within a test sequence for a single individual, status is \code{confirmed} if 1) the test is venous, or if 2) the test is capillary and the next prior test within \emph{n} days (as determined by \code{rule}) is also capillary. Status is \code{unconfirmed} if the test is capillary and there is no prior test within \emph{n} days. Status is \code{cap_after_venous} if the test is capillary and the next prior test within \emph{n} days is venous. If a test meets none of the above criteria, its status is \code{unknown}.
 }

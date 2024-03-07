@@ -1,16 +1,16 @@
 #' Assign confirmed status to lead tests
 #'
 #' @description
-#' This function determines the confirmed status (`"confirmed"`, `"unconfirmed"`, `"cap_after_venous"`, or `"unknown"`) for each test in df. Tests are subset into sequences for each person in the data set and sorted by 1) collection date, 2) specimen source (capillary tests before venous tests), and 3) result value (in descending order).
+#' This function determines the confirmed status (`confirmed`, `unconfirmed`, `cap_after_venous`, or `unknown`) for each test in df. Tests are subset into sequences for each person in the data set and sorted by 1) collection date, 2) specimen source (capillary tests before venous tests), and 3) result value (in descending order).
 #'
 #' @details
-#' Within a test sequence for a single individual, status is `"confirmed"` if 1) the test is venous, or if 2) the test is capillary and the next prior test within *n* days (as determined by `rule`) is also capillary. Status is `"unconfirmed"` if the test is capillary and there is no prior test within *n* days. Status is `"cap_after_venous"` if the test is capillary and the next prior test within *n* days is venous. If a test meets none of the above criteria, its status is `"unknown"`.
+#' Within a test sequence for a single individual, status is `confirmed` if 1) the test is venous, or if 2) the test is capillary and the next prior test within *n* days (as determined by `rule`) is also capillary. Status is `unconfirmed` if the test is capillary and there is no prior test within *n* days. Status is `cap_after_venous` if the test is capillary and the next prior test within *n* days is venous. If a test meets none of the above criteria, its status is `unknown`.
 #'
 #' @param df A dataframe of cleaned, deduplicated lead tests.
 #' @param row_id A unique row identifier variable in `df`.
 #' @param rule A string indicating which rule to follow in assigning confirmed status to capillary tests. A capillary test is confirmed if it occurs within *n* days of a prior capillary test.
-#' - `"cdc"`: *n* = 84
-#' - `"tracking"`: *n* = 90
+#' - `cdc`: *n* = 84
+#' - `tracking`: *n* = 90
 #' @param silent Logical: silence progress indicator if `TRUE`.
 #'
 #' @return The input dataframe with new variables.

@@ -20,25 +20,6 @@ library(etmstuff)
 ```
 
 ```{r}
-# Histogram plot function
-my_hist <- function(x, title, x_title = "Unit numbers", bin_size = 1) {
-  plotly::plot_ly(
-    x = x,
-    type = "histogram",
-    xbins = list(size = bin_size)
-  ) %>%
-    plotly::layout(
-      title = title,
-      xaxis = list(
-        title = x_title
-      ),
-      yaxis = list(
-        title = "Frequency"
-      ),
-      margin = list(t = 100, b = 70)
-    )
-}
-
 # Get counts of values within each interval of 100
 get_bincounts <- function(values, interval_size, bin_max) {
   bin_ticks <- seq(0, bin_max, by = interval_size)
@@ -89,7 +70,7 @@ house_numbers <- sort(as.numeric(stringr::str_extract(df_md$AddressLine1, "^\\d+
 ```{r fig.width=11.53}
 # Plot house numbers
 title <- "Distribution of house numbers (actual)"
-my_hist(house_numbers, title)
+my_hist(house_numbers, x_label = "House numbers", title = title)
 ```
 
 ```{r}
@@ -103,7 +84,7 @@ sum(house_numbers >= 40000)
 house_numbers <- house_numbers[which(0 < house_numbers & house_numbers < 40000)]
 x <- house_numbers
 title <- paste("Distribution of house numbers", min(x), "to", max(x), "(actual)")
-my_hist(house_numbers, title)
+my_hist(house_numbers, x_label = "House numbers", title = title)
 ```
 
 ```{r fig.width=11.53}
@@ -112,7 +93,7 @@ min <- 300
 max <- min + 100
 x <- house_numbers[min <= house_numbers & house_numbers < max]
 title <- paste("Distribution of house numbers", min(x), "to", max(x), "(actual)")
-my_hist(x, title)
+my_hist(x, x_label = "House numbers", title = title)
 ```
 
 ```{r fig.width=11.53}
@@ -125,7 +106,7 @@ p <- dlnorm(1:100, meanlog = 2.7, sdlog = 1.2)
 samp <- sample(min:(max - 1), size = length(x), replace = TRUE, prob = p)
 
 title <- paste("Distribution of house numbers", min(samp), "to", max(samp), "(modeled)")
-my_hist(samp, title)
+my_hist(samp, x_label = "House numbers", title = title)
 ```
 
 ```{r}
@@ -153,7 +134,7 @@ samp <- etmstuff:::sim_distribution(
 )
 
 title <- paste("Distribution of house numbers", min(samp), "to", max(samp), "(modeled)")
-my_hist(samp, title)
+my_hist(samp, x_label = "House numbers", title = title)
 ```
 
 # Unit numbers
@@ -189,8 +170,8 @@ df_units <- df_units %>%
 df_summarize_prefix <- df_units %>%
   group_by(prefix) %>%
   count() %>%
-  mutate(pct = etmstuff::pct(n, nrow(df_units))) %>%
-  print(n = nrow(.))
+  mutate(pct = etmstuff::pct(n, nrow(df_units)))
+my_kable(df_summarize_prefix)
 ```
 
 ```{r}
@@ -209,8 +190,8 @@ df_units <- df_units %>%
 df_summarize_location_type <- df_units %>%
   group_by(location_type) %>%
   count() %>%
-  mutate(pct = etmstuff::pct(n, nrow(df_units))) %>%
-  print(n = nrow(.))
+  mutate(pct = etmstuff::pct(n, nrow(df_units)))
+my_kable(df_summarize_location_type)
 ```
 
 ```{r}
@@ -230,8 +211,8 @@ df_units <- df_units %>%
 df_summarize_location_type <- df_units %>%
   group_by(location_type) %>%
   count() %>%
-  mutate(pct = etmstuff::pct(n, nrow(df_units))) %>%
-  print(n = nrow(.))
+  mutate(pct = etmstuff::pct(n, nrow(df_units)))
+my_kable(df_summarize_location_type)
 ```
 
 ```{r}
@@ -244,8 +225,8 @@ df_units$loc_letter <- str_extract(df_units$location, "[:alpha:]")
 df_summarize_location_number <- df_units %>%
   group_by(nchar(loc_number)) %>%
   count() %>%
-  mutate(pct = etmstuff::pct(n, nrow(df_units))) %>%
-  print(n = nrow(.))
+  mutate(pct = etmstuff::pct(n, nrow(df_units)))
+my_kable(df_summarize_location_number)
 ```
 
 ```{r}
@@ -254,8 +235,8 @@ df_summarize_location_letter <- df_units %>%
 df_summarize_location_letter <- df_summarize_location_letter %>%
   group_by(loc_letter) %>%
   count() %>%
-  mutate(pct = etmstuff::pct(n, nrow(df_summarize_location_letter))) %>%
-  print(n = nrow(.))
+  mutate(pct = etmstuff::pct(n, nrow(df_summarize_location_letter)))
+my_kable(df_summarize_location_letter, scroll_box_ht = "600px")
 ```
 
 ```{r}
@@ -269,7 +250,7 @@ unit_numbers <- df_units %>%
   pull(loc_number)
 
 title <- paste("Distribution of unit numbers", min(unit_numbers), "to", max(unit_numbers), "(actual)")
-my_hist(unit_numbers, title)
+my_hist(unit_numbers, x_label = "Unit numbers", title = title)
 ```
 
 ```{r fig.width=11.53}
@@ -278,7 +259,7 @@ x <- unit_numbers[which(unit_numbers < 100)]
 x_total <- length(x)
 
 title <- paste("Distribution of unit numbers", min(x), "to", max(x), "(actual)")
-my_hist(x, title)
+my_hist(x, x_label = "Unit numbers", title = title)
 ```
 
 ```{r fig.width=11.53}
@@ -287,7 +268,7 @@ p <- dlnorm(1:100, meanlog = 1.5, sdlog = 1)
 samp <- sample(1:100, size = x_total, replace = TRUE, prob = p)
 
 title <- paste("Distribution of unit numbers", min(x), "to", max(x), "(modeled)")
-my_hist(samp, title)
+my_hist(samp, x_label = "Unit numbers", title = title)
 ```
 
 ```{r}
@@ -315,5 +296,5 @@ samp <- etmstuff:::sim_distribution(
 )
 
 title <- paste("Distribution of unit numbers", min(samp), "to", max(samp), "(modeled)")
-my_hist(samp, title)
+my_hist(samp, x_label = "Unit numbers", title = title)
 ```
