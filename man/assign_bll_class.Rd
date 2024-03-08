@@ -7,11 +7,20 @@
 assign_bll_class(df)
 }
 \arguments{
-\item{df}{A dataframe of lead test records.}
+\item{df}{A dataframe of cleaned, deduplicated lead test records.}
 }
 \value{
-A dataframe with the new variable \code{bll_class}.
+The input dataframe with the new variable \code{bll_class}.
 }
 \description{
-This function assigns each lead test to a BLL class based on the KDHE Elevated Blood Lead Disease Investigation Guidelines.
+This function creates a new variable, \code{bll_class}, and assigns one of the following values to each lead test based on the test result value:
+\itemize{
+\item \verb{> 0 and < 3.5 μg/dL}
+\item \verb{≥ 3.5 and < 5 μg/dL}
+\item \verb{≥ 5 and < 10 μg/dL}
+\item \verb{≥ 10 and < 15 μg/dL}
+\item \verb{≥ 15 and < 25 μg/dL}
+\item \verb{≥ 25 and < 45 μg/dL}
+\item \verb{≥ 45 μg/dL}
+}
 }
