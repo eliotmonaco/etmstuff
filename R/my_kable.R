@@ -4,11 +4,12 @@
 #' This function returns a table formatted using the [kableExtra] package.
 #'
 #' @param df A dataframe.
-#' @param caption A table caption.
-#' @param row_names Logical: row names will be `rownames(df)` if `TRUE`.
 #' @param bootstrap_opts A character vector of bootstrap options to pass to [kableExtra::kable_styling()]. Options are `basic`, `striped`, `bordered`, `hover`, `condensed`, `responsive`, and `none`.
-#' @param scroll_box_ht A string for the number of pixels to use as the height of a scroll box containing the output table (e.g., `"600px"`.
+#' @param scroll_h A string for the height in pixels of a scroll box to contain the table (e.g., `"600px"`).
+#' @param scroll_w A string for the width in pixels of a scroll box to contain the table (e.g., `"600px"`).
 #' @param format A value passed to the `format` argument in [kableExtra::kbl()] (see that function's documentation for options). Default is `"html"`.
+#' @param css CSS styling for HTML output.
+#' @param ... Additional arguments passed to [kableExtra::kbl()].
 #'
 #' @return None.
 #' @export
@@ -33,29 +34,24 @@
 #'   )
 #' }
 #'
-my_kable <- function(df, caption = NULL, bootstrap_opts = NULL, row_names = FALSE, scroll_box_ht = NULL, format = "html") {
+my_kable <- function(df, bootstrap_opts = NULL, scroll_h = NULL, scroll_w = NULL, format = "html", css = "class='my-kable'", ...) {
   if (!is.data.frame(df)) stop("`df` must be a dataframe")
   if (nrow(df) == 0) return(message("The dataframe has 0 rows"))
-
-  # Table class name for CSS
-  css_class <- "class='my-kable'"
 
   # Compose table
   df %>%
     kableExtra::kbl(
       format = format,
-      # digits = 3,
-      row.names = row_names,
-      caption = caption,
       format.args = list(
         big.mark = ",",
         scientific = FALSE
       ),
-      table.attr = css_class
+      table.attr = css,
+      ...
     ) %>%
     kableExtra::kable_styling(
       bootstrap_options = bootstrap_opts,
       full_width = FALSE
     ) %>%
-    kableExtra::scroll_box(height = scroll_box_ht)
+    kableExtra::scroll_box(height = scroll_h, width = scroll_w)
 }

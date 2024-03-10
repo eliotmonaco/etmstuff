@@ -28,22 +28,32 @@ assign_confirmed_status(
 \item{silent}{Logical: silence progress indicator if \code{TRUE}.}
 }
 \value{
-The input dataframe with the new variables \code{test_gap} (in days since the previous test), either \code{confirmed_status_cdc} or \code{confirmed_status_tracking}, and \code{test_reason}.
+The input dataframe with the new variables \code{test_gap_prev} (in days since the previous test), either \code{confirmed_status_cdc} or \code{confirmed_status_tracking}, and \code{test_reason}.
 }
 \description{
-This function determines the confirmed status (\code{confirmed}, \code{unconfirmed}, \code{cap_after_ven}, \code{unknown_early}, or \code{unknown}) for each test in df.
+This function subsets \code{df} into test sequences for each person and returns the following variables:
+\itemize{
+\item the confirmed status (either \code{confirmed_status_cdc} or \code{confirmed_status_tracking})
+\item \code{test_gap_prev} (the number of days since the previous test in the sequence)
+\item \code{test_gap_next} (the number of days before the next test in the sequence)
+\item \code{test_reason}
+}
 }
 \details{
-Tests are subset into sequences for each person in the data set and sorted by 1) collection date, 2) specimen source (capillary tests before venous tests), and 3) result value (in descending order). Within a test sequence, confirmed status values are assigned as follows:
+Within the function, tests are subset into sequences for each person in \code{df} and sorted by 1) collection date, 2) specimen source (capillary tests before venous tests), and 3) result value (in descending order).
 
-\code{confirmed}: any venous test, or a capillary test following a prior capillary test within \emph{n} days (\emph{n} = 84 for the CDC; \emph{n} = 90 for Tracking)
-\code{unconfirmed}: a capillary test that has no prior test within \emph{n} days
-\code{cap_after_ven}: a capillary test following a venous test within \emph{n} days
-\code{unknown_early}: a capillary test that has no prior test and occurs within \emph{n} days of the start of the data set’s date range (this means a prior test may exist before the earliest date of the data set)
-\code{unknown}: any test not assigned an above status
+Confirmed status values:
+\itemize{
+\item \code{confirmed}: any venous test, or a capillary test following a prior capillary test within \emph{n} days (\emph{n} = 84 for the CDC; \emph{n} = 90 for Tracking)
+\item \code{unconfirmed}: a capillary test that has no prior test within \emph{n} days
+\item \code{cap_after_ven}: a capillary test following a venous test within \emph{n} days
+\item \code{unknown_early}: a capillary test that has no prior test and occurs within \emph{n} days of the start of the data set’s date range (this means a prior test may exist before the earliest date of the data set)
+\item \code{unknown}: any test not assigned an above status
+}
 
-Other variables returned are \code{test_gap} (the number of days since the previous test in the sequence) and \code{test_reason}, which has the following values:
-
-\code{screening}: an unconfirmed capillary test with no prior test within one year
-\code{confirmatory}: the next test after an elevated screening test (venous or capillary)
+\code{test_reason} values:
+\itemize{
+\item \code{screening}: an unconfirmed capillary test with no prior test within one year
+\item \code{confirmatory}: the next test after an elevated screening test (venous or capillary)
+}
 }

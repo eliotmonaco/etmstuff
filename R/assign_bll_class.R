@@ -28,30 +28,27 @@ assign_bll_class <- function(df) {
   # Create BLL classes
   df <- df %>%
     dplyr::mutate(bll_class = dplyr::case_when(
-      .data$result_number                               <  3.5 ~ 1,
-      .data$result_number >=  3.5 & .data$result_number <  5   ~ 2,
-      .data$result_number >=  5   & .data$result_number < 10   ~ 3,
-      .data$result_number >= 10   & .data$result_number < 15   ~ 4,
-      .data$result_number >= 15   & .data$result_number < 25   ~ 5,
-      .data$result_number >= 25   & .data$result_number < 45   ~ 6,
-      .data$result_number >= 45                                ~ 7
+      .data$result_number                               <  3.5 ~ "> 0 and < 3.5 \u03bcg/dL",
+      .data$result_number >=  3.5 & .data$result_number <  5   ~ "\u2265 3.5 and < 5 \u03bcg/dL",
+      .data$result_number >=  5   & .data$result_number < 10   ~ "\u2265 5 and < 10 \u03bcg/dL",
+      .data$result_number >= 10   & .data$result_number < 15   ~ "\u2265 10 and < 15 \u03bcg/dL",
+      .data$result_number >= 15   & .data$result_number < 25   ~ "\u2265 15 and < 25 \u03bcg/dL",
+      .data$result_number >= 25   & .data$result_number < 45   ~ "\u2265 25 and < 45 \u03bcg/dL",
+      .data$result_number >= 45                                ~ "\u2265 45 \u03bcg/dL"
     ))
 
-  # Convert `bll_class` to factor
-  df$bll_class <- factor(
-    df$bll_class,
-    levels = 1:7,
-    labels = c(
-      "> 0 and < 3.5 \u03bcg/dL",
-      "\u2265 3.5 and < 5 \u03bcg/dL",
-      "\u2265 5 and < 10 \u03bcg/dL",
-      "\u2265 10 and < 15 \u03bcg/dL",
-      "\u2265 15 and < 25 \u03bcg/dL",
-      "\u2265 25 and < 45 \u03bcg/dL",
-      "\u2265 45 \u03bcg/dL"
-    ),
-    ordered = TRUE
+  x <- c(
+    "> 0 and < 3.5 \u03bcg/dL",
+    "\u2265 3.5 and < 5 \u03bcg/dL",
+    "\u2265 5 and < 10 \u03bcg/dL",
+    "\u2265 10 and < 15 \u03bcg/dL",
+    "\u2265 15 and < 25 \u03bcg/dL",
+    "\u2265 25 and < 45 \u03bcg/dL",
+    "\u2265 45 \u03bcg/dL"
   )
+
+  # Convert `bll_class` to factor
+  df$bll_class <- factor(df$bll_class, levels = x)
 
   df
 }

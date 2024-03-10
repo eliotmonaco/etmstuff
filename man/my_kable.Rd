@@ -6,25 +6,28 @@
 \usage{
 my_kable(
   df,
-  caption = NULL,
   bootstrap_opts = NULL,
-  row_names = FALSE,
-  scroll_box_ht = NULL,
-  format = "html"
+  scroll_h = NULL,
+  scroll_w = NULL,
+  format = "html",
+  css = "class='my-kable'",
+  ...
 )
 }
 \arguments{
 \item{df}{A dataframe.}
 
-\item{caption}{A table caption.}
-
 \item{bootstrap_opts}{A character vector of bootstrap options to pass to \code{\link[kableExtra:kable_styling]{kableExtra::kable_styling()}}. Options are \code{basic}, \code{striped}, \code{bordered}, \code{hover}, \code{condensed}, \code{responsive}, and \code{none}.}
 
-\item{row_names}{Logical: row names will be \code{rownames(df)} if \code{TRUE}.}
+\item{scroll_h}{A string for the height in pixels of a scroll box to contain the table (e.g., \code{"600px"}).}
 
-\item{scroll_box_ht}{A string for the number of pixels to use as the height of a scroll box containing the output table (e.g., \code{"600px"}.}
+\item{scroll_w}{A string for the width in pixels of a scroll box to contain the table (e.g., \code{"600px"}).}
 
 \item{format}{A value passed to the \code{format} argument in \code{\link[kableExtra:kbl]{kableExtra::kbl()}} (see that function's documentation for options). Default is \code{"html"}.}
+
+\item{css}{CSS styling for HTML output.}
+
+\item{...}{Additional arguments passed to \code{\link[kableExtra:kbl]{kableExtra::kbl()}}.}
 }
 \value{
 None.
