@@ -47,13 +47,13 @@ Confirmed status values:
 \item \code{confirmed}: any venous test, or a capillary test following a prior capillary test within \emph{n} days (\emph{n} = 84 for the CDC; \emph{n} = 90 for Tracking)
 \item \code{unconfirmed}: a capillary test that has no prior test within \emph{n} days
 \item \code{cap_after_ven}: a capillary test following a venous test within \emph{n} days
-\item \code{unknown_early}: a capillary test that has no prior test and occurs within \emph{n} days of the start of the data set’s date range (this means a prior test may exist before the earliest date of the data set)
+\item \code{unknown_early}: a capillary test that has no prior test and occurs within \emph{n} days of the start of the data set’s date range (therefore, a prior test may exist outside of the date range of the data set)
 \item \code{unknown}: any test not assigned an above status
 }
 
 \code{test_reason} values:
 \itemize{
-\item \code{screening}: an unconfirmed capillary test with no prior test within one year
-\item \code{confirmatory}: the next test after an elevated screening test (venous or capillary)
+\item \code{screening}: a capillary test with no prior test within one year
+\item \code{confirmatory}: the next test (venous or capillary) after an elevated screening test
 }
 }

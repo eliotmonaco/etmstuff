@@ -16,13 +16,13 @@
 #' - `confirmed`: any venous test, or a capillary test following a prior capillary test within *n* days (*n* = 84 for the CDC; *n* = 90 for Tracking)
 #' - `unconfirmed`: a capillary test that has no prior test within *n* days
 #' - `cap_after_ven`: a capillary test following a venous test within *n* days
-#' - `unknown_early`: a capillary test that has no prior test and occurs within *n* days of the start of the data set’s date range (this means a prior test may exist before the earliest date of the data set)
+#' - `unknown_early`: a capillary test that has no prior test and occurs within *n* days of the start of the data set’s date range (therefore, a prior test may exist outside of the date range of the data set)
 #' - `unknown`: any test not assigned an above status
 #'
 #' `test_reason` values:
 #'
-#' - `screening`: an unconfirmed capillary test with no prior test within one year
-#' - `confirmatory`: the next test after an elevated screening test (venous or capillary)
+#' - `screening`: a capillary test with no prior test within one year
+#' - `confirmatory`: the next test (venous or capillary) after an elevated screening test
 #'
 #' @param df A dataframe of cleaned, deduplicated lead test records.
 #' @param row_id A unique row identifier variable in `df`.
@@ -60,14 +60,14 @@ assign_confirmed_status <- function(df, row_id, rule = c("cdc", "tracking"), sta
     stop("`rule` must be one of `c(\"cdc\", \"tracking\")")
   }
 
-  # Prior to these dates, the confirmed status and test reason are unknown because a prior test might exist before the start of the data's date range
+  # Prior to these dates, the confirmed status or test reason of any capillary test is unknown because a prior test may exist outside of the data set's date range
   period_cfm_unk <- as.Date(start_date, format = "%Y-%m-%d") + cfm_retest_wndw
   period_scrn_unk <- as.Date(start_date, format = "%Y-%m-%d") + 365
 
   # Get unique `person_id`s
   person_id_unq <- unique(df$person_id)
 
-  all_sequences <- list()
+  df_seq <- list()
 
   if (!silent) pb <- utils::txtProgressBar(1, length(person_id_unq), width = 50, style = 3)
 
@@ -134,18 +134,13 @@ assign_confirmed_status <- function(df, row_id, rule = c("cdc", "tracking"), sta
       test_seq <- test_seq |>
         dplyr::mutate(test_reason = dplyr::case_when(
           test_reason == "screening" ~ "screening",
-          # A confirmatory test is the next test after an elevated screening test
+          # A confirmatory test is the next test (either venous or capillary) after an elevated screening test
           pr_rsn == "screening" & pr_elev ~ "confirmatory",
           TRUE ~ NA
         ))
     }
 
-    # browser(expr = {n > 4})
-    # browser(expr = {"unconfirmed" %in% test_seq[[var_cfm]]})
-    # browser(expr = {"confirmatory" %in% test_seq$test_reason})
-    # browser(expr = {"screening" %in% test_seq$test_reason})
-
-    all_sequences[[i]] <- test_seq
+    df_seq[[i]] <- test_seq
 
     if (!silent) utils::setTxtProgressBar(pb, i)
   }
@@ -153,7 +148,7 @@ assign_confirmed_status <- function(df, row_id, rule = c("cdc", "tracking"), sta
   if (!silent) close(pb)
 
   # Condense all test sequences to a dataframe
-  all_sequences <- purrr::list_rbind(all_sequences) |>
+  df_seq <- purrr::list_rbind(df_seq) |>
     dplyr::select(
       tidyselect::all_of(row_id),
       "test_gap_prev", "test_gap_next",
@@ -161,11 +156,17 @@ assign_confirmed_status <- function(df, row_id, rule = c("cdc", "tracking"), sta
       "test_reason"
     )
 
-  # Compare row IDs in `df` and `all_sequences`
-  rows_match <- identical(sort(df[[row_id]]), sort(all_sequences[[row_id]]))
+  # Compare row IDs in `df` and `df_seq`
+  rows_match <- identical(sort(df[[row_id]]), sort(df_seq[[row_id]]))
   if (!rows_match) message("Problem matching rows")
+
+  # Convert `var_cfm` & `test_reason` to factor
+  fct_cfm <- c("confirmed", "unconfirmed", "cap_after_ven", "unknown_early", "unknown")
+  df_seq[[var_cfm]] <- factor(df_seq[[var_cfm]], levels = fct_cfm)
+  fct_rsn <- c("screening", "confirmatory")
+  df_seq$test_reason <- factor(df_seq$test_reason, levels = fct_rsn)
 
   # Join new variables to `df`
   df |>
-    dplyr::left_join(all_sequences, by = row_id)
+    dplyr::left_join(df_seq, by = row_id)
 }
