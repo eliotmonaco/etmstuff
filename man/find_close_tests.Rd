@@ -7,15 +7,15 @@
 find_close_tests(df, days, silent = FALSE)
 }
 \arguments{
-\item{df}{A dataframe of deduplicated lead records.}
+\item{df}{A dataframe of cleaned, deduplicated lead test records.}
 
-\item{days}{A number of days to look ahead for similar tests.}
+\item{days}{The number of days to look ahead for similar tests.}
 
 \item{silent}{Logical: silence progress indicator if \code{TRUE}.}
 }
 \value{
-A list in which each element is a dataframe consisting of a set of close tests.
+A dataframe.
 }
 \description{
-This function finds tests that fit the criteria for duplicates (the same person, test result, and specimen source) but occur on different days. The \code{days} argument determines the number of days to look ahead for similar tests. \code{df} should be a deduplicated data set of lead records.
+This function finds tests that fit the criteria for duplicates (the same person, test result, and specimen source) but occur on different days.
 }

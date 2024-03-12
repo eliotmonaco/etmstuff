@@ -1,12 +1,12 @@
 #' Find similar tests on different days
 #'
-#' This function finds tests that fit the criteria for duplicates (the same person, test result, and specimen source) but occur on different days. The `days` argument determines the number of days to look ahead for similar tests. `df` should be a deduplicated data set of lead records.
+#' This function finds tests that fit the criteria for duplicates (the same person, test result, and specimen source) but occur on different days.
 #'
-#' @param df A dataframe of deduplicated lead records.
-#' @param days A number of days to look ahead for similar tests.
+#' @param df A dataframe of cleaned, deduplicated lead test records.
+#' @param days The number of days to look ahead for similar tests.
 #' @param silent Logical: silence progress indicator if `TRUE`.
 #'
-#' @return A list in which each element is a dataframe consisting of a set of close tests.
+#' @return A dataframe.
 #' @export
 #'
 #' @importFrom magrittr %>%
@@ -17,19 +17,13 @@
 find_close_tests <- function(df, days, silent = FALSE) {
   if (!is.data.frame(df)) stop("`df` must be a dataframe")
   if (length(days) != 1 | days != round(days)) stop("`days` must be an integer")
-
   vars <- c(
-    "dupe_id", "person_id", "patient_record_number", "collection_date",
+    "dupe_id", "person_id", "collection_date",
     "result_sign", "result_number", "specimen_source"
   )
-
   var_check(df, var = vars)
 
-
-  df <- df %>%
-    dplyr::select(tidyselect::all_of(vars))
-
-  test_list <- list()
+  close_tests <- list()
 
   ct <- 1
 
@@ -49,7 +43,7 @@ find_close_tests <- function(df, days, silent = FALSE) {
       )
 
     if (nrow(tests) > 0) {
-      test_list[[ct]] <- df[i,] %>%
+      close_tests[[ct]] <- df[i,] %>%
         dplyr::bind_rows(tests)
       ct = ct + 1
     }
@@ -59,5 +53,5 @@ find_close_tests <- function(df, days, silent = FALSE) {
 
   if (!silent) close(pb)
 
-  test_list
+  purrr::list_rbind(close_tests)
 }
