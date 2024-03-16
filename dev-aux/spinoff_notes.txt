@@ -1,15 +1,19 @@
-etmstuff_objects_20231110 <- ls("package:etmstuff")
-saveRDS(etmstuff_objects_20231110, "dev-aux/etmstuff_objects_20231110.rds")
+etmstuff_objects <- ls("package:etmstuff")
+file_path <- paste0("dev-aux/etmstuff_objects_", format(Sys.Date(), "%Y%m%d"), ".rds")
+saveRDS(etmstuff_objects, file_path)
 
 
 
-Spin-off packages: kslead, addresses, undupe
 
 
+Package: kslead
+Purpose: Lead data processing functions and data
 
-1) Critical and specific to lead only: kslead
+Functions:
 
 assign_bll_class
+assign_confirmed_status
+assign_elevated_status
 assign_test_reason
 cbls_address_table
 cbls_check_table
@@ -20,51 +24,75 @@ cbls_registry_merge
 cbls_table_key
 cbls_undupe
 cbls_write_fwf
-check_lab_results
-clean_lab_results
 config_epitrax
+create_bl_project
 find_close_tests
-flag_elevated_results
 flag_overdue_followup
-parse_lab_results
 pick_max_test_result
-pull_addresses
+pull_addresses ???
+test_results
 track_followups
 
+Data:
+
+epitrax_vars
 
 
-2) Critical but not specific to lead:
 
-Addresses: ???
+Package: [address package]
+Purpose: Address cleaning and validation functions and data
+
+Functions:
 
 build_md_url
-clean_street_address
-md_batch_request
-md_request
+clean_address
 md_results_table
 replace_values
+send_md_request
 usps_lookup
 validate_address
 
-Deduplication: undupe
+Data:
 
-count_conflicts
-flatten_conflicts
-isolate_conflicts
+address_regex
+directions
+ks_city_zip
+ks_county_fips
+ks_place_by_county
+ks_places
+melissa_data_codes
+street_names
+street_sfx
+unit_pfx
+
+
+
+Deduplication:
+
+dupeset_conflicts
 undupe
+
+
 
 Other:
 
 calculate_age
 check_date_seq
 fuzzy_compare
-get_quarter
-get_year
+get_date_element
 id_distinct_rows
 match_elements
+my_hist
+my_kable
+my_xl_table
+my_xlsx
 pattern_check_df
-sim_address          ???????
-subset_date_range
+pct
+prox_check
+sim_address
+skipper_seq
+standardize
+subset_dates
 var_check
 
 
@@ -82,14 +110,6 @@ standardize
 
 
 
-data:
-
-ks_cities
-ks_counties
-ks_fips
-ks_place_by_county
-ks_places
-ks_zipcodes
 
 
 

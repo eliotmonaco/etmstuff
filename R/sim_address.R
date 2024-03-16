@@ -23,10 +23,10 @@ sim_address <- function(n, dirty = FALSE) {
   v_units <- sim_unit(round(n * .14))
 
   # City, state, zip, & county components
-  df <- etmstuff::ks_city_zip[sample(1:nrow(etmstuff::ks_city_zip), size = n, replace = TRUE),]
+  df <- ks_city_zip[sample(1:nrow(ks_city_zip), n, TRUE),]
 
   df$street <- v_streets
-  df$unit <- sample(c(v_units, rep(NA, times = n - length(v_units))), size = n, replace = FALSE)
+  df$unit <- sample(c(v_units, rep(NA, n - length(v_units))), n, FALSE)
   df$state <- "KS"
 
   df <- df %>%
@@ -68,14 +68,14 @@ sim_address <- function(n, dirty = FALSE) {
 }
 
 sim_street <- function(n) {
-  streets <- etmstuff::street_names[sample(1:length(etmstuff::street_names), size = n, replace = TRUE)]
+  streets <- street_names[sample(1:length(street_names), n, TRUE)]
 
   samp <- sim_distribution(
     sample_size = 100 * n, max_value = 40000, bin_width = 100,
     m_full = 2.7, sd_full = 1.2, m_bin = 2.6, sd_bin = 1.2
   )
 
-  numbers <- sample(samp, size = n, replace = TRUE)
+  numbers <- sample(samp, n, TRUE)
 
   paste(numbers, streets)
 }
@@ -84,7 +84,7 @@ sim_unit <- function(n) {
   # Unit prefix
   prefixes <- c("Apt", "Lot", "Ste", "Trlr", "Unit")
   p_pfx <- c(82, 14.5, .5, 1, 2)
-  unit_pfx <- sample(prefixes, size = n, replace = TRUE, prob = p_pfx)
+  unit_pfx <- sample(prefixes, n, TRUE, prob = p_pfx)
 
   # Unit location
   samp <- sim_distribution(
@@ -92,22 +92,22 @@ sim_unit <- function(n) {
     m_full = 0, sd_full = 1, m_bin = 1.5, sd_bin = 1
   )
 
-  loc_number <- sample(samp, size = n * .87, replace = TRUE)
-  loc_number <- c(loc_number, rep("", times = n - length(loc_number)))
+  loc_number <- sample(samp, n * .87, TRUE)
+  loc_number <- c(loc_number, rep("", n - length(loc_number)))
 
   p_letters <- c(
     .248, .245, .143, .112, .064, .047, .036, .028, .009, .012, .009, .007, .004,
     .005, .001, .004, .001, .002, .004, .005, .003, .001, .007, .002, .002, .001
   )
 
-  loc_letter <- sample(LETTERS, size = n * .22, replace = TRUE, prob = p_letters)
-  loc_letter <- c(rep("", times = n - length(loc_letter)), loc_letter)
+  loc_letter <- sample(LETTERS, n * .22, TRUE, prob = p_letters)
+  loc_letter <- c(rep("", n - length(loc_letter)), loc_letter)
 
   # Join
   units <- paste(unit_pfx, paste0(loc_number, loc_letter))
 
   # Shuffle
-  units <- sample(units, size = n, replace = FALSE)
+  units <- sample(units, n, FALSE)
 
   units
 }
@@ -121,12 +121,12 @@ sim_distribution <- function(sample_size, max_value, bin_width, m_full, sd_full,
 
   # Determine the number of values to populate each bin
   p <- stats::dlnorm(bins, meanlog = m_full, sdlog = sd_full)
-  samp <- sample(bins, size = sample_size, replace = TRUE, prob = p)
+  samp <- sample(bins, sample_size, TRUE, prob = p)
   bincounts <- tabulate(samp)
 
   # Add zero counts for any missing bins at the end of `bincounts`
   n_zeros <- n_bins - length(bincounts)
-  bincounts <- c(bincounts, rep(0, times = n_zeros))
+  bincounts <- c(bincounts, rep(0, n_zeros))
 
   # Create the distribution within each bin
   dist <- list()
@@ -134,7 +134,7 @@ sim_distribution <- function(sample_size, max_value, bin_width, m_full, sd_full,
     min <- bin_ticks[i]
     max <- bin_ticks[i + 1] - 1
     p <- stats::dlnorm(1:length(min:max), meanlog = m_bin, sdlog = sd_bin)
-    dist[[i]] <- sample(min:max, size = bincounts[i], replace = TRUE, prob = p)
+    dist[[i]] <- sample(min:max, bincounts[i], TRUE, prob = p)
   }
 
   unlist(dist)

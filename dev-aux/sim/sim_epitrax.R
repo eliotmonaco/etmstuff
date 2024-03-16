@@ -1,14 +1,98 @@
 
 library(tidyverse)
 
+
+# Simulated clean lead data set
+# Create unique people
+# Give them multiple realistic records, with plausible test sequences
+
+
+vars <- etmstuff::epitrax_vars$epht_name
+
+
+
+sim_person <- function(n) {
+  df_names <- tibble::tibble(
+    first_name = c(names$first_male, names$first_female),
+    birth_sex = c(rep("Male", length(names$first_male)), rep("Female", length(names$first_female)))
+  )
+  df <- df_names[sample(1:nrow(df_names), n, TRUE),] |>
+    dplyr::mutate(
+      last_name = sample(names$last, n, TRUE),
+      middle_name = sample(LETTERS, n, TRUE),
+      person_id = as.character(100000:(100000 + n - 1)),
+      patient_record_number = as.character(2000000000:(2000000000 + n - 1)),
+      birth_date = sample(seq.Date(Sys.Date() - 100 * 365, Sys.Date(), "day"), n, TRUE)
+    ) |>
+    dplyr::select(person_id, patient_record_number, last_name, first_name, middle_name, birth_date, birth_sex)
+  df_addr <- sim_address(n)
+  colnames(df_addr) <- paste0("coll_add_", colnames(df_addr))
+  df |>
+    dplyr::bind_cols(df_addr)
+}
+
+# df <- sim_person(100)
+
+sim_lead_test <- function(id, dob, dmin, dmax) {
+  dmin <- max(dob, dmin)
+  test <- list()
+  test$person_id <- id
+  test$collection_date <- sample(seq.Date(dmin, dmax, "day"), 1)
+  test$specimen_source <- sample(c("Blood - capillary", "Blood - venous"), 1)
+  vals <- c("< 1.0", "< 2.0", "< 3.0", "< 3.3", seq(3.3, 65, by = 0.1))
+  p <- stats::dlnorm(1:length(vals), meanlog = 1.5, sdlog = 1)
+  test$result_value <- sample(vals, 1, prob = p)
+  test$units <- "\u03bcg/dL"
+  test
+}
+
+# debugonce(sim_lead_test)
+# sim_lead_test(df$person_id[1], df$birth_date[1], as.Date("2020-01-01"), Sys.Date())
+
+sim_lead_data <- function(n, dmin, dmax = Sys.Date()) {
+  df <- sim_person(100)
+  tests <- lapply(
+    df$person_id, FUN = sim_lead_test,
+    dob = df$birth_date, dmin = dmin, dmax = dmax
+  )
+  tests <- lapply(tests, tibble::as_tibble)
+  tests <- purrr::list_rbind(tests)
+  df <- df |>
+    dplyr::left_join(tests, by = "person_id")
+  # browser()
+  cols <- epitrax_vars$epht_name[epitrax_vars$epht_name %in% colnames(df)]
+  df |>
+    dplyr::select(tidyselect::all_of(cols))
+}
+
+# debugonce(sim_lead_data)
+df <- sim_lead_data(100, as.Date("2020-01-01"))
+
+
+
+
+
+
+
+
+
+
+
+# First names
+# https://www.ssa.gov/oact/babynames/decades/century.html
+
+# Last names
+# https://www.census.gov/topics/population/genealogy/data/2010_surnames.html
+
+
+
+
+
 epitrax_data <- readRDS("../bl_2023q2/data/final/data_core_2023q2.rds")
 
 
 
 # sim_person_name ####
-
-first_names <- readRDS("dev-aux/sim/first_names.rds")
-last_names <- readRDS("dev-aux/sim/last_names.rds")
 
 # `match` can be NULL, TRUE, or a variable name
 
