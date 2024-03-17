@@ -8,7 +8,7 @@
 A list of five dataframes.
 }
 \source{
-Copied on 2024-02-01 from the Melissa Wiki web page (https://wiki.melissadata.com/index.php?title=Result_Code_Details#Personator_Consumer).
+Copied on 2024-02-01 from the \href{https://wiki.melissadata.com/index.php?title=Result_Code_Details#Personator_Consumer}{Melissa Wiki web page}.
 }
 \usage{
 melissa_data_codes

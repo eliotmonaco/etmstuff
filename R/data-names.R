@@ -12,7 +12,7 @@
 #'
 #' @format A list.
 #'
-#' @source names.xlsx
+#' @source First names obtained from the Social Security Administration website: [Top Names Over the Last 100 Years](https://www.ssa.gov/oact/babynames/decades/century.html). Last names downloaded from the US Census website: [Frequently Occurring Surnames from the 2010 Census](https://www.census.gov/topics/population/genealogy/data/2010_surnames.html).
 #'
 #' @keywords datasets
 "names"

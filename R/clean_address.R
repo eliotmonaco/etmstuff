@@ -4,14 +4,14 @@
 #' This function cleans address strings by using regular expressions to match common error patterns.
 #'
 #' @details
-#' Each `type` option corresponds to a row in `etmstuff::address_regex` with patterns to clean a specific type of error found in address strings. The function returns a dataframe with two new variables, `REMOVED_TEXT` (the part of the string matching the error pattern) and `REPLACEMENT_TEXT` (a replacement suggestion for the entire string). These new columns are placed to the right of `var`. Only rows in which a pattern match is found will be returned. The user should examine the returned dataframe to confirm, reject, or modify the suggested replacements. [replace_values()] can then be used to replace the values with errors in the original dataframe.
+#' Each `type` option corresponds to a row in `address_regex` with patterns to clean a specific type of error found in address strings. The function returns a dataframe with two new variables, `REMOVED_TEXT` (the part of the string matching the error pattern) and `REPLACEMENT_TEXT` (a replacement suggestion for the entire string). These new columns are placed to the right of `var`. Only rows in which a pattern match is found will be returned. The user should examine the returned dataframe to confirm, reject, or modify the suggested replacements. [replace_values()] can then be used to replace the values with errors in the original dataframe.
 #'
 #' @inheritSection pull_addresses Address validation workflow
 #' @inheritSection pull_addresses Melissa Data
 #'
 #' @param df A dataframe of addresses.
 #' ```{r echo=FALSE}
-#' all_types <- etmstuff::address_regex$type
+#' all_types <- address_regex$type
 #' all_types <- paste0('"', paste(all_types, collapse = '", "'), '"')
 #' all_types <- paste0("c(", all_types, ")")
 #' ```
@@ -38,9 +38,9 @@ clean_address <- function(df, type, var = "street", row_id = "address_id") {
   if (any(duplicated(df[[row_id]]))) stop("`row_id` is not a unique row identifier")
 
   # Load `ref` based on the selected `type`
-  all_types <- etmstuff::address_regex$type
+  all_types <- address_regex$type
   if (type %in% all_types) {
-    ref <- etmstuff::address_regex[which(etmstuff::address_regex$type == type),]
+    ref <- address_regex[which(address_regex$type == type),]
   } else {
     stop(paste0(
       "`type` must be one of c(",

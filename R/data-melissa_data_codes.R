@@ -14,7 +14,7 @@
 #'
 #' @format A list of five dataframes.
 #'
-#' @source Copied on 2024-02-01 from the Melissa Wiki web page (https://wiki.melissadata.com/index.php?title=Result_Code_Details#Personator_Consumer).
+#' @source Copied on 2024-02-01 from the [Melissa Wiki web page](https://wiki.melissadata.com/index.php?title=Result_Code_Details#Personator_Consumer).
 #'
 #' @keywords datasets
 "melissa_data_codes"

@@ -28,7 +28,7 @@ md_results_table <- function(df, var = "Results") {
   unq_codes <- sort(unique(unlist(strsplit(df$Results, ","))))
 
   # Table of unique result codes
-  df_md_codes <- purrr::list_rbind(etmstuff::melissa_data_codes) %>%
+  df_md_codes <- purrr::list_rbind(melissa_data_codes) %>%
     dplyr::filter(.data$code %in% unq_codes)
 
   # Add n occurrences
@@ -41,7 +41,7 @@ md_results_table <- function(df, var = "Results") {
   # Add pct occurrences
   df_md_codes$pct <- sapply(
     df_md_codes$n,
-    FUN = function(x) etmstuff::pct(x, nrow(df)),
+    FUN = function(x) pct(x, nrow(df)),
     simplify = TRUE
   )
 

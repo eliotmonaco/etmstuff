@@ -57,7 +57,7 @@ For more information on constructing the request, see the \href{https://www.meli
 }
 
 \examples{
-df <- etmstuff::test_addresses
+df <- test_addresses
 
 df$md_url <- build_md_url(df, "address_id")
 

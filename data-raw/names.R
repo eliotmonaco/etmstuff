@@ -1,5 +1,8 @@
 # Generates `names.rda`
 
+# First names source: https://www.ssa.gov/oact/babynames/decades/century.html
+# Last names source: https://www.census.gov/topics/population/genealogy/data/2010_surnames.html
+
 df1 <- readxl::read_xlsx("data-raw/names.xlsx", sheet = 1)
 df2 <- readxl::read_xlsx("data-raw/names.xlsx", sheet = 2)
 

@@ -48,6 +48,8 @@ testthat::test_file("tests/testthat/test-subset_dates.R")
 
 devtools::test()
 
+devtools::load_all()
+
 devtools::document()
 
 devtools::check()

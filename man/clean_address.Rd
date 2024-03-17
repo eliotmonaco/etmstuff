@@ -22,7 +22,7 @@ A dataframe consisting of rows where matches were found in \code{var}.
 This function cleans address strings by using regular expressions to match common error patterns.
 }
 \details{
-Each \code{type} option corresponds to a row in \code{etmstuff::address_regex} with patterns to clean a specific type of error found in address strings. The function returns a dataframe with two new variables, \code{REMOVED_TEXT} (the part of the string matching the error pattern) and \code{REPLACEMENT_TEXT} (a replacement suggestion for the entire string). These new columns are placed to the right of \code{var}. Only rows in which a pattern match is found will be returned. The user should examine the returned dataframe to confirm, reject, or modify the suggested replacements. \code{\link[=replace_values]{replace_values()}} can then be used to replace the values with errors in the original dataframe.
+Each \code{type} option corresponds to a row in \code{address_regex} with patterns to clean a specific type of error found in address strings. The function returns a dataframe with two new variables, \code{REMOVED_TEXT} (the part of the string matching the error pattern) and \code{REPLACEMENT_TEXT} (a replacement suggestion for the entire string). These new columns are placed to the right of \code{var}. Only rows in which a pattern match is found will be returned. The user should examine the returned dataframe to confirm, reject, or modify the suggested replacements. \code{\link[=replace_values]{replace_values()}} can then be used to replace the values with errors in the original dataframe.
 }
 \section{Address validation workflow}{
 

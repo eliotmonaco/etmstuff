@@ -1,37 +1,5 @@
 
-library(tidyverse)
 
-
-# Simulated clean lead data set
-# Create unique people
-# Give them multiple realistic records, with plausible test sequences
-
-
-vars <- etmstuff::epitrax_vars$epht_name
-
-
-
-sim_person <- function(n) {
-  df_names <- tibble::tibble(
-    first_name = c(names$first_male, names$first_female),
-    birth_sex = c(rep("Male", length(names$first_male)), rep("Female", length(names$first_female)))
-  )
-  df <- df_names[sample(1:nrow(df_names), n, TRUE),] |>
-    dplyr::mutate(
-      last_name = sample(names$last, n, TRUE),
-      middle_name = sample(LETTERS, n, TRUE),
-      person_id = as.character(100000:(100000 + n - 1)),
-      patient_record_number = as.character(2000000000:(2000000000 + n - 1)),
-      birth_date = sample(seq.Date(Sys.Date() - 100 * 365, Sys.Date(), "day"), n, TRUE)
-    ) |>
-    dplyr::select(person_id, patient_record_number, last_name, first_name, middle_name, birth_date, birth_sex)
-  df_addr <- sim_address(n)
-  colnames(df_addr) <- paste0("coll_add_", colnames(df_addr))
-  df |>
-    dplyr::bind_cols(df_addr)
-}
-
-# df <- sim_person(100)
 
 sim_lead_test <- function(id, dob, dmin, dmax) {
   dmin <- max(dob, dmin)
@@ -46,49 +14,78 @@ sim_lead_test <- function(id, dob, dmin, dmax) {
   test
 }
 
-# debugonce(sim_lead_test)
-# sim_lead_test(df$person_id[1], df$birth_date[1], as.Date("2020-01-01"), Sys.Date())
 
-sim_lead_data <- function(n, dmin, dmax = Sys.Date()) {
-  df <- sim_person(100)
-  tests <- lapply(
-    df$person_id, FUN = sim_lead_test,
-    dob = df$birth_date, dmin = dmin, dmax = dmax
-  )
-  tests <- lapply(tests, tibble::as_tibble)
-  tests <- purrr::list_rbind(tests)
-  df <- df |>
-    dplyr::left_join(tests, by = "person_id")
-  # browser()
-  cols <- epitrax_vars$epht_name[epitrax_vars$epht_name %in% colnames(df)]
-  df |>
-    dplyr::select(tidyselect::all_of(cols))
+
+# sim_address() with option to create dirty addresses, and accessory functions
+
+sim_address <- function(n, dirty = FALSE) {
+  # Street component
+  v_streets <- sim_street(n)
+
+  # Unit component
+  v_units <- sim_unit(round(n * .14))
+
+  # City, state, zip, & county components
+  df <- ks_city_zip[sample(1:nrow(ks_city_zip), n, TRUE),]
+
+  df$street <- v_streets
+  df$unit <- sample(c(v_units, rep(NA, n - length(v_units))), n, FALSE)
+  df$state <- "KS"
+
+  df <- df %>%
+    dplyr::select("street", "unit", "city", "state", "zip", "county")
+
+  # Add dirty data to `df`
+  if (dirty) {
+    #   # Add PO Box to `street`
+    #   n <- n %/% 50
+    #   n <- ifelse(n < 2, 2, n)
+    #   pobox <- c("PO Box", "P.O. Box", "Box")
+    #   pobox <- paste(
+    #     sample(pobox, n, replace = TRUE),
+    #     sample(10:9999, n, replace = TRUE)
+    #   )
+    #   n <- sample(1:n, length(pobox))
+    #   df$street[n] <- pobox
+    #
+    #   # Misspell `city`: string_delete()
+    #   n <- n %/% 100
+    #   n <- ifelse(n < 2, 2, n)
+    #   n <- sample(1:n, n)
+    #   df$city[n] <- sapply(df$city[n], string_delete, simplify = TRUE)
+    #
+    #   # Misspell `city`: string_add()
+    #   n <- n %/% 100
+    #   n <- ifelse(n < 2, 2, n)
+    #   n <- sample(1:n, n)
+    #   df$city[n] <- sapply(df$city[n], string_add, simplify = TRUE)
+    #
+    #   # Replace `zip`
+    #   n <- n %/% 100
+    #   n <- ifelse(n < 2, 2, n)
+    #   n <- sample(1:n, n)
+    #   df$zip[n] <- sample(10000:99999, length(n), replace = TRUE)
+  }
+
+  df
 }
 
-# debugonce(sim_lead_data)
-df <- sim_lead_data(100, as.Date("2020-01-01"))
+string_delete <- function(s) {
+  c <- sample(1:nchar(s), 1)
+  stringr::str_sub(s, c, c) <- ""
+  s
+}
+
+string_add <- function(s) {
+  c <- sample(1:nchar(s), 1)
+  paste0(
+    substr(s, 1, c),
+    sample(letters, 1),
+    substr(s, c + 1, nchar(s))
+  )
+}
 
 
-
-
-
-
-
-
-
-
-
-# First names
-# https://www.ssa.gov/oact/babynames/decades/century.html
-
-# Last names
-# https://www.census.gov/topics/population/genealogy/data/2010_surnames.html
-
-
-
-
-
-epitrax_data <- readRDS("../bl_2023q2/data/final/data_core_2023q2.rds")
 
 
 
@@ -99,14 +96,14 @@ epitrax_data <- readRDS("../bl_2023q2/data/final/data_core_2023q2.rds")
 sim_person_name <- function(df, first = NULL, middle = NULL, last = NULL, match = NULL) {
   vars <- c(first, middle, last)
 
-  etmstuff::var_check(df, var = vars)
+  var_check(df, var = vars)
 
   # Subset `df` by matching variable
   if (is.logical(match) && match) {
     df_temp <- df %>%
       dplyr::distinct(dplyr::across(tidyselect::all_of(vars)))
   } else if (!is.null(match)) {
-    etmstuff::var_check(df, var = match)
+    var_check(df, var = match)
     df_temp <- df %>%
       dplyr::distinct(dplyr::across(tidyselect::all_of(match)))
   } else {
@@ -197,7 +194,7 @@ df <- sim_person_name(
 # sim_number ####
 
 sim_number <- function(df, var, min = NULL, max = NULL, match = NULL) {
-  etmstuff::var_check(df, var = var)
+  var_check(df, var = var)
 
   # Determine min. & max. values for the sample sequence
   if (is.null(min)) {
@@ -226,7 +223,7 @@ sim_number <- function(df, var, min = NULL, max = NULL, match = NULL) {
     df_temp <- df %>%
       dplyr::distinct(dplyr::across(tidyselect::all_of(var)))
   } else if (!is.null(match)) {
-    etmstuff::var_check(df, var = match)
+    var_check(df, var = match)
     df_temp <- df %>%
       dplyr::distinct(dplyr::across(tidyselect::all_of(match)))
   } else {
@@ -274,7 +271,7 @@ df <- sim_number(epitrax_data, var = "lab_result_number", max = 105)
 # sim_date ####
 
 sim_date <- function(df, var, match = NULL) {
-  etmstuff::var_check(df, var = var)
+  var_check(df, var = var)
 
   # Get min. & max. dates for the sample sequence
   min <- min(df[[var]], na.rm = TRUE)
@@ -300,7 +297,7 @@ sim_date <- function(df, var, match = NULL) {
     df_temp <- df %>%
       dplyr::distinct(dplyr::across(tidyselect::all_of(var)))
   } else if (!is.null(match)) {
-    etmstuff::var_check(df, var = match)
+    var_check(df, var = match)
     df_temp <- df %>%
       dplyr::distinct(dplyr::across(tidyselect::all_of(match)))
   } else {
@@ -348,7 +345,7 @@ df <- sim_date(epitrax_data, var = "patient_birth_date")
 # sim_factor ####
 
 sim_factor <- function(df, var, match = NULL) {
-  etmstuff::var_check(df, var = var)
+  var_check(df, var = var)
 
   # Keep unique values of `var`
   factors <- unique(df[[var]])
@@ -358,7 +355,7 @@ sim_factor <- function(df, var, match = NULL) {
     df_temp <- df %>%
       dplyr::distinct(dplyr::across(tidyselect::all_of(var)))
   } else if (!is.null(match)) {
-    etmstuff::var_check(df, var = match)
+    var_check(df, var = match)
     df_temp <- df %>%
       dplyr::distinct(dplyr::across(tidyselect::all_of(match)))
   } else {

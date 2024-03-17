@@ -124,7 +124,7 @@ count_conflicts <- function(df, dupe_id = "dupe_id", ignore_empty = TRUE, silent
 
   # Add percentage variable to `df_ct`
   df_ct <- df_ct %>%
-    dplyr::mutate(pct = etmstuff::pct(.data$n, length(dupe_ids)))
+    dplyr::mutate(pct = pct(.data$n, length(dupe_ids)))
 
   df_ct
 }

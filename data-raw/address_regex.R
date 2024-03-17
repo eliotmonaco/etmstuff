@@ -90,10 +90,10 @@ type <- "extract_unit"
 #   "#"
 # )
 
-unit <- na.omit(c(etmstuff::unit_pfx$full, etmstuff::unit_pfx$abbr, c("ap", "no(?!rth)")))
+unit <- na.omit(c(unit_pfx$full, unit_pfx$abbr, c("ap", "no(?!rth)")))
 unit <- paste0(unit, collapse = "|")
 
-sfx <- na.omit(c(etmstuff::street_sfx$full, etmstuff::street_sfx$abbr))
+sfx <- na.omit(c(street_sfx$full, street_sfx$abbr))
 sfx <- paste0(sfx, collapse = "|")
 
 p_search <- paste0(

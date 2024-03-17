@@ -8,7 +8,7 @@
 A list.
 }
 \source{
-names.xlsx
+First names obtained from the Social Security Administration website: \href{https://www.ssa.gov/oact/babynames/decades/century.html}{Top Names Over the Last 100 Years}. Last names downloaded from the US Census website: \href{https://www.census.gov/topics/population/genealogy/data/2010_surnames.html}{Frequently Occurring Surnames from the 2010 Census}.
 }
 \usage{
 names

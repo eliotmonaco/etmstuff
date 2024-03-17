@@ -25,12 +25,12 @@ df_geo <- df_geo |>
   dplyr::relocate(address_id)
 
 # Parse predirectional
-pattern <- paste0("^", etmstuff::directions$abbr, "\\s", collapse = "|")
+pattern <- paste0("^", directions$abbr, "\\s", collapse = "|")
 df_geo$predir <- stringr::str_squish(stringr::str_extract(df_geo$full_street, pattern))
 df_geo$street <- stringr::str_squish(stringr::str_remove(df_geo$full_street, pattern))
 
 # Parse predirectional placed at end of string
-pattern <- paste0("(?i)", paste0(",\\s", etmstuff::directions$full, "$", collapse = "|"))
+pattern <- paste0("(?i)", paste0(",\\s", directions$full, "$", collapse = "|"))
 df_geo$predir_post <- stringr::str_squish(stringr::str_remove(stringr::str_extract(df_geo$street, pattern), ","))
 df_geo$street <- stringr::str_squish(stringr::str_remove(df_geo$street, pattern))
 
@@ -55,7 +55,7 @@ df_geo <- df_geo |>
   dplyr::distinct(predir, street, postdir, .keep_all = T)
 
 # Parse suffix(es)
-sfx <- na.omit(c(etmstuff::street_sfx$full, etmstuff::street_sfx$abbr))
+sfx <- na.omit(c(street_sfx$full, street_sfx$abbr))
 pattern <- paste0("(?i)", paste0("\\s", sfx, "$", collapse = "|"))
 df_geo$suffix2 <- stringr::str_squish(stringr::str_extract(df_geo$street, pattern))
 df_geo$street <- stringr::str_squish(stringr::str_remove(df_geo$street, pattern))
