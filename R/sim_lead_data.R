@@ -16,6 +16,10 @@
 #' df <- sim_lead_data(n = 1000, dmin = as.Date("2020-01-01"))
 #'
 sim_lead_data <- function(n, dmin, dmax = Sys.Date()) {
+  if (!is.numeric(n) || n != round(n)) stop("`n` must be an integer")
+  dmin <- as.Date(dmin, format = "%Y-%m-%d")
+  dmax <- as.Date(dmax, format = "%Y-%m-%d")
+  if (is.na(dmin) | is.na(dmax)) stop("`dmin` and `dmax` must be dates formatted YYYY-MM-DD")
   df <- sim_person(n)
   tests <- purrr::pmap(
     list(df$person_id, df$birth_date), sim_test_seq,
@@ -60,9 +64,7 @@ sim_test_seq <- function(id, dob, dmin, dmax) {
     tests$person_id[i] <- id
     tests$collection_date[i] <- sample(seq.Date(dmin, dmax, "day"), 1)
     tests$specimen_source[i] <- sample(c("Blood - capillary", "Blood - venous"), 1, prob = c(.33, .67))
-    vals <- c("< 1.0", "< 2.0", "< 3.0", "< 3.3", seq(3.3, 65, by = 0.1))
-    p <- stats::dlnorm(1:length(vals), meanlog = 1.5, sdlog = 1)
-    tests$result_value[i] <- as.character(sample(vals, 1, prob = p))
+    tests$result_value[i] <- sample_bll_dist(1)
     tests$units[i] <- "\u03bcg/dL"
     while (!is.na(suppressWarnings(as.numeric(tests$result_value[i]))) && as.numeric(tests$result_value[i]) >= 3.5) {
       p <- stats::dnorm(1:61, mean = 30, sd = 10)
@@ -73,12 +75,10 @@ sim_test_seq <- function(id, dob, dmin, dmax) {
       } else {
         source <- "Blood - venous"
       }
-      x <- seq(-20, 5, by = 0.1)
-      p <- stats::dnorm(1:length(x), mean = length(x) / 2, sd = 50)
+      x <- -20:5
+      p <- stats::dnorm(1:length(x), mean = length(x) / 2, sd = 5)
       result <- as.numeric(tests$result_value[i]) + sample(x, 1, prob = p)
-      if (result < 3.3) {
-        result <- sample(c("< 1.0", "< 2.0", "< 3.0", "< 3.3"), 1)
-      }
+      if (result < 1) result <- "< 1"
       i <- i + 1
       tests$person_id[i] <- id
       tests$collection_date[i] <- date
@@ -94,4 +94,15 @@ sim_test_seq <- function(id, dob, dmin, dmax) {
     }
   }
   tests
+}
+
+sample_bll_dist <- function(n) {
+  vals1 <- c("< 1", "< 2", "< 3")
+  p1 <- c(.401, .062, .099)
+  vals2 <- 1:100
+  p2 <- stats::dlnorm(1:length(vals2), meanlog = 1, sdlog = 1)
+  p2 <- p2 * (1 - sum(p1))
+  vals <- c(vals1, vals2)
+  p <- c(p1, p2)
+  sample(vals, n, TRUE, prob = p)
 }

@@ -15,7 +15,7 @@ my_hist(x, bin_size = 1, x_label = NULL, title = NULL, bar_gap = NULL)
 
 \item{title}{The plot title.}
 
-\item{bar_gap}{A number from 0 to 1. The gap between bars as a fraction of the plot.}
+\item{bar_gap}{A number from 0 to 1. The gap between bars as a fraction of a full bar width.}
 }
 \value{
 None.

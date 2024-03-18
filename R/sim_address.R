@@ -11,8 +11,6 @@
 #' @return A dataframe.
 #' @export
 #'
-#' @importFrom rlang .data
-#'
 #' @examples
 #' df <- sim_address(n = 1000)
 #'
@@ -37,12 +35,7 @@ sim_address <- function(n) {
 sim_street <- function(n) {
   streets <- street_names[sample(1:length(street_names), n, TRUE)]
 
-  samp <- sim_distribution(
-    sample_size = 100 * n, max_value = 40000, bin_width = 100,
-    m_full = 2.7, sd_full = 1.2, m_bin = 2.6, sd_bin = 1.2
-  )
-
-  numbers <- sample(samp, n, TRUE)
+  numbers <- sample_address_dist(n, type = "house")
 
   paste(numbers, streets)
 }
@@ -54,48 +47,47 @@ sim_unit <- function(n) {
   unit_pfx <- sample(prefixes, n, TRUE, prob = p_pfx)
 
   # Unit location
-  samp <- sim_distribution(
-    sample_size = n * 100, max_value = 10000, bin_width = 100,
-    m_full = 0, sd_full = 1, m_bin = 1.5, sd_bin = 1
-  )
-
-  loc_number <- sample(samp, n * .87, TRUE)
+  loc_number <- sample_address_dist(n * .87, type = "unit")
   loc_number <- c(loc_number, rep("", n - length(loc_number)))
-
-  p_letters <- c(
-    .248, .245, .143, .112, .064, .047, .036, .028, .009, .012, .009, .007, .004,
-    .005, .001, .004, .001, .002, .004, .005, .003, .001, .007, .002, .002, .001
-  )
-
-  loc_letter <- sample(LETTERS, n * .22, TRUE, prob = p_letters)
+  p <- stats::dlnorm(1:26, meanlog = .8, sdlog = .75)
+  loc_letter <- sample(LETTERS, n * .22, TRUE, prob = p)
   loc_letter <- c(rep("", n - length(loc_letter)), loc_letter)
 
   # Join
   units <- paste(unit_pfx, paste0(loc_number, loc_letter))
 
   # Shuffle
-  units <- sample(units, n, FALSE)
-
-  units
+  sample(units, n, FALSE)
 }
 
 # Function to model the distribution of house and unit numbers using log-normal distribution
-sim_distribution <- function(sample_size, max_value, bin_width, m_full, sd_full, m_bin, sd_bin) {
+sample_address_dist <- function(n, type) {
+  if (type == "house") {
+    max_value <- 40000
+    m_full <- 2.7; sd_full <- 1.2
+    m_bin <- 2.6; sd_bin <- 1.2
+  } else if (type == "unit") {
+    max_value <- 10000
+    m_full <- 0; sd_full <- 1
+    m_bin <- 1.5; sd_bin <- 1
+  }
+
+  bin_width <- 100
   n_bins <- max_value / bin_width
   bins <- 1:n_bins
   bin_ticks <- seq(0, max_value, by = bin_width)
   bin_ticks[1] <- 1
 
-  # Determine the number of values to populate each bin
+  # Overall distribution: determine the number of values to populate each bin of 100
   p <- stats::dlnorm(bins, meanlog = m_full, sdlog = sd_full)
-  samp <- sample(bins, sample_size, TRUE, prob = p)
+  samp <- sample(bins, 100000, TRUE, prob = p)
   bincounts <- tabulate(samp)
 
   # Add zero counts for any missing bins at the end of `bincounts`
   n_zeros <- n_bins - length(bincounts)
   bincounts <- c(bincounts, rep(0, n_zeros))
 
-  # Create the distribution within each bin
+  # Distribution within each bin
   dist <- list()
   for (i in 1:(length(bin_ticks) - 1)) {
     min <- bin_ticks[i]
@@ -103,6 +95,7 @@ sim_distribution <- function(sample_size, max_value, bin_width, m_full, sd_full,
     p <- stats::dlnorm(1:length(min:max), meanlog = m_bin, sdlog = sd_bin)
     dist[[i]] <- sample(min:max, bincounts[i], TRUE, prob = p)
   }
+  dist <- unlist(dist)
 
-  unlist(dist)
+  sample(dist, n, TRUE)
 }

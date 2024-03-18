@@ -12,8 +12,6 @@
 #' @return A dataframe.
 #' @export
 #'
-#' @importFrom magrittr %>%
-#'
 #' @examples
 #' n_rows <- 50
 #'
@@ -43,12 +41,15 @@ id_distinct_rows <- function(df, id_name, prefix = NULL, var = colnames(df), seq
     digits <- digits_min
   }
 
-  # Deduplicate rows by `var` and add sequential ID numbers to distinct rows
-  df_distinct <- df %>%
-    dplyr::select(tidyselect::all_of(var)) %>%
-    dplyr::distinct() %>%
+  # Deduplicate rows by `var`
+  df_distinct <- df |>
+    dplyr::select(tidyselect::all_of(var)) |>
+    dplyr::distinct()
+
+  #  Add sequential ID numbers to distinct rows
+  df_distinct <- df_distinct |>
     dplyr::mutate({{ id_name }} := formatC(
-      x = seq_start:(seq_start + nrow(.) - 1),
+      x = seq_start:(seq_start + nrow(df_distinct) - 1),
       width = digits,
       flag = "0"
     ))
@@ -59,6 +60,6 @@ id_distinct_rows <- function(df, id_name, prefix = NULL, var = colnames(df), seq
   }
 
   # Join IDs back to full dataframe
-  df %>%
+  df |>
     dplyr::left_join(df_distinct, by = var)
 }
