@@ -17,64 +17,72 @@
 # @examples
 #'
 document_ksde_project <- function(proj_dir, type = c("display", "geo", "mw", "version"), overwrite = FALSE, test_drive = FALSE) {
+  default_dir <- "C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Documents/r_projects/"
+
   if (type == "display") {
-    proj_path = paste0("KS_Tracking_Data_Explorer/Rabies_Surveillance/", proj_dir)
+    parent_dir <- "KS_Tracking_Data_Explorer/Rabies_Surveillance/"
+    proj_path = paste0(default_dir, parent_dir, proj_dir)
   } else if (type == "geo" | type == "mw") {
-    proj_path = paste0("KS_Tracking_Data_Explorer/Geography_Tables/", proj_dir)
+    parent_dir <- "KS_Tracking_Data_Explorer/Geography_Tables/"
+    proj_path = paste0(default_dir, parent_dir, proj_dir)
   } else if (type == "version") {
-    proj_path = paste0("KS_Tracking_Data_Explorer/Version_Table/", proj_dir)
+    parent_dir <- "KS_Tracking_Data_Explorer/Version_Table/"
+    proj_path = paste0(default_dir, parent_dir, proj_dir)
   }
 
   proj_info <- fn_project_info(type)
 
   if (test_drive) {
     # Overwrite `proj_info$dest_path` to save projects to desktop for testing
-    dir <- "C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Desktop/"
+    test_dir <- "C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Desktop/"
     proj_info$dest_path <- purrr::map(
       proj_info$dest_path,
-      stringr::str_replace, pattern = ".+", replacement = dir
+      stringr::str_replace, pattern = ".+", replacement = test_dir
     )
+  }
+
+  # Check if project path exists
+  if (!dir.exists(proj_path)) {
+    stop(paste0("Project path not found: '", proj_path, "'"))
+  }
+
+  # Check if destination path exists
+  if (!all(unlist(purrr::map(proj_info$dest_path, dir.exists)))) {
+    stop(paste0(
+      "One or more destination paths not found:\n",
+      paste(unlist(proj_info$dest_path), collapse = "\n")
+    ))
   }
 
   file_path <- paste0(proj_path, proj_info$code_doc_path)
   code_doc <- readRDS(file_path)
 
+  # Check if scripts in `code_doc` exist
+  scripts <- sort(unique(unlist(purrr::map(code_doc, purrr::pluck, "script"))))
+  scripts_path <- paste0(proj_path, "/scripts/", scripts)
+  if (!all(file.exists(scripts_path))) {
+    stop(paste0(
+      "One or more scripts not found: ",
+      paste(scripts, collapse = ", ")
+    ))
+  }
+
   # Create destination directory name(s)
-  dest_dir <- purrr::map(code_doc, function(x) purrr::pluck(x, "name"))
+  dest_dir <- purrr::map(code_doc, purrr::pluck, "name")
 
   if (length(dest_dir) != length(proj_info$dest_path)) {
     stop("Length mismatch: `dest_dir` & `dest_path`")
   }
 
+  patterns <- fn_patterns()
+
   # Select directories to copy
   dirs_all <- list.dirs(proj_path, full.names = TRUE, recursive = TRUE)
-  p <- paste( # Exclude the following folders
-    "/.git\\b",
-    "/\\.Rproj\\.user\\b",
-    "/data/1_source/past\\b",
-    "/data/2_final/.+",
-    "/data/3_final/.+",
-    "/output/1_test/.+",
-    "/output/2_prod/.+",
-    "/renv\\b",
-    sep = "|"
-  )
-  dirs_all <- dirs_all[!stringr::str_detect(dirs_all, p)]
+  dirs_all <- dirs_all[!stringr::str_detect(dirs_all, patterns$p1)]
 
   # Select files to copy
   files_all <- list.files(proj_path, all.files = TRUE, full.names = TRUE, recursive = TRUE)
-  p <- paste( # Exclude paths containing the following strings
-    "/.git/",
-    "/.gitignore\\b",
-    "/\\.Rproj\\.user/",
-    "/data/2_final/",
-    "/data/3_final/",
-    "/log\\b",
-    "/output/",
-    "/renv/",
-    sep = "|"
-  )
-  files_all <- files_all[!stringr::str_detect(files_all, p)]
+  files_all <- files_all[!stringr::str_detect(files_all, patterns$p2)]
 
   if (!any(stringr::str_detect(files_all, "\\brenv.lock\\b"))) {
     stop("No renv.lock file present")
@@ -120,7 +128,7 @@ document_ksde_project <- function(proj_dir, type = c("display", "geo", "mw", "ve
 
     # Create new project directories
     dirs2 <- stringr::str_replace(dirs1, proj_path, file_path)
-    purrr::map(dirs2, dir.create)
+    # purrr::map(dirs2, dir.create)
 
     # Remove unneeded scripts
     p <- paste0("scripts/(?!", paste(code_doc[[i]]$script, collapse = "|"), ")")
@@ -128,7 +136,7 @@ document_ksde_project <- function(proj_dir, type = c("display", "geo", "mw", "ve
 
     # Copy files
     files2 <- stringr::str_replace(files1, proj_path, file_path)
-    purrr::map2(files1, files2, file.copy)
+    # purrr::map2(files1, files2, file.copy)
 
     # Rename RMD script
     name1 <- paste0(
@@ -136,12 +144,19 @@ document_ksde_project <- function(proj_dir, type = c("display", "geo", "mw", "ve
       code_doc[[i]]$script[stringr::str_detect(code_doc[[i]]$script, ".Rmd$")]
     )
     name2 <- paste0(file_path, "/scripts/", dest_dir[[i]], ".Rmd")
-    file.rename(name1, name2)
+    # file.rename(name1, name2)
 
     # Rename .RPROJ file
-    name1 <- paste0(file_path, "/", proj_dir, ".rproj")
-    name2 <- paste0(file_path, "/", dest_dir[[i]], ".rproj")
-    file.rename(name1, name2)
+    name1 <- files2[stringr::str_detect(files2, "\\.Rproj$")]
+    name2 <- paste0(file_path, "/", dest_dir[[i]], ".Rproj")
+    # file.rename(name1, name2)
+
+    browser()
+
+    # Confirmation message about which files copied
+    # Copy CSV & XML tables
+    # Make the for loop a function?
+
   }
 }
 
@@ -181,4 +196,33 @@ fn_project_info <- function(type) {
       )
     )
   }
+}
+
+fn_patterns <- function() {
+  list(
+    # Folders to exclude
+    p1 = paste(
+      "/.git\\b",
+      "/\\.Rproj\\.user\\b",
+      "/data/1_source/past\\b",
+      "/data/2_final/.+",
+      "/data/3_final/.+",
+      "/output/1_test/.+",
+      "/output/2_prod/.+",
+      "/renv\\b",
+      sep = "|"
+    ),
+    # Files to exclude
+    p2 = paste(
+      "/.git/",
+      "/.gitignore\\b",
+      "/\\.Rproj\\.user/",
+      "/data/2_final/",
+      "/data/3_final/",
+      "/log\\b",
+      "/output/",
+      "/renv/",
+      sep = "|"
+    )
+  )
 }
