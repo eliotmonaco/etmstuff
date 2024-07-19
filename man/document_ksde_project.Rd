@@ -6,7 +6,8 @@
 \usage{
 document_ksde_project(
   proj_dir,
-  type = c("display", "geo", "mw", "version"),
+  proj_type = c("rabies", "geo", "mw", "version"),
+  doc_type = c("code", "output"),
   overwrite = FALSE,
   test_drive = FALSE
 )
@@ -14,12 +15,18 @@ document_ksde_project(
 \arguments{
 \item{proj_dir}{The name of the RStudio project to document.}
 
-\item{type}{The project type.
+\item{proj_type}{The project type.
 \itemize{
-\item \code{"display"} = display data
-\item \code{"geo"} = core geography tables
-\item \code{"mw"} = message widget table
-\item \code{"version"} = version table
+\item \code{"rabies"} = A Rabies Surveillance display data project.
+\item \code{"geo"} = A core geography tables project.
+\item \code{"mw"} = A message widget table project.
+\item \code{"version"} = A version table project.
+}}
+
+\item{doc_type}{The part of the project to document.
+\itemize{
+\item \code{"code"} = All parts of the project necessary to reproduce the output, including the project folder structure, source data, and scripts.
+\item \code{"output"} = The project output only.
 }}
 
 \item{overwrite}{If the destination directory for the project already exists, it will be removed when \code{overwrite} is set to \code{TRUE}.}

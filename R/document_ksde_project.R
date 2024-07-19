@@ -1,12 +1,17 @@
 #' Document a KS Tracking Data Explorer project
 #'
 #' @param proj_dir The name of the RStudio project to document.
-#' @param type The project type.
+#' @param proj_type The project type.
 #'
-#' * `"display"` = display data
-#' * `"geo"` = core geography tables
-#' * `"mw"` = message widget table
-#' * `"version"` = version table
+#' * `"rabies"` = A Rabies Surveillance display data project.
+#' * `"geo"` = A core geography tables project.
+#' * `"mw"` = A message widget table project.
+#' * `"version"` = A version table project.
+#'
+#' @param doc_type The part of the project to document.
+#'
+#' * `"code"` = All parts of the project necessary to reproduce the output, including the project folder structure, source data, and scripts.
+#' * `"output"` = The project output only.
 #'
 #' @param overwrite If the destination directory for the project already exists, it will be removed when `overwrite` is set to `TRUE`.
 #' @param test_drive Replace the destination path with the desktop ("C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Desktop/") if `TRUE`.
@@ -16,29 +21,41 @@
 #'
 # @examples
 #'
-document_ksde_project <- function(proj_dir, type = c("display", "geo", "mw", "version"), overwrite = FALSE, test_drive = FALSE) {
+document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw", "version"), doc_type = c("code", "output"), overwrite = FALSE, test_drive = FALSE) {
+  if (!all(proj_type %in% c("rabies", "geo", "mw", "version"))) {
+    stop("`proj_type` must be one of c(\"rabies\", \"geo\", \"mw\", \"version\")")
+  }
+  if (!all(doc_type %in% c("code", "output"))) {
+    stop("`doc_type` must be one of c(\"code\", \"output\")")
+  }
+
   default_dir <- "C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Documents/r_projects/"
 
-  if (type == "display") {
+  if (proj_type == "rabies") {
     parent_dir <- "KS_Tracking_Data_Explorer/Rabies_Surveillance/"
     proj_path = paste0(default_dir, parent_dir, proj_dir)
-  } else if (type == "geo" | type == "mw") {
+  } else if (proj_type == "geo" | proj_type == "mw") {
     parent_dir <- "KS_Tracking_Data_Explorer/Geography_Tables/"
     proj_path = paste0(default_dir, parent_dir, proj_dir)
-  } else if (type == "version") {
+  } else if (proj_type == "version") {
     parent_dir <- "KS_Tracking_Data_Explorer/Version_Table/"
     proj_path = paste0(default_dir, parent_dir, proj_dir)
   }
 
-  proj_info <- fn_project_info(type)
+  proj_info <- fn_project_info(proj_type)
+
+  if (doc_type == "code" & proj_type != "geo") {
+    dest_path <- purrr::map(proj_info$dest_path, paste0, "02_Code/")
+  } else if (doc_type == "output" & proj_type != "geo") {
+    dest_path <- purrr::map(proj_info$dest_path, paste0, "01_Data/")
+  } else if (proj_type == "geo") {
+    dest_path <- proj_info$dest_path
+  }
 
   if (test_drive) {
-    # Overwrite `proj_info$dest_path` to save projects to desktop for testing
+    # Overwrite `dest_path` to save projects to desktop for testing
     test_dir <- "C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Desktop/"
-    proj_info$dest_path <- purrr::map(
-      proj_info$dest_path,
-      stringr::str_replace, pattern = ".+", replacement = test_dir
-    )
+    dest_path <- purrr::map(dest_path, stringr::str_replace, pattern = ".+", replacement = test_dir)
   }
 
   # Check if project path exists
@@ -47,133 +64,163 @@ document_ksde_project <- function(proj_dir, type = c("display", "geo", "mw", "ve
   }
 
   # Check if destination path exists
-  if (!all(unlist(purrr::map(proj_info$dest_path, dir.exists)))) {
+  if (!all(unlist(purrr::map(dest_path, dir.exists)))) {
     stop(paste0(
       "One or more destination paths not found:\n",
-      paste(unlist(proj_info$dest_path), collapse = "\n")
+      paste(unlist(dest_path), collapse = "\n")
     ))
   }
 
-  file_path <- paste0(proj_path, proj_info$code_doc_path)
-  code_doc <- readRDS(file_path)
+  project_doc <- readRDS(paste0(proj_path, proj_info$project_doc_path))
 
-  # Check if scripts in `code_doc` exist
-  scripts <- sort(unique(unlist(purrr::map(code_doc, purrr::pluck, "script"))))
-  scripts_path <- paste0(proj_path, "/scripts/", scripts)
-  if (!all(file.exists(scripts_path))) {
-    stop(paste0(
-      "One or more scripts not found: ",
-      paste(scripts, collapse = ", ")
-    ))
-  }
+  if (doc_type == "code") {
+    # Check if scripts in `project_doc` exist
+    scripts <- sort(unique(unlist(purrr::map(project_doc, purrr::pluck, "script"))))
+    scripts_path <- paste0(proj_path, "/scripts/", scripts)
+    if (!all(file.exists(scripts_path))) {
+      stop(paste0(
+        "One or more scripts not found: ",
+        paste(scripts, collapse = ", ")
+      ))
+    }
 
-  # Create destination directory name(s)
-  dest_dir <- purrr::map(code_doc, purrr::pluck, "name")
+    # Create destination directory name(s)
+    dest_dir <- purrr::map(project_doc, purrr::pluck, "proj_name")
 
-  if (length(dest_dir) != length(proj_info$dest_path)) {
-    stop("Length mismatch: `dest_dir` & `dest_path`")
-  }
+    if (length(dest_dir) != length(dest_path)) {
+      stop("Length mismatch: `dest_dir` & `dest_path`")
+    }
 
-  patterns <- fn_patterns()
+    patterns <- fn_patterns()
 
-  # Select directories to copy
-  dirs_all <- list.dirs(proj_path, full.names = TRUE, recursive = TRUE)
-  dirs_all <- dirs_all[!stringr::str_detect(dirs_all, patterns$p1)]
+    # Select directories to copy
+    dirs_all <- list.dirs(proj_path, full.names = TRUE, recursive = TRUE)
+    dirs_all <- dirs_all[!stringr::str_detect(dirs_all, patterns$p1)]
 
-  # Select files to copy
-  files_all <- list.files(proj_path, all.files = TRUE, full.names = TRUE, recursive = TRUE)
-  files_all <- files_all[!stringr::str_detect(files_all, patterns$p2)]
+    # Select files to copy
+    files_all <- list.files(proj_path, all.files = TRUE, full.names = TRUE, recursive = TRUE)
+    files_all <- files_all[!stringr::str_detect(files_all, patterns$p2)]
 
-  if (!any(stringr::str_detect(files_all, "\\brenv.lock\\b"))) {
-    stop("No renv.lock file present")
+    if (!any(stringr::str_detect(files_all, "/renv.lock$"))) {
+      stop("No renv.lock file present")
+    }
+  } else if (doc_type == "output") {
+    # Assign destination directories
+    dest_dir <- dest_path
+
+    # Get project output paths
+    proj_output_path <- paste0(proj_path, purrr::map(project_doc, purrr::pluck, "dir_output"))
   }
 
   for (i in 1:length(dest_dir)) {
-    if (type == "geo") {
+    if (proj_type == "geo") {
       # Geography table data files and code are stored in a version folder created here
       dir_geo_vrsn <- list(
-        parent = paste0(proj_info$dest_path[[i]], code_doc[[i]]$version_dir),
-        data = paste0(proj_info$dest_path[[i]], code_doc[[i]]$version_dir, "/01_Data/"),
-        code = paste0(proj_info$dest_path[[i]], code_doc[[i]]$version_dir, "/02_Code/")
+        parent = paste0(dest_path[[i]], project_doc[[i]]$dir_version),
+        data = paste0(dest_path[[i]], project_doc[[i]]$dir_version, "/01_Data/"),
+        code = paste0(dest_path[[i]], project_doc[[i]]$dir_version, "/02_Code/")
       )
       if (dir.exists(dir_geo_vrsn$parent) & !overwrite) {
         stop(paste0("The directory '", dir_geo_vrsn$parent, "' already exists!"))
-      } else if (!dir.exists(dir_geo_vrsn$parent)) {
-        purrr::map(dir_geo_vrsn, dir.create)
-      }
-      file_path <- paste0(dir_geo_vrsn$code, dest_dir[[i]])
-    } else {
-      # All other data is stored in a fixed location
-      file_path <- paste0(proj_info$dest_path[[i]], dest_dir[[i]])
-    }
-
-    if (type == "geo" | type == "mw") {
-      # Remove unneeded data folders and files
-      p <- paste0("data/1_source/(?!", paste(code_doc[[i]]$src_data, collapse = "|"), ")")
-      dirs1 <- dirs_all[!dirs_all %in% dirs_all[stringr::str_detect(dirs_all, p)]]
-      files1 <- files_all[!files_all %in% files_all[stringr::str_detect(files_all, p)]]
-    } else {
-      dirs1 <- dirs_all
-      files1 <- files_all
-    }
-
-    # Check if `file_path` exists and overwrite or stop
-    if (dir.exists(file_path)) {
-      if (overwrite) {
-        unlink(file_path, recursive = TRUE)
-      } else if (!overwrite) {
-        stop(paste0("The directory '", file_path, "' already exists!"))
+      } else {
+        purrr::map(dir_geo_vrsn, dir.create, showWarnings = FALSE)
       }
     }
 
-    # Create new project directories
-    dirs2 <- stringr::str_replace(dirs1, proj_path, file_path)
-    # purrr::map(dirs2, dir.create)
+    if (doc_type == "code") {
+      if (proj_type == "geo") {
+        file_path <- paste0(dir_geo_vrsn$code, dest_dir[[i]])
+      } else {
+        file_path <- paste0(dest_path[[i]], dest_dir[[i]])
+      }
 
-    # Remove unneeded scripts
-    p <- paste0("scripts/(?!", paste(code_doc[[i]]$script, collapse = "|"), ")")
-    files1 <- files1[!files1 %in% files1[stringr::str_detect(files1, p)]]
+      if (proj_type == "geo" | proj_type == "mw") {
+        # Remove unneeded data folders and files
+        p <- paste0("data/1_source/(?!", paste(project_doc[[i]]$src_data, collapse = "|"), ")")
+        dirs1 <- dirs_all[!dirs_all %in% dirs_all[stringr::str_detect(dirs_all, p)]]
+        files1 <- files_all[!files_all %in% files_all[stringr::str_detect(files_all, p)]]
+      } else {
+        dirs1 <- dirs_all
+        files1 <- files_all
+      }
 
-    # Copy files
-    files2 <- stringr::str_replace(files1, proj_path, file_path)
-    # purrr::map2(files1, files2, file.copy)
+      # Check if `file_path` exists and overwrite or stop
+      if (dir.exists(file_path)) {
+        if (overwrite) {
+          unlink(file_path, recursive = TRUE)
+        } else if (!overwrite) {
+          stop(paste0("The directory '", file_path, "' already exists!"))
+        }
+      }
 
-    # Rename RMD script
-    name1 <- paste0(
-      file_path, "/scripts/",
-      code_doc[[i]]$script[stringr::str_detect(code_doc[[i]]$script, ".Rmd$")]
+      # Create destination path names
+      dirs2 <- stringr::str_replace(dirs1, proj_path, file_path)
+      # Create new project directories
+      purrr::map(dirs2, dir.create) # WRITE
+
+      # Remove unneeded scripts
+      p <- paste0("scripts/(?!", paste(project_doc[[i]]$script, collapse = "|"), ")")
+      files1 <- files1[!files1 %in% files1[stringr::str_detect(files1, p)]]
+
+      # Create destination path names
+      files2 <- stringr::str_replace(files1, proj_path, file_path)
+      # Copy files
+      purrr::map2(files1, files2, file.copy) # WRITE
+
+      # Rename RMD script
+      name1 <- paste0(file_path, "/scripts/", stringr::str_subset(project_doc[[i]]$script, ".+\\.Rmd$"))
+      name2 <- paste0(file_path, "/scripts/", dest_dir[[i]], ".Rmd")
+      file.rename(name1, name2) # RENAME
+
+      # Rename .RPROJ file
+      name1 <- files2[stringr::str_detect(files2, "\\.Rproj$")]
+      name2 <- paste0(file_path, "/", dest_dir[[i]], ".Rproj")
+      file.rename(name1, name2) # RENAME
+
+      # Names of copied items
+      objs <- list.files(file_path, all.files = TRUE, recursive = TRUE, include.dirs = TRUE)
+    } else if (doc_type == "output") {
+      if (proj_type == "geo") {
+        file_path <- dir_geo_vrsn$data
+      } else {
+        file_path <- dest_dir[[i]]
+      }
+
+      # Select files to copy
+      files1 <- list.files(proj_output_path[[i]], full.names = TRUE)
+      # Create destination path names
+      files2 <- stringr::str_replace(files1, proj_output_path[[i]], file_path)
+      # Copy files
+      purrr::map2(files1, files2, file.copy, overwrite = TRUE) # WRITE
+
+      # Names of copied items
+      objs <- list.files(file_path, all.files = TRUE, recursive = TRUE, include.dirs = TRUE)
+      files2_names <- stringr::str_remove(files2, file_path)
+      objs <- objs[objs %in% files2_names]
+    }
+
+    # Confirmation message
+    message(
+      paste0("Items copied to '", file_path, "':\n"),
+      paste0(" - ", objs, collapse = "\n")
     )
-    name2 <- paste0(file_path, "/scripts/", dest_dir[[i]], ".Rmd")
-    # file.rename(name1, name2)
-
-    # Rename .RPROJ file
-    name1 <- files2[stringr::str_detect(files2, "\\.Rproj$")]
-    name2 <- paste0(file_path, "/", dest_dir[[i]], ".Rproj")
-    # file.rename(name1, name2)
-
-    browser()
-
-    # Confirmation message about which files copied
-    # Copy CSV & XML tables
-    # Make the for loop a function?
-
   }
 }
 
 fn_project_info <- function(type) {
-  if (type == "display") {
+  if (type == "rabies") {
     list(
-      code_doc_path = "/data/3_final/code_doc.rds",
+      project_doc_path = "/data/3_final/project_doc.rds",
       dest_path = list(
-        test_county = "Z:/KSDataExplorer/02_TEST/01_DisplayDataFiles/RabiesSurveillance/01_County/02_Code/",
-        test_state = "Z:/KSDataExplorer/02_TEST/01_DisplayDataFiles/RabiesSurveillance/02_State/02_Code/",
-        prod_county = "Z:/KSDataExplorer/03_PRODUCTION/01_DisplayDataFiles/RabiesSurveillance/01_County/02_Code/",
-        prod_state = "Z:/KSDataExplorer/03_PRODUCTION/01_DisplayDataFiles/RabiesSurveillance/02_State/02_Code/"
+        test_county = "Z:/KSDataExplorer/02_TEST/01_DisplayDataFiles/RabiesSurveillance/01_County/",
+        test_state = "Z:/KSDataExplorer/02_TEST/01_DisplayDataFiles/RabiesSurveillance/02_State/",
+        prod_county = "Z:/KSDataExplorer/03_PRODUCTION/01_DisplayDataFiles/RabiesSurveillance/01_County/",
+        prod_state = "Z:/KSDataExplorer/03_PRODUCTION/01_DisplayDataFiles/RabiesSurveillance/02_State/"
       )
     )
   } else if (type == "geo") {
     list(
-      code_doc_path = "/data/3_final/code_doc_geo.rds",
+      project_doc_path = "/data/3_final/project_doc_geo.rds",
       dest_path = list(
         test = "Z:/KSDataExplorer/02_TEST/02_GeographyTables/",
         prod = "Z:/KSDataExplorer/03_PRODUCTION/02_GeographyTables/"
@@ -181,18 +228,18 @@ fn_project_info <- function(type) {
     )
   } else if (type == "mw") {
     list(
-      code_doc_path = "/data/3_final/code_doc_mw.rds",
+      project_doc_path = "/data/3_final/project_doc_mw.rds",
       dest_path = list(
-        test = "Z:/KSDataExplorer/02_TEST/03_MessageWidget/02_Code/",
-        prod = "Z:/KSDataExplorer/03_PRODUCTION/03_MessageWidget/02_Code/"
+        test = "Z:/KSDataExplorer/02_TEST/03_MessageWidget/",
+        prod = "Z:/KSDataExplorer/03_PRODUCTION/03_MessageWidget/"
       )
     )
   } else if (type == "version") {
     list(
-      code_doc_path = "/data/2_final/code_doc.rds",
+      project_doc_path = "/data/2_final/project_doc.rds",
       dest_path = list(
-        test = "Z:/KSDataExplorer/02_TEST/05_VersionTable/02_Code/",
-        prod = "Z:/KSDataExplorer/03_PRODUCTION/05_VersionTable/02_Code/"
+        test = "Z:/KSDataExplorer/02_TEST/05_VersionTable/",
+        prod = "Z:/KSDataExplorer/03_PRODUCTION/05_VersionTable/"
       )
     )
   }
