@@ -7,7 +7,7 @@
 document_ksde_project(
   proj_dir,
   proj_type = c("rabies", "geo", "mw", "version"),
-  doc_type = c("code", "output"),
+  doc_mode = c("code", "output"),
   overwrite = FALSE,
   test_drive = FALSE
 )
@@ -23,18 +23,18 @@ document_ksde_project(
 \item \code{"version"} = A version table project.
 }}
 
-\item{doc_type}{The part of the project to document.
+\item{doc_mode}{The part of the project to document.
 \itemize{
-\item \code{"code"} = All parts of the project necessary to reproduce the output, including the project folder structure, source data, and scripts.
-\item \code{"output"} = The project output only.
+\item \code{"code"} = Document all parts of the project necessary to reproduce the output, including the project structure, source data, and scripts.
+\item \code{"output"} = Document the project output only.
 }}
 
-\item{overwrite}{If the destination directory for the project already exists, it will be removed when \code{overwrite} is set to \code{TRUE}.}
+\item{overwrite}{If the destination directory for the documented project already exists, it will be removed when \code{overwrite} is set to \code{TRUE}.}
 
 \item{test_drive}{Replace the destination path with the desktop ("C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Desktop/") if \code{TRUE}.}
 }
 \value{
-No value returned.
+A list the same length as the number of destination directories into which project documentation was copied indicating success (\code{TRUE}) or failure (\code{FALSE}), invisibly.
 }
 \description{
 Document a KS Tracking Data Explorer project

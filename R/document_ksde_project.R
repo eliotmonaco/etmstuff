@@ -8,25 +8,25 @@
 #' * `"mw"` = A message widget table project.
 #' * `"version"` = A version table project.
 #'
-#' @param doc_type The part of the project to document.
+#' @param doc_mode The part of the project to document.
 #'
-#' * `"code"` = All parts of the project necessary to reproduce the output, including the project folder structure, source data, and scripts.
-#' * `"output"` = The project output only.
+#' * `"code"` = Document all parts of the project necessary to reproduce the output, including the project structure, source data, and scripts.
+#' * `"output"` = Document the project output only.
 #'
-#' @param overwrite If the destination directory for the project already exists, it will be removed when `overwrite` is set to `TRUE`.
+#' @param overwrite If the destination directory for the documented project already exists, it will be removed when `overwrite` is set to `TRUE`.
 #' @param test_drive Replace the destination path with the desktop ("C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Desktop/") if `TRUE`.
 #'
-#' @return No value returned.
+#' @return A list the same length as the number of destination directories into which project documentation was copied indicating success (`TRUE`) or failure (`FALSE`), invisibly.
 #' @export
 #'
 # @examples
 #'
-document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw", "version"), doc_type = c("code", "output"), overwrite = FALSE, test_drive = FALSE) {
+document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw", "version"), doc_mode = c("code", "output"), overwrite = FALSE, test_drive = FALSE) {
   if (!all(proj_type %in% c("rabies", "geo", "mw", "version"))) {
     stop("`proj_type` must be one of c(\"rabies\", \"geo\", \"mw\", \"version\")")
   }
-  if (!all(doc_type %in% c("code", "output"))) {
-    stop("`doc_type` must be one of c(\"code\", \"output\")")
+  if (!all(doc_mode %in% c("code", "output"))) {
+    stop("`doc_mode` must be one of c(\"code\", \"output\")")
   }
 
   default_dir <- "C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Documents/r_projects/"
@@ -44,9 +44,9 @@ document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw",
 
   proj_info <- fn_project_info(proj_type)
 
-  if (doc_type == "code" & proj_type != "geo") {
+  if (doc_mode == "code" & proj_type != "geo") {
     dest_path <- purrr::map(proj_info$dest_path, paste0, "02_Code/")
-  } else if (doc_type == "output" & proj_type != "geo") {
+  } else if (doc_mode == "output" & proj_type != "geo") {
     dest_path <- purrr::map(proj_info$dest_path, paste0, "01_Data/")
   } else if (proj_type == "geo") {
     dest_path <- proj_info$dest_path
@@ -73,7 +73,7 @@ document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw",
 
   project_doc <- readRDS(paste0(proj_path, proj_info$project_doc_path))
 
-  if (doc_type == "code") {
+  if (doc_mode == "code") {
     # Check if scripts in `project_doc` exist
     scripts <- sort(unique(unlist(purrr::map(project_doc, purrr::pluck, "script"))))
     scripts_path <- paste0(proj_path, "/scripts/", scripts)
@@ -104,13 +104,15 @@ document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw",
     if (!any(stringr::str_detect(files_all, "/renv.lock$"))) {
       stop("No renv.lock file present")
     }
-  } else if (doc_type == "output") {
+  } else if (doc_mode == "output") {
     # Assign destination directories
     dest_dir <- dest_path
 
     # Get project output paths
     proj_output_path <- paste0(proj_path, purrr::map(project_doc, purrr::pluck, "dir_output"))
   }
+
+  items_copied <- list()
 
   for (i in 1:length(dest_dir)) {
     if (proj_type == "geo") {
@@ -127,7 +129,7 @@ document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw",
       }
     }
 
-    if (doc_type == "code") {
+    if (doc_mode == "code") {
       if (proj_type == "geo") {
         file_path <- paste0(dir_geo_vrsn$code, dest_dir[[i]])
       } else {
@@ -179,7 +181,7 @@ document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw",
 
       # Names of copied items
       objs <- list.files(file_path, all.files = TRUE, recursive = TRUE, include.dirs = TRUE)
-    } else if (doc_type == "output") {
+    } else if (doc_mode == "output") {
       if (proj_type == "geo") {
         file_path <- dir_geo_vrsn$data
       } else {
@@ -204,7 +206,11 @@ document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw",
       paste0("Items copied to '", file_path, "':\n"),
       paste0(" - ", objs, collapse = "\n")
     )
+
+    items_copied[[i]] <- ifelse(length(objs) > 0, TRUE, FALSE)
   }
+  browser()
+  invisible(items_copied)
 }
 
 fn_project_info <- function(type) {
