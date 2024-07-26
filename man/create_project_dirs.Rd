@@ -17,7 +17,7 @@ create_project_dirs(type = c("analysis1", "analysis2", "ksde"), root = getwd())
 \item{root}{The project root directory. Defaults to \code{getwd()}.}
 }
 \value{
-The project root directory, invisibly.
+Returns the project root directory, invisibly.
 }
 \description{
 Create project directories

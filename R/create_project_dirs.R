@@ -8,12 +8,16 @@
 #'
 #' @param root The project root directory. Defaults to `getwd()`.
 #'
-#' @return The project root directory, invisibly.
+#' @return Returns the project root directory, invisibly.
 #' @export
 #'
 # @examples
 #'
 create_project_dirs <- function(type = c("analysis1", "analysis2", "ksde"), root = getwd()) {
+  if (length(type) != 1 || !type %in% c("analysis1", "analysis2", "ksde")) {
+    stop("`type` must be one of c(\"analysis1\", \"analysis2\", \"ksde\")")
+  }
+
   if (type == "analysis1") {
     dirs <- c(
       "data", "data/1_source", "data/2_aux", "data/3_final",
