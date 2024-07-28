@@ -2,6 +2,12 @@
 
 export(check_date_seq)
 export(check_pattern_df)
+export(compare_dfs)
+export(compare_diff)
+export(compare_fn)
+export(compare_tf)
+export(compare_val)
+export(compare_vectors)
 export(create_project_dirs)
 export(document_ksde_project)
 export(my_hist)
