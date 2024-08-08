@@ -11,7 +11,7 @@
 #' @param doc_mode The part of the project to document.
 #'
 #' * `"code"` = Document all parts of the project necessary to reproduce the output, including the project structure, source data, and scripts.
-#' * `"output"` = Document the project output only.
+#' * `"output"` = Document the project output only (CSV and XML files).
 #'
 #' @param overwrite If the destination directory for the documented project already exists, it will be removed when `overwrite` is set to `TRUE`.
 #' @param test_drive Replace the destination path with the desktop ("C:/Users/eliot.monaco/OneDrive - State of Kansas, OITS/Desktop/") if `TRUE`.
@@ -22,10 +22,10 @@
 # @examples
 #'
 document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw", "version"), doc_mode = c("code", "output"), overwrite = FALSE, test_drive = FALSE) {
-  if (!all(proj_type %in% c("rabies", "geo", "mw", "version"))) {
+  if (length(proj_type) != 1 || !proj_type %in% c("rabies", "geo", "mw", "version")) {
     stop("`proj_type` must be one of c(\"rabies\", \"geo\", \"mw\", \"version\")")
   }
-  if (!all(doc_mode %in% c("code", "output"))) {
+  if (length(doc_mode) != 1 || !doc_mode %in% c("code", "output")) {
     stop("`doc_mode` must be one of c(\"code\", \"output\")")
   }
 
@@ -122,9 +122,7 @@ document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw",
         data = paste0(dest_path[[i]], project_doc[[i]]$dir_version, "/01_Data/"),
         code = paste0(dest_path[[i]], project_doc[[i]]$dir_version, "/02_Code/")
       )
-      if (dir.exists(dir_geo_vrsn$parent) & !overwrite) {
-        stop(paste0("The directory '", dir_geo_vrsn$parent, "' already exists!"))
-      } else {
+      if (!dir.exists(dir_geo_vrsn$parent)) {
         purrr::map(dir_geo_vrsn, dir.create, showWarnings = FALSE)
       }
     }
@@ -132,6 +130,9 @@ document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw",
     if (doc_mode == "code") {
       if (proj_type == "geo") {
         file_path <- paste0(dir_geo_vrsn$code, dest_dir[[i]])
+        if (dir.exists(file_path) & !overwrite) {
+          stop(paste0("The directory '", file_path, "' already exists!"))
+        }
       } else {
         file_path <- paste0(dest_path[[i]], dest_dir[[i]])
       }
@@ -184,6 +185,9 @@ document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw",
     } else if (doc_mode == "output") {
       if (proj_type == "geo") {
         file_path <- dir_geo_vrsn$data
+        if (length(list.files(file_path)) > 0 & !overwrite) {
+          stop(paste0("The directory '", file_path, "' already contains files!"))
+        }
       } else {
         file_path <- dest_dir[[i]]
       }

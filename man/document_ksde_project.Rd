@@ -26,7 +26,7 @@ document_ksde_project(
 \item{doc_mode}{The part of the project to document.
 \itemize{
 \item \code{"code"} = Document all parts of the project necessary to reproduce the output, including the project structure, source data, and scripts.
-\item \code{"output"} = Document the project output only.
+\item \code{"output"} = Document the project output only (CSV and XML files).
 }}
 
 \item{overwrite}{If the destination directory for the documented project already exists, it will be removed when \code{overwrite} is set to \code{TRUE}.}
