@@ -209,7 +209,7 @@ document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw",
 
     items_copied[[i]] <- ifelse(length(objs) > 0, TRUE, FALSE)
   }
-  browser()
+
   invisible(items_copied)
 }
 
