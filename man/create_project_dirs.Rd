@@ -7,11 +7,11 @@
 create_project_dirs(type = c("analysis1", "analysis2", "ksde"), root = getwd())
 }
 \arguments{
-\item{type}{The type of project structure to create. One of \code{c("analysis1", "analysis2", "ksde")}. All create three subdirectories: "data", "data/1_source", "output", and "scripts". The differences are that
+\item{type}{The type of project structure to create. One of \code{c("analysis1", "analysis2", "ksde")}. All create three subdirectories: "data", "data/1-source", "output", and "scripts". The differences are that
 \itemize{
-\item \code{"analysis1"} also creates "data/2_aux" and "data/3_final".
-\item \code{"analysis2"} also creates "data/2_final".
-\item \code{"ksde"} also creates "data/2_aux", "data/3_final", "output/1_test", and "output/2_prod".
+\item \code{"analysis1"} also creates "data/2-aux" and "data/3-final".
+\item \code{"analysis2"} also creates "data/2-final".
+\item \code{"ksde"} also creates "data/2-aux", "data/3-final", "output/1-test", and "output/2-prod".
 }}
 
 \item{root}{The project root directory. Defaults to \code{getwd()}.}
