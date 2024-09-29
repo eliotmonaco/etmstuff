@@ -1,0 +1,4 @@
+name: NB template
+description: >
+   An R notebook template with _output.yml and styles.css files
+create_dir: FALSE

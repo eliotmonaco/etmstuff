@@ -1,0 +1,95 @@
+:root {
+	--parchment: #efece4;
+	--blue1: #0e1e56;
+	--blue2: #1a244a;
+	--green-text: #087c02;
+	--grey1: #dcdcdc;
+	--grey2: #141414;
+	--transparent1: rgba(140, 140, 140, 0.1);
+	--transparent2: rgba(0, 0, 0, 0.1);
+	--transparent3: rgba(0, 0, 0, 0.15);
+}
+
+body {
+	background-color: var(--parchment);
+	color: var(--blue1);
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+ /* Header section */
+div#header {
+	margin-bottom: 40px;
+}
+div#header h1.title {
+	font-weight: bold;
+}
+
+ /* In-line code */
+code:not(.hljs) {
+	background-color: var(--transparent2);
+	position: relative;
+    bottom: 1px;
+}
+
+ /* Block quote */
+blockquote {
+	border-left: 5px solid var(--blue1);
+	font-size: inherit;
+}
+
+/* Link text */
+a, a *, a:hover {
+	color: ;
+}
+
+/* Table of contents (floating) */
+div.tocify {
+	border-color: var(--transparent3);
+}
+div.tocify .list-group-item:not(.active) {
+	background-color: var(--parchment);
+}
+div.tocify * {
+	text-indent: 0;
+}
+div.tocify > ul > li.list-group-item {
+	padding-left: 10px;
+}
+div.tocify > ul > ul > li.list-group-item {
+	padding-left: 20px;
+}
+div.tocify > ul > ul > ul > li.list-group-item {
+	padding-left: 30px;
+}
+
+/* Code block */
+pre.r {
+	background-color: var(--transparent1);
+	border-color: var(--transparent3);
+}
+
+/* Code block text */
+.hljs-literal {
+color: #990073;
+}
+.hljs-number {
+color: #099;
+}
+.hljs-comment {
+color: var(--green-text);
+font-style: italic;
+}
+.hljs-keyword {
+color: #900;
+font-weight: bold;
+}
+.hljs-string {
+color: #d14;
+}
+
+/* Output block */
+pre:not(.r) {
+	background-color: var(--blue2);
+	border-color: var(--grey2);
+	color: var(--grey1);
+}

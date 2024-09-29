@@ -1,0 +1,6 @@
+html_notebook:
+  css: styles.css
+  code_folding: show
+  number_sections: true
+  toc: true
+  toc_float: true
