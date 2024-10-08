@@ -139,7 +139,7 @@ document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw",
 
       if (proj_type == "geo" | proj_type == "mw") {
         # Remove unneeded data folders and files
-        p <- paste0("data/1_source/(?!", paste(project_doc[[i]]$src_data, collapse = "|"), ")")
+        p <- paste0("data/1-source/(?!", paste(project_doc[[i]]$src_data, collapse = "|"), ")")
         dirs1 <- dirs_all[!dirs_all %in% dirs_all[stringr::str_detect(dirs_all, p)]]
         files1 <- files_all[!files_all %in% files_all[stringr::str_detect(files_all, p)]]
       } else {
@@ -220,7 +220,7 @@ document_ksde_project <- function(proj_dir, proj_type = c("rabies", "geo", "mw",
 fn_project_info <- function(type) {
   if (type == "rabies") {
     list(
-      project_doc_path = "/data/3_final/project_doc.rds",
+      project_doc_path = "/data/3-final/project_doc.rds",
       dest_path = list(
         test_county = "Z:/KSDataExplorer/02_TEST/01_DisplayDataFiles/RabiesSurveillance/01_County/",
         test_state = "Z:/KSDataExplorer/02_TEST/01_DisplayDataFiles/RabiesSurveillance/02_State/",
@@ -230,7 +230,7 @@ fn_project_info <- function(type) {
     )
   } else if (type == "geo") {
     list(
-      project_doc_path = "/data/3_final/project_doc_geo.rds",
+      project_doc_path = "/data/3-final/project_doc_geo.rds",
       dest_path = list(
         test = "Z:/KSDataExplorer/02_TEST/02_GeographyTables/",
         prod = "Z:/KSDataExplorer/03_PRODUCTION/02_GeographyTables/"
@@ -238,7 +238,7 @@ fn_project_info <- function(type) {
     )
   } else if (type == "mw") {
     list(
-      project_doc_path = "/data/3_final/project_doc_mw.rds",
+      project_doc_path = "/data/3-final/project_doc_mw.rds",
       dest_path = list(
         test = "Z:/KSDataExplorer/02_TEST/03_MessageWidget/",
         prod = "Z:/KSDataExplorer/03_PRODUCTION/03_MessageWidget/"
@@ -246,7 +246,7 @@ fn_project_info <- function(type) {
     )
   } else if (type == "version") {
     list(
-      project_doc_path = "/data/2_final/project_doc.rds",
+      project_doc_path = "/data/2-final/project_doc.rds",
       dest_path = list(
         test = "Z:/KSDataExplorer/02_TEST/05_VersionTable/",
         prod = "Z:/KSDataExplorer/03_PRODUCTION/05_VersionTable/"
@@ -261,9 +261,9 @@ fn_patterns <- function() {
     p1 = paste(
       "/.git\\b",
       "/\\.Rproj\\.user\\b",
-      "/data/1_source/past\\b",
-      "/data/2_final/.+",
-      "/data/3_final/.+",
+      "/data/1-source/past\\b",
+      "/data/2-final/.+",
+      "/data/3-final/.+",
       "/output/1_test/.+",
       "/output/2_prod/.+",
       "/renv\\b",
@@ -274,8 +274,8 @@ fn_patterns <- function() {
       "/.git/",
       "/.gitignore\\b",
       "/\\.Rproj\\.user/",
-      "/data/2_final/",
-      "/data/3_final/",
+      "/data/2-final/",
+      "/data/3-final/",
       "/log\\b",
       "/output/",
       "/renv/",
