@@ -246,7 +246,7 @@ fn_project_info <- function(type) {
     )
   } else if (type == "version") {
     list(
-      project_doc_path = "/data/2-final/project_doc.rds",
+      project_doc_path = "/data/3-final/project_doc.rds",
       dest_path = list(
         test = "Z:/KSDataExplorer/02_TEST/05_VersionTable/",
         prod = "Z:/KSDataExplorer/03_PRODUCTION/05_VersionTable/"
